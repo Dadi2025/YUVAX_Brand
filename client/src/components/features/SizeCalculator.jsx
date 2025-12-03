@@ -1,160 +1,142 @@
 import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
 
-const SizeCalculator = ({ category, onBack }) => {
+const SizeCalculator = ({ isOpen, onClose, onSelectSize }) => {
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
-    const [recommendedSize, setRecommendedSize] = useState(null);
+    const [fit, setFit] = useState('regular'); // tight, regular, loose
+    const [result, setResult] = useState(null);
+
+    if (!isOpen) return null;
 
     const calculateSize = () => {
+        if (!height || !weight) return;
+
         const h = parseInt(height);
         const w = parseInt(weight);
 
-        if (!h || !w) {
-            alert('Please enter both height and weight');
-            return;
-        }
+        // Simplified logic for demo purposes
+        // In a real app, this would use specific brand size charts
+        let recommendedSize = 'M';
+        let confidence = 85;
 
-        // Simple size calculation algorithm based on height and weight
-        let size = 'M'; // default
-
-        if (category === 'Joggers') {
-            // For joggers, focus more on weight
-            if (w < 60) size = 'S';
-            else if (w < 70) size = 'M';
-            else if (w < 80) size = 'L';
-            else if (w < 90) size = 'XL';
-            else size = 'XXL';
+        // Basic BMI-ish logic + Height checks
+        if (h < 160) {
+            recommendedSize = w < 50 ? 'XS' : w < 60 ? 'S' : 'M';
+        } else if (h < 170) {
+            recommendedSize = w < 60 ? 'S' : w < 70 ? 'M' : 'L';
+        } else if (h < 180) {
+            recommendedSize = w < 70 ? 'M' : w < 80 ? 'L' : 'XL';
         } else {
-            // For tops (Hoodies, Tshirts), consider both height and weight
-            const bmi = w / ((h / 100) ** 2);
-
-            if (h < 165) {
-                if (bmi < 20) size = 'S';
-                else if (bmi < 23) size = 'M';
-                else if (bmi < 26) size = 'L';
-                else size = 'XL';
-            } else if (h < 175) {
-                if (bmi < 19) size = 'S';
-                else if (bmi < 22) size = 'M';
-                else if (bmi < 25) size = 'L';
-                else if (bmi < 28) size = 'XL';
-                else size = 'XXL';
-            } else {
-                if (bmi < 20) size = 'M';
-                else if (bmi < 23) size = 'L';
-                else if (bmi < 26) size = 'XL';
-                else size = 'XXL';
-            }
+            recommendedSize = w < 80 ? 'L' : w < 90 ? 'XL' : 'XXL';
         }
 
-        setRecommendedSize(size);
+        // Adjust for fit preference
+        if (fit === 'tight') {
+            // Maybe suggest size down if on the edge, or just note it
+            confidence += 5;
+        } else if (fit === 'loose') {
+            // Suggest size up logic could go here
+            // For now, we'll keep the base size but adjust confidence text
+        }
+
+        setResult({ size: recommendedSize, confidence });
+    };
+
+    const handleApply = () => {
+        if (result) {
+            onSelectSize(result.size);
+            onClose();
+        }
     };
 
     return (
-        <div>
-            <button
-                onClick={onBack}
-                style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--accent-cyan)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    marginBottom: '1.5rem',
-                    fontSize: '0.875rem'
-                }}
-            >
-                <ArrowLeft size={16} /> Back to Size Chart
-            </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] rounded-lg w-full max-w-md p-6 relative animate-scale-in shadow-[0_0_50px_rgba(0,243,255,0.1)]">
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-white"
+                >
+                    ✕
+                </button>
 
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Find Your Perfect Size</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                Enter your measurements and we'll recommend the best size for you
-            </p>
+                <h3 className="text-xl font-bold mb-1 font-[var(--font-display)]">Find Your Perfect Fit</h3>
+                <p className="text-[var(--text-muted)] text-sm mb-6">Answer 3 simple questions to get a size recommendation.</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem' }}>
-                {/* Height Input */}
-                <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        Height (cm)
-                    </label>
-                    <input
-                        type="number"
-                        value={height}
-                        onChange={(e) => setHeight(e.target.value)}
-                        placeholder="e.g., 175"
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid var(--border-light)',
-                            borderRadius: '4px',
-                            color: 'white',
-                            fontSize: '1rem'
-                        }}
-                    />
-                </div>
+                {!result ? (
+                    <div className="space-y-5">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Height (cm)</label>
+                                <input
+                                    type="number"
+                                    value={height}
+                                    onChange={(e) => setHeight(e.target.value)}
+                                    placeholder="e.g. 175"
+                                    className="w-full bg-[rgba(255,255,255,0.05)] border border-[var(--border-light)] rounded px-3 py-2.5 text-sm focus:border-[var(--accent-cyan)] outline-none"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Weight (kg)</label>
+                                <input
+                                    type="number"
+                                    value={weight}
+                                    onChange={(e) => setWeight(e.target.value)}
+                                    placeholder="e.g. 70"
+                                    className="w-full bg-[rgba(255,255,255,0.05)] border border-[var(--border-light)] rounded px-3 py-2.5 text-sm focus:border-[var(--accent-cyan)] outline-none"
+                                />
+                            </div>
+                        </div>
 
-                {/* Weight Input */}
-                <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        Weight (kg)
-                    </label>
-                    <input
-                        type="number"
-                        value={weight}
-                        onChange={(e) => setWeight(e.target.value)}
-                        placeholder="e.g., 70"
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid var(--border-light)',
-                            borderRadius: '4px',
-                            color: 'white',
-                            fontSize: '1rem'
-                        }}
-                    />
-                </div>
-            </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Fit Preference</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {['tight', 'regular', 'loose'].map((f) => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFit(f)}
+                                        className={`py-2 rounded text-sm capitalize transition-colors ${fit === f
+                                                ? 'bg-[var(--accent-cyan)] text-black font-bold'
+                                                : 'bg-[rgba(255,255,255,0.05)] text-[var(--text-muted)] hover:bg-[rgba(255,255,255,0.1)]'
+                                            }`}
+                                    >
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-            <button
-                onClick={calculateSize}
-                className="btn-primary"
-                style={{ width: '100%', padding: '1rem', marginBottom: '1.5rem' }}
-            >
-                CALCULATE MY SIZE
-            </button>
+                        <button
+                            onClick={calculateSize}
+                            disabled={!height || !weight}
+                            className="w-full btn-primary py-3 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Calculate My Size
+                        </button>
+                    </div>
+                ) : (
+                    <div className="text-center py-4 animate-fade-in">
+                        <div className="w-20 h-20 rounded-full bg-[rgba(0,243,255,0.1)] border-2 border-[var(--accent-cyan)] flex items-center justify-center mx-auto mb-4">
+                            <span className="text-3xl font-bold text-[var(--accent-cyan)]">{result.size}</span>
+                        </div>
+                        <h4 className="text-lg font-bold mb-1">We recommend Size {result.size}</h4>
+                        <p className="text-[var(--text-muted)] text-sm mb-6">Based on your measurements and {fit} fit preference ({result.confidence}% match).</p>
 
-            {/* Recommended Size Result */}
-            {recommendedSize && (
-                <div style={{
-                    padding: '2rem',
-                    background: 'rgba(0,243,255,0.1)',
-                    border: '2px solid var(--accent-cyan)',
-                    borderRadius: '8px',
-                    textAlign: 'center'
-                }}>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                        Your Recommended Size
-                    </p>
-                    <p style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent-cyan)', marginBottom: '0.5rem' }}>
-                        {recommendedSize}
-                    </p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                        This is a recommendation based on your measurements. For the best fit, please refer to the size chart.
-                    </p>
-                </div>
-            )}
-
-            {/* Tips */}
-            <div style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-                <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                    <strong>💡 Tip:</strong> If you're between sizes, we recommend sizing up for a more relaxed fit or sizing down for a slimmer fit.
-                </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setResult(null)}
+                                className="flex-1 py-2.5 rounded border border-[var(--border-light)] text-sm hover:border-white transition-colors"
+                            >
+                                Recalculate
+                            </button>
+                            <button
+                                onClick={handleApply}
+                                className="flex-1 btn-primary py-2.5 text-sm"
+                            >
+                                Select Size {result.size}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

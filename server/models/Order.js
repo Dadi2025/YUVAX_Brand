@@ -73,6 +73,26 @@ const orderSchema = mongoose.Schema({
     returnReason: {
         type: String
     },
+    exchangeStatus: {
+        type: String,
+        enum: ['None', 'Requested', 'Approved', 'Rejected', 'Completed'],
+        default: 'None'
+    },
+    exchangeReason: {
+        type: String
+    },
+    refundStatus: {
+        type: String,
+        enum: ['None', 'Pending', 'Completed', 'Failed'],
+        default: 'None'
+    },
+    refundAmount: {
+        type: Number,
+        default: 0.0
+    },
+    refundedAt: {
+        type: Date
+    },
     status: {
         type: String,
         default: 'Processing'

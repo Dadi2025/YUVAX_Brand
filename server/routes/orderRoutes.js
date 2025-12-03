@@ -43,7 +43,7 @@ const orderValidation = [
 // @access  Private/Admin
 router.get('/', protect, admin, async (req, res) => {
     try {
-        const orders = await Order.find({}).populate('user', 'id name email');
+        const orders = await Order.find({}).populate('user', 'id name email phone');
         res.json(orders);
     } catch (error) {
         console.error('Fetch orders error:', error);
@@ -285,6 +285,97 @@ router.put('/:id/return-status', protect, admin, async (req, res) => {
     } catch (error) {
         console.error('Update return status error:', error);
         res.status(400).json({ message: 'Failed to update return status' });
+    }
+});
+
+// @desc    Request exchange
+// @route   PUT /api/orders/:id/exchange
+// @access  Private
+router.put('/:id/exchange', protect, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Check if user owns the order
+        if (order.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        if (!order.isDelivered) {
+            return res.status(400).json({ message: 'Cannot exchange undelivered order' });
+        }
+
+        if (order.exchangeStatus !== 'None') {
+            return res.status(400).json({ message: 'Exchange already requested' });
+        }
+
+        if (order.returnStatus !== 'None') {
+            return res.status(400).json({ message: 'Cannot exchange order with active return request' });
+        }
+
+        order.exchangeStatus = 'Requested';
+        order.exchangeReason = req.body.reason;
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error('Exchange request error:', error);
+        res.status(400).json({ message: 'Failed to request exchange' });
+    }
+});
+
+// @desc    Update exchange status
+// @route   PUT /api/orders/:id/exchange-status
+// @access  Private/Admin
+router.put('/:id/exchange-status', protect, admin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        order.exchangeStatus = req.body.status;
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error('Update exchange status error:', error);
+        res.status(400).json({ message: 'Failed to update exchange status' });
+    }
+});
+
+// @desc    Process refund
+// @route   PUT /api/orders/:id/refund
+// @access  Private/Admin
+router.put('/:id/refund', protect, admin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        if (order.returnStatus !== 'Approved') {
+            return res.status(400).json({ message: 'Return must be approved before refunding' });
+        }
+
+        if (order.refundStatus === 'Completed') {
+            return res.status(400).json({ message: 'Refund already completed' });
+        }
+
+        order.refundStatus = 'Completed';
+        order.refundAmount = req.body.amount || order.totalPrice;
+        order.refundedAt = Date.now();
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error('Refund processing error:', error);
+        res.status(400).json({ message: 'Failed to process refund' });
     }
 });
 

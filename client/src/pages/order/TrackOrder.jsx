@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Package, Truck, CheckCircle, Clock, MapPin, Phone, Mail, RotateCcw } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, MapPin, Phone, Mail, RotateCcw, RefreshCw } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 const TrackOrder = () => {
@@ -11,8 +11,11 @@ const TrackOrder = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showReturnModal, setShowReturnModal] = useState(false);
+    const [showExchangeModal, setShowExchangeModal] = useState(false);
     const [returnReason, setReturnReason] = useState('');
+    const [exchangeReason, setExchangeReason] = useState('');
     const [submittingReturn, setSubmittingReturn] = useState(false);
+    const [submittingExchange, setSubmittingExchange] = useState(false);
 
     useEffect(() => {
         fetchOrder();
@@ -66,6 +69,41 @@ const TrackOrder = () => {
             showToast('Something went wrong', 'error');
         } finally {
             setSubmittingReturn(false);
+        }
+    };
+
+    const handleExchangeRequest = async (e) => {
+        e.preventDefault();
+        if (!exchangeReason.trim()) {
+            showToast('Please provide a reason for exchange', 'error');
+            return;
+        }
+
+        setSubmittingExchange(true);
+        try {
+            const token = localStorage.getItem('yuva-token');
+            const res = await fetch(`/api/orders/${orderId}/exchange`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ reason: exchangeReason })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setOrder(data);
+                setShowExchangeModal(false);
+                showToast('Exchange requested successfully', 'success');
+            } else {
+                showToast(data.message || 'Failed to request exchange', 'error');
+            }
+        } catch (error) {
+            showToast('Something went wrong', 'error');
+        } finally {
+            setSubmittingExchange(false);
         }
     };
 
@@ -280,16 +318,24 @@ const TrackOrder = () => {
                             </div>
                         </div>
 
-                        {/* Return Action */}
-                        {order.isDelivered && order.returnStatus === 'None' && (
-                            <div style={{ marginTop: '2rem' }}>
+                        {/* Return/Exchange Action */}
+                        {order.isDelivered && order.returnStatus === 'None' && order.exchangeStatus === 'None' && (
+                            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
                                 <button
                                     onClick={() => setShowReturnModal(true)}
                                     className="btn-secondary"
-                                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                                 >
                                     <RotateCcw size={18} />
-                                    Request Return
+                                    Return
+                                </button>
+                                <button
+                                    onClick={() => setShowExchangeModal(true)}
+                                    className="btn-secondary"
+                                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                                >
+                                    <RefreshCw size={18} />
+                                    Exchange
                                 </button>
                             </div>
                         )}
@@ -305,6 +351,34 @@ const TrackOrder = () => {
                                 </p>
                                 {order.returnReason && (
                                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Reason: {order.returnReason}</p>
+                                )}
+                                {order.refundStatus === 'Completed' && (
+                                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-light)' }}>
+                                        <p style={{ fontWeight: 'bold', color: '#4ade80', marginBottom: '0.25rem' }}>
+                                            Refund Processed
+                                        </p>
+                                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                            Amount: <span style={{ color: 'white' }}>₹{order.refundAmount}</span>
+                                        </p>
+                                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                                            Date: <span style={{ color: 'white' }}>{new Date(order.refundedAt).toLocaleDateString()}</span>
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {order.exchangeStatus !== 'None' && (
+                            <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
+                                <h3 style={{ fontSize: '1.125rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <RefreshCw size={18} color="var(--accent-cyan)" />
+                                    Exchange Status
+                                </h3>
+                                <p style={{ fontWeight: 'bold', color: order.exchangeStatus === 'Approved' ? '#00ff00' : order.exchangeStatus === 'Rejected' ? '#ff4444' : 'var(--accent-cyan)', marginBottom: '0.5rem' }}>
+                                    {order.exchangeStatus}
+                                </p>
+                                {order.exchangeReason && (
+                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Reason: {order.exchangeReason}</p>
                                 )}
                             </div>
                         )}
@@ -350,6 +424,52 @@ const TrackOrder = () => {
                                         disabled={submittingReturn}
                                     >
                                         {submittingReturn ? 'Submitting...' : 'Submit Request'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Exchange Modal */}
+                {showExchangeModal && (
+                    <div style={{
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                    }}>
+                        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '500px', border: '1px solid var(--border-light)' }}>
+                            <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Request Exchange</h2>
+                            <form onSubmit={handleExchangeRequest}>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Reason for Exchange</label>
+                                    <textarea
+                                        value={exchangeReason}
+                                        onChange={(e) => setExchangeReason(e.target.value)}
+                                        required
+                                        rows="4"
+                                        placeholder="Please explain why you want to exchange this item (e.g., wrong size, defective)..."
+                                        style={{
+                                            width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.05)',
+                                            border: '1px solid var(--border-light)', borderRadius: '4px', color: 'white', resize: 'vertical'
+                                        }}
+                                    ></textarea>
+                                </div>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowExchangeModal(false)}
+                                        className="btn-secondary"
+                                        style={{ flex: 1 }}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn-primary"
+                                        style={{ flex: 1 }}
+                                        disabled={submittingExchange}
+                                    >
+                                        {submittingExchange ? 'Submitting...' : 'Submit Request'}
                                     </button>
                                 </div>
                             </form>
