@@ -8,6 +8,7 @@ import SizeCalculator from '../../components/features/SizeCalculator';
 import ReviewForm from '../../components/features/ReviewForm';
 import ReviewList from '../../components/features/ReviewList';
 import CompleteLook from '../../components/features/CompleteLook';
+import VirtualTryOn from '../../components/features/VirtualTryOn';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -18,6 +19,7 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [showSizeGuide, setShowSizeGuide] = useState(false);
     const [showSizeCalculator, setShowSizeCalculator] = useState(false);
+    const [showVirtualTryOn, setShowVirtualTryOn] = useState(false);
     const [refreshReviews, setRefreshReviews] = useState(0);
 
     if (!product) {
@@ -101,6 +103,12 @@ const ProductDetail = () => {
                                         style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.875rem', textDecoration: 'underline' }}
                                     >
                                         Size Guide
+                                    </button>
+                                    <button
+                                        onClick={() => setShowVirtualTryOn(true)}
+                                        style={{ background: 'none', border: 'none', color: 'var(--accent-purple)', cursor: 'pointer', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                                    >
+                                        <span>✨</span> Try It On
                                     </button>
                                 </div>
                             </div>
@@ -216,12 +224,24 @@ const ProductDetail = () => {
                 category={product.category}
             />
 
-            {/* Size Calculator Modal */}
-            <SizeCalculator
-                isOpen={showSizeCalculator}
-                onClose={() => setShowSizeCalculator(false)}
-                onSizeRecommended={(size) => setSelectedSize(size)}
-            />
+            {showSizeCalculator && (
+                <SizeCalculator
+                    isOpen={showSizeCalculator}
+                    onClose={() => setShowSizeCalculator(false)}
+                    onSizeRecommended={(size) => {
+                        setSelectedSize(size);
+                        setShowSizeCalculator(false);
+                    }}
+                />
+            )}
+
+            {showVirtualTryOn && (
+                <VirtualTryOn
+                    product={product}
+                    isOpen={showVirtualTryOn}
+                    onClose={() => setShowVirtualTryOn(false)}
+                />
+            )}
         </div>
     );
 };

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import VisualSearch from '../features/VisualSearch';
 
 const Navbar = () => {
   const { getCartCount, wishlist, user, logout } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showVisualSearch, setShowVisualSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -45,6 +47,16 @@ const Navbar = () => {
             style={{ background: 'none', border: 'none', cursor: 'pointer' }}
           >
             <span style={{ fontSize: '1.25rem' }}>🔍</span>
+          </button>
+
+          {/* Visual Search Icon */}
+          <button
+            onClick={() => setShowVisualSearch(true)}
+            className="nav-link"
+            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            title="Visual Search"
+          >
+            <span style={{ fontSize: '1.25rem' }}>📷</span>
           </button>
 
           {/* Wishlist */}
@@ -219,6 +231,12 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+      {/* Visual Search Modal */}
+      <VisualSearch
+        isOpen={showVisualSearch}
+        onClose={() => setShowVisualSearch(false)}
+      />
     </nav>
   );
 };
