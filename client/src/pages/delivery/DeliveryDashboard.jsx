@@ -198,21 +198,27 @@ const DeliveryDashboard = () => {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
                         <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                {orders.length}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Total Assigned</div>
+                        </div>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
                                 {orders.filter(o => o.status !== 'Delivered').length}
                             </div>
-                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Active Deliveries</div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Pending Orders</div>
                         </div>
                         <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
                                 {orders.filter(o => o.status === 'Delivered').length}
                             </div>
-                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Completed Today</div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Delivered Orders</div>
                         </div>
                         <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                                {orders.length}
+                                ₹{orders.reduce((acc, order) => (order.paymentMethod === 'cod' && order.status !== 'Delivered') ? acc + order.totalPrice : acc, 0)}
                             </div>
-                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Total Orders</div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Cash to Collect</div>
                         </div>
                     </div>
                 </div>
