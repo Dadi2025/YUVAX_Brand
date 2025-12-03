@@ -12,6 +12,10 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
+  // Check if admin or agent is logged in
+  const isAdminLoggedIn = localStorage.getItem('yuva-admin');
+  const isAgentLoggedIn = localStorage.getItem('agent-token');
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -19,6 +23,19 @@ const Navbar = () => {
       setShowSearch(false);
       setSearchQuery('');
     }
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('yuva-admin');
+    navigate('/admin/login');
+    window.location.reload(); // Refresh to update navbar
+  };
+
+  const handleAgentLogout = () => {
+    localStorage.removeItem('agent-token');
+    localStorage.removeItem('agent-info');
+    navigate('/delivery/login');
+    window.location.reload(); // Refresh to update navbar
   };
 
   return (
@@ -150,9 +167,28 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <Link to="/login" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
-              Login
-            </Link>
+            // Show logout for admin/agent, or login for neither
+            isAdminLoggedIn ? (
+              <button
+                onClick={handleAdminLogout}
+                className="btn-primary"
+                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#ff4444', border: 'none' }}
+              >
+                Admin Logout
+              </button>
+            ) : isAgentLoggedIn ? (
+              <button
+                onClick={handleAgentLogout}
+                className="btn-primary"
+                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#ff4444', border: 'none' }}
+              >
+                Agent Logout
+              </button>
+            ) : (
+              <Link to="/login" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
+                Login
+              </Link>
+            )
           )}
         </div>
 
