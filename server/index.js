@@ -15,6 +15,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import agentRoutes from './routes/agentRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import visualSearchRoutes from './routes/visualSearchRoutes.js';
+import pincodeRoutes from './routes/pincodeRoutes.js';
 import { checkPriceDrops } from './utils/priceAlertService.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 
@@ -94,6 +95,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/visual-search', visualSearchRoutes);
+app.use('/api/pincode', pincodeRoutes);
 
 // 404 Handler
 app.use((req, res) => {

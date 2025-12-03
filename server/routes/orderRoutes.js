@@ -123,6 +123,55 @@ router.put('/:id/status', protect, admin, async (req, res) => {
     }
 });
 
+// @desc    Simulate Courier Updates (Auto-advance status)
+// @route   POST /api/orders/simulate-courier
+// @access  Private/Admin
+router.post('/simulate-courier', protect, admin, async (req, res) => {
+    try {
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const twoDays = 2 * oneDay;
+
+        let updatedCount = 0;
+
+        // 1. Processing -> Shipped (if older than 1 day)
+        const processingOrders = await Order.find({ status: 'Processing' });
+        for (const order of processingOrders) {
+            if (now - new Date(order.createdAt).getTime() > oneDay) {
+                order.status = 'Shipped';
+                await order.save();
+                updatedCount++;
+            }
+        }
+
+        // 2. Shipped -> Delivered (if older than 2 days from update)
+        const shippedOrders = await Order.find({ status: 'Shipped' });
+        for (const order of shippedOrders) {
+            if (now - new Date(order.updatedAt).getTime() > twoDays) {
+                order.status = 'Delivered';
+                order.isDelivered = true;
+                order.deliveredAt = now;
+
+                // Award Loyalty Points
+                const pointsToAward = Math.floor(order.totalPrice / 100);
+                const user = await User.findById(order.user);
+                if (user) {
+                    user.points += pointsToAward;
+                    await user.save();
+                }
+
+                await order.save();
+                updatedCount++;
+            }
+        }
+
+        res.json({ message: `Simulated courier updates: ${updatedCount} orders updated` });
+    } catch (error) {
+        console.error('Courier simulation error:', error);
+        res.status(500).json({ message: 'Failed to simulate courier updates' });
+    }
+});
+
 // @desc    Get order analytics
 // @route   GET /api/orders/analytics
 // @access  Private/Admin
@@ -260,8 +309,17 @@ router.put('/:id/return', protect, async (req, res) => {
             return res.status(400).json({ message: 'Return already requested' });
         }
 
-        order.returnStatus = 'Requested';
-        order.returnReason = req.body.reason;
+        // Auto-approve if within 7 days of delivery
+        const deliveryDate = new Date(order.deliveredAt);
+        const daysSinceDelivery = (Date.now() - deliveryDate) / (1000 * 60 * 60 * 24);
+
+        if (daysSinceDelivery <= 7) {
+            order.returnStatus = 'Approved';
+            order.returnReason = req.body.reason + ' (Auto-Approved)';
+        } else {
+            order.returnStatus = 'Requested';
+            order.returnReason = req.body.reason;
+        }
 
         const updatedOrder = await order.save();
         res.json(updatedOrder);
@@ -352,7 +410,39 @@ router.put('/:id/exchange-status', protect, admin, async (req, res) => {
     }
 });
 
-// @desc    Process refund
+// @desc    Process refund (Simulated)
+// @route   PUT /api/orders/:id/process-refund
+// @access  Private/Admin
+router.put('/:id/process-refund', protect, admin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        if (order.returnStatus !== 'Approved' && order.status !== 'Cancelled') {
+            return res.status(400).json({ message: 'Return must be approved or order cancelled before refunding' });
+        }
+
+        if (order.refundStatus === 'Completed') {
+            return res.status(400).json({ message: 'Refund already completed' });
+        }
+
+        // Simulate Payment Gateway Refund
+        order.refundStatus = 'Completed';
+        order.refundAmount = order.totalPrice;
+        order.refundedAt = Date.now();
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error('Refund processing error:', error);
+        res.status(400).json({ message: 'Failed to process refund' });
+    }
+});
+
+// @desc    Process refund (Manual/Legacy)
 // @route   PUT /api/orders/:id/refund
 // @access  Private/Admin
 router.put('/:id/refund', protect, admin, async (req, res) => {

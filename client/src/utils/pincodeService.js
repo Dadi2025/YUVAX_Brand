@@ -9,18 +9,21 @@ export const getAddressFromPincode = async (pincode) => {
     }
 
     try {
-        const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+        // Call our backend API which handles both DB check and fallback
+        const response = await fetch(`/api/pincode/${pincode}`);
         const data = await response.json();
 
-        if (data && data[0].Status === 'Success') {
-            const postOffice = data[0].PostOffice[0];
+        if (response.ok && data.serviceable) {
             return {
-                city: postOffice.District,
-                state: postOffice.State,
-                country: 'India'
+                city: data.city,
+                state: data.state,
+                country: 'India',
+                deliveryDays: data.deliveryDays,
+                isCodAvailable: data.isCodAvailable,
+                message: data.message
             };
         } else {
-            throw new Error('Invalid pincode or data not found');
+            throw new Error(data.message || 'Pincode not serviceable');
         }
     } catch (error) {
         console.error('Error fetching address:', error);

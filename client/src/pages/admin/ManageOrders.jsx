@@ -99,9 +99,39 @@ const ManageOrders = () => {
         }
     };
 
+    const handleSimulateCourier = async () => {
+        try {
+            const token = localStorage.getItem('yuva-token');
+            const res = await fetch('/api/orders/simulate-courier', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                showToast(data.message, 'success');
+                fetchAllOrders();
+            } else {
+                showToast('Simulation failed', 'error');
+            }
+        } catch (error) {
+            showToast('Simulation error', 'error');
+        }
+    };
+
     return (
         <div>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>Manage Orders ({orders.length})</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Manage Orders ({orders.length})</h2>
+                <button
+                    onClick={handleSimulateCourier}
+                    className="btn-secondary"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                >
+                    🚚 Simulate Courier Updates
+                </button>
+            </div>
 
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>

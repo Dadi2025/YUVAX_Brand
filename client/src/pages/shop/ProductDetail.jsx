@@ -9,6 +9,7 @@ import ReviewForm from '../../components/features/ReviewForm';
 import ReviewList from '../../components/features/ReviewList';
 import CompleteLook from '../../components/features/CompleteLook';
 import VirtualTryOn from '../../components/features/VirtualTryOn';
+import DeliveryCheck from '../../components/features/DeliveryCheck';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -181,7 +182,13 @@ const ProductDetail = () => {
                             </div>
                             <div>
                                 <span style={{ color: 'var(--text-muted)' }}>Rating:</span> <span>⭐ {product.rating} ({product.reviews} reviews)</span>
+                                <div>
+                                    <span style={{ color: 'var(--text-muted)' }}>Rating:</span> <span>⭐ {product.rating} ({product.reviews} reviews)</span>
+                                </div>
                             </div>
+
+                            {/* Delivery Check */}
+                            <DeliveryCheck />
                         </div>
                     </div>
                 </div>
