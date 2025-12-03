@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { categories, priceRanges, genders, sizes, colors } from '../../data/products';
 import ProductCard from '../../components/features/ProductCard';
+import useVoiceSearch from '../../hooks/useVoiceSearch';
 import { useApp } from '../../context/AppContext';
 
 const Shop = () => {
@@ -14,6 +15,7 @@ const Shop = () => {
     const [selectedPriceRange, setSelectedPriceRange] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('newest');
+    const { isListening, transcript, isSupported, startListening } = useVoiceSearch();
 
     // Get search query from URL
     useEffect(() => {
@@ -23,6 +25,13 @@ const Shop = () => {
             setSearchQuery(search);
         }
     }, [location.search]);
+
+    // Update search when voice transcript changes
+    useEffect(() => {
+        if (transcript) {
+            setSearchQuery(transcript);
+        }
+    }, [transcript]);
 
     // Filter products
     let filteredProducts = Array.isArray(products) ? products : [];
@@ -91,6 +100,33 @@ const Shop = () => {
                                 }}
                             />
                         </div>
+
+                        {/* Voice Search */}
+                        {isSupported && (
+                            <div style={{ marginBottom: '2rem' }}>
+                                <button
+                                    onClick={startListening}
+                                    disabled={isListening}
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        background: isListening ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.05)',
+                                        border: '1px solid var(--border-light)',
+                                        borderRadius: '4px',
+                                        color: isListening ? 'black' : 'white',
+                                        cursor: isListening ? 'not-allowed' : 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '1.25rem' }}>🎤</span>
+                                    {isListening ? 'Listening...' : 'Voice Search'}
+                                </button>
+                            </div>
+                        )}
 
                         {/* Categories */}
                         <div style={{ marginBottom: '2rem' }}>
