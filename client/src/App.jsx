@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import Navbar from './components/layout/Navbar';
 import Toast from './components/common/Toast';
+import FashionAssistant from './components/features/FashionAssistant';
 import Home from './pages/Home';
 import Footer from './components/layout/Footer';
 
@@ -46,6 +47,7 @@ function App() {
         <div style={{ background: 'var(--bg-dark)', minHeight: '100vh', color: 'var(--text-main)' }}>
           <Navbar />
           <Toast />
+          <FashionAssistant />
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Home />} />
