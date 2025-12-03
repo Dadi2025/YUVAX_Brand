@@ -112,6 +112,10 @@ router.put('/:id/status', protect, admin, async (req, res) => {
         }
 
         const updatedOrder = await order.save();
+
+        // Populate user data before sending response
+        await updatedOrder.populate('user', 'id name email phone');
+
         res.json(updatedOrder);
     } catch (error) {
         console.error('Update order status error:', error);

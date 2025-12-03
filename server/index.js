@@ -13,7 +13,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import otpRoutes from './routes/otpRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import agentRoutes from './routes/agentRoutes.js';
-import { startPriceDropChecker } from './utils/priceDropChecker.js';
+import { checkPriceDrops } from './utils/priceAlertService.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 
 dotenv.config();
@@ -27,6 +27,16 @@ if (!process.env.JWT_SECRET) {
 connectDB();
 
 // Start price drop checker (runs every 24 hours)
+const startPriceDropChecker = () => {
+    // Run immediately on startup
+    checkPriceDrops();
+
+    // Then run every 24 hours
+    setInterval(checkPriceDrops, 24 * 60 * 60 * 1000);
+
+    console.log('Price drop checker started (runs every 24 hours)');
+};
+
 startPriceDropChecker();
 
 const app = express();

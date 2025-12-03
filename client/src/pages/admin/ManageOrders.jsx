@@ -229,7 +229,7 @@ const ManageOrders = () => {
                                                 onChange={(e) => updateOrderStatus(orderId, e.target.value)}
                                                 style={{
                                                     padding: '0.5rem',
-                                                    background: 'rgba(255,255,255,0.05)',
+                                                    background: '#2a2a2a',
                                                     border: '1px solid var(--border-light)',
                                                     borderRadius: '4px',
                                                     color: 'white',
@@ -237,10 +237,10 @@ const ManageOrders = () => {
                                                     fontSize: '0.875rem'
                                                 }}
                                             >
-                                                <option value="Processing">Processing</option>
-                                                <option value="Shipped">Shipped</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Processing" style={{ background: '#2a2a2a', color: 'white' }}>Processing</option>
+                                                <option value="Shipped" style={{ background: '#2a2a2a', color: 'white' }}>Shipped</option>
+                                                <option value="Delivered" style={{ background: '#2a2a2a', color: 'white' }}>Delivered</option>
+                                                <option value="Cancelled" style={{ background: '#2a2a2a', color: 'white' }}>Cancelled</option>
                                             </select>
                                         </td>
                                     </tr>
