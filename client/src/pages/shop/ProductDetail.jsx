@@ -4,8 +4,10 @@ import { useApp } from '../../context/AppContext';
 import ProductCard from '../../components/features/ProductCard';
 import ProductRecommendations from '../../components/features/ProductRecommendations';
 import SizeGuide from '../../components/features/SizeGuide';
+import SizeCalculator from '../../components/features/SizeCalculator';
 import ReviewForm from '../../components/features/ReviewForm';
 import ReviewList from '../../components/features/ReviewList';
+import CompleteLook from '../../components/features/CompleteLook';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -15,6 +17,7 @@ const ProductDetail = () => {
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [showSizeGuide, setShowSizeGuide] = useState(false);
+    const [showSizeCalculator, setShowSizeCalculator] = useState(false);
     const [refreshReviews, setRefreshReviews] = useState(0);
 
     if (!product) {
@@ -84,7 +87,23 @@ const ProductDetail = () => {
 
                         {/* Size Selector */}
                         <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Select Size</h3>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                <h3 style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>Select Size</h3>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button
+                                        onClick={() => setShowSizeCalculator(true)}
+                                        style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.875rem', textDecoration: 'underline' }}
+                                    >
+                                        Calculate My Size
+                                    </button>
+                                    <button
+                                        onClick={() => setShowSizeGuide(true)}
+                                        style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.875rem', textDecoration: 'underline' }}
+                                    >
+                                        Size Guide
+                                    </button>
+                                </div>
+                            </div>
                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                                 {product.sizes.map(size => (
                                     <button
@@ -171,6 +190,9 @@ const ProductDetail = () => {
                     </div>
                 )}
 
+                {/* Complete the Look */}
+                <CompleteLook currentProduct={product} />
+
                 {/* Customer Reviews Section */}
                 <div style={{ marginTop: '4rem' }}>
                     <ReviewList productId={product.id} key={refreshReviews} />
@@ -192,6 +214,13 @@ const ProductDetail = () => {
                 isOpen={showSizeGuide}
                 onClose={() => setShowSizeGuide(false)}
                 category={product.category}
+            />
+
+            {/* Size Calculator Modal */}
+            <SizeCalculator
+                isOpen={showSizeCalculator}
+                onClose={() => setShowSizeCalculator(false)}
+                onSizeRecommended={(size) => setSelectedSize(size)}
             />
         </div>
     );

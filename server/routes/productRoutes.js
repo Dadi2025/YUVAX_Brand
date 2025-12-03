@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Product from '../models/Product.js';
 import { protect, admin } from '../middleware/auth.js';
+import { checkProductPriceDrop } from '../utils/priceAlertService.js';
 
 const router = express.Router();
 
@@ -163,6 +164,12 @@ router.put('/:id', protect, admin, productValidation, async (req, res) => {
             product.originalPrice = originalPrice !== undefined ? originalPrice : product.originalPrice;
 
             const updatedProduct = await product.save();
+
+            // Check for price drops and notify wishlist users
+            checkProductPriceDrop(parseInt(req.params.id)).catch(err =>
+                console.error('Price alert check failed:', err)
+            );
+
             res.json(updatedProduct);
         } else {
             res.status(404).json({ message: 'Product not found' });
