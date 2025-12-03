@@ -100,6 +100,12 @@ const AdminLogin = () => {
                     </button>
                 </form>
             </div>
+
+            <div style={{ position: 'absolute', bottom: '2rem', textAlign: 'center', width: '100%' }}>
+                <a href="/delivery/login" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.875rem' }}>
+                    Delivery Partner Login &rarr;
+                </a>
+            </div>
         </div>
     );
 };

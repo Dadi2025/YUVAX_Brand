@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const agentSchema = mongoose.Schema({
     name: {
@@ -41,9 +42,26 @@ const agentSchema = mongoose.Schema({
     },
     address: {
         type: String
+    },
+    password: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true
+});
+
+agentSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
+agentSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        next();
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Indexes for performance

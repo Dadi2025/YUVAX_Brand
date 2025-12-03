@@ -20,6 +20,8 @@ const Feedback = lazy(() => import('./pages/user/Feedback'));
 const TrackOrder = lazy(() => import('./pages/order/TrackOrder'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const DeliveryLogin = lazy(() => import('./pages/delivery/DeliveryLogin'));
+const DeliveryDashboard = lazy(() => import('./pages/delivery/DeliveryDashboard'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const FAQ = lazy(() => import('./pages/FAQ'));
@@ -60,6 +62,11 @@ function App() {
               <Route path="/track-order/:orderId" element={<TrackOrder />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+              {/* Delivery Agent Routes */}
+              <Route path="/delivery/login" element={<DeliveryLogin />} />
+              <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
+
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />

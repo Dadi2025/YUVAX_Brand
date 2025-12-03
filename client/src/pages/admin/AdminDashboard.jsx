@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ManageProducts from './ManageProducts';
 import ManageOrders from './ManageOrders';
 import ManageUsers from './ManageUsers';
+import ManageAgents from './ManageAgents';
 import DashboardStats from './DashboardStats';
 
 const AdminDashboard = () => {
@@ -30,7 +31,7 @@ const AdminDashboard = () => {
 
                 {/* Tabs */}
                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--border-light)' }}>
-                    {['overview', 'products', 'orders', 'users'].map(tab => (
+                    {['overview', 'products', 'orders', 'users', 'agents'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -63,6 +64,9 @@ const AdminDashboard = () => {
 
                 {/* Users Tab */}
                 {activeTab === 'users' && <ManageUsers />}
+
+                {/* Agents Tab */}
+                {activeTab === 'agents' && <ManageAgents />}
             </div>
         </div>
     );
