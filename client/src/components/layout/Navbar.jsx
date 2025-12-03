@@ -53,6 +53,11 @@ const Navbar = () => {
           <Link to="/style-wall" className="nav-link">Style Wall</Link>
           <Link to="/spin-wheel" className="nav-link" style={{ color: 'var(--accent-cyan)' }}>🎁 Spin & Win</Link>
           <Link to="/feedback" className="nav-link">Feedback</Link>
+
+          {/* Dashboard Links */}
+          {user && <Link to="/profile" className="nav-link" style={{ color: 'var(--accent-purple)' }}>👤 My Account</Link>}
+          {isAgentLoggedIn && <Link to="/delivery/dashboard" className="nav-link" style={{ color: 'var(--accent-cyan)' }}>📊 Dashboard</Link>}
+          {isAdminLoggedIn && <Link to="/admin/dashboard" className="nav-link" style={{ color: 'var(--accent-purple)' }}>📊 Dashboard</Link>}
         </div>
 
 
@@ -174,7 +179,7 @@ const Navbar = () => {
                 className="btn-primary"
                 style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#ff4444', border: 'none' }}
               >
-                Admin Logout
+                Logout
               </button>
             ) : isAgentLoggedIn ? (
               <button
@@ -182,7 +187,7 @@ const Navbar = () => {
                 className="btn-primary"
                 style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#ff4444', border: 'none' }}
               >
-                Agent Logout
+                Logout
               </button>
             ) : (
               <Link to="/login" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
