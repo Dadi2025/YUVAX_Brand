@@ -120,7 +120,8 @@ export const AppProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error('Error fetching products:', error);
-                showToast('Failed to load products', 'error');
+                // Don't show toast on initial load - just log the error
+                setProducts([]);
             }
         };
 

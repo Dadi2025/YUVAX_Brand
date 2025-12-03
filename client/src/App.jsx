@@ -25,6 +25,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
+const StyleWall = lazy(() => import('./pages/StyleWall'));
 
 // Loading component
 const PageLoader = () => (
@@ -64,6 +65,7 @@ function App() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/style-wall" element={<StyleWall />} />
             </Routes>
           </Suspense>
           <Footer />

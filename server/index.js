@@ -13,6 +13,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import otpRoutes from './routes/otpRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import agentRoutes from './routes/agentRoutes.js';
+import postRoutes from './routes/postRoutes.js';
 import { checkPriceDrops } from './utils/priceAlertService.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 
@@ -90,6 +91,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/agents', agentRoutes);
+app.use('/api/posts', postRoutes);
 
 // 404 Handler
 app.use((req, res) => {

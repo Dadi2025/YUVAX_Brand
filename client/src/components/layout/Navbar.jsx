@@ -31,8 +31,10 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/shop" className="nav-link">Collections</Link>
+          <Link to="/style-wall" className="nav-link">Style Wall</Link>
           <Link to="/feedback" className="nav-link">Feedback</Link>
         </div>
+
 
         {/* Icons */}
         <div className="hidden md:flex items-center gap-6">
@@ -200,6 +202,7 @@ const Navbar = () => {
           <div className="flex flex-col p-8 gap-6">
             <Link to="/" className="nav-link" onClick={() => setIsOpen(false)}>Home</Link>
             <Link to="/shop" className="nav-link" onClick={() => setIsOpen(false)}>Collections</Link>
+            <Link to="/style-wall" className="nav-link" onClick={() => setIsOpen(false)}>Style Wall</Link>
             <Link to="/cart" className="nav-link" onClick={() => setIsOpen(false)}>Cart ({getCartCount()})</Link>
             <Link to="/wishlist" className="nav-link" onClick={() => setIsOpen(false)}>Wishlist ({wishlist.length})</Link>
             {user ? (
