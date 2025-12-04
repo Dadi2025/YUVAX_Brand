@@ -109,9 +109,9 @@ const ReviewList = ({ productId }) => {
                                 {review.photos.map((photo, index) => (
                                     <img
                                         key={index}
-                                        src={`http://localhost:5001${photo}`}
+                                        src={photo}
                                         alt={`Review photo ${index + 1}`}
-                                        onClick={() => setSelectedImage(`http://localhost:5001${photo}`)}
+                                        onClick={() => setSelectedImage(photo)}
                                         style={{
                                             width: '100px',
                                             height: '100px',

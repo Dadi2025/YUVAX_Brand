@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Ruler } from 'lucide-react';
 import SizeCalculator from './SizeCalculator';
 
-const SizeGuide = ({ isOpen, onClose, category }) => {
+const SizeGuide = ({ isOpen, onClose, category, productSizeChart }) => {
     const [showCalculator, setShowCalculator] = useState(false);
 
     if (!isOpen) return null;
@@ -51,7 +51,22 @@ const SizeGuide = ({ isOpen, onClose, category }) => {
         }
     };
 
-    const chart = sizeCharts[category] || sizeCharts.default;
+    let chart = sizeCharts[category] || sizeCharts.default;
+
+    // If product has specific size chart, use it
+    if (productSizeChart && productSizeChart.length > 0) {
+        // Transform productSizeChart to match the expected format
+        const measurements = Object.keys(productSizeChart[0]).filter(k => k !== 'size' && k !== '_id');
+        const sizes = {};
+        productSizeChart.forEach(item => {
+            sizes[item.size] = measurements.map(m => item[m]);
+        });
+
+        chart = {
+            measurements: measurements.map(m => m.charAt(0).toUpperCase() + m.slice(1)),
+            sizes
+        };
+    }
 
     return (
         <div

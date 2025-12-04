@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.get('/:id', async (req, res) => {
     try {
-        const product = await Product.findOne({ id: req.params.id });
+        const product = await Product.findOne({ id: req.params.id }).populate('completeTheLook', 'id name price image category');
 
         if (product) {
             res.json(product);
@@ -101,7 +101,7 @@ router.post('/', protect, admin, productValidation, async (req, res) => {
         });
     }
 
-    const { name, price, description, image, category, gender, sizes, colors, stock, originalPrice } = req.body;
+    const { name, price, description, image, category, gender, sizes, colors, stock, originalPrice, sizeChart, completeTheLook } = req.body;
 
     try {
         // Generate a simple numeric ID (in production use UUID or let Mongo handle it)
@@ -122,7 +122,10 @@ router.post('/', protect, admin, productValidation, async (req, res) => {
             countInStock: stock, // Mapping stock to countInStock
             numReviews: 0,
             description,
-            originalPrice
+            description,
+            originalPrice,
+            sizeChart,
+            completeTheLook
         });
 
         const createdProduct = await product.save();
@@ -146,7 +149,7 @@ router.put('/:id', protect, admin, productValidation, async (req, res) => {
         });
     }
 
-    const { name, price, description, image, category, gender, sizes, colors, stock, originalPrice } = req.body;
+    const { name, price, description, image, category, gender, sizes, colors, stock, originalPrice, sizeChart, completeTheLook } = req.body;
 
     try {
         const product = await Product.findOne({ id: req.params.id });
@@ -162,6 +165,8 @@ router.put('/:id', protect, admin, productValidation, async (req, res) => {
             product.colors = colors || product.colors;
             product.countInStock = stock !== undefined ? stock : product.countInStock;
             product.originalPrice = originalPrice !== undefined ? originalPrice : product.originalPrice;
+            product.sizeChart = sizeChart || product.sizeChart;
+            product.completeTheLook = completeTheLook || product.completeTheLook;
 
             const updatedProduct = await product.save();
 

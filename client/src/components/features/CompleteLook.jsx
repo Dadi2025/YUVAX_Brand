@@ -7,21 +7,32 @@ const CompleteLook = ({ currentProduct }) => {
     const [relatedProducts, setRelatedProducts] = useState([]);
 
     useEffect(() => {
-        if (products.length > 0 && currentProduct) {
-            // Simple logic: Find products in the same category, excluding the current one
-            // In a real app, this could be more sophisticated (e.g., matching tags like "summer", "formal")
-            const related = products
-                .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
-                .slice(0, 4); // Limit to 4 items
+        if (currentProduct) {
+            if (currentProduct.completeTheLook && currentProduct.completeTheLook.length > 0) {
+                // If backend provides specific recommendations, use them
+                // Check if completeTheLook contains full objects or just IDs
+                if (typeof currentProduct.completeTheLook[0] === 'object') {
+                    setRelatedProducts(currentProduct.completeTheLook);
+                } else {
+                    // If IDs, find them in products context
+                    const related = products.filter(p => currentProduct.completeTheLook.includes(p.id));
+                    setRelatedProducts(related);
+                }
+            } else if (products.length > 0) {
+                // Fallback: Find products in the same category, excluding the current one
+                const related = products
+                    .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
+                    .slice(0, 4); // Limit to 4 items
 
-            // If not enough same-category items, just fill with others for demo
-            if (related.length < 4) {
-                const others = products
-                    .filter(p => p.id !== currentProduct.id && !related.includes(p))
-                    .slice(0, 4 - related.length);
-                setRelatedProducts([...related, ...others]);
-            } else {
-                setRelatedProducts(related);
+                // If not enough same-category items, just fill with others for demo
+                if (related.length < 4) {
+                    const others = products
+                        .filter(p => p.id !== currentProduct.id && !related.includes(p))
+                        .slice(0, 4 - related.length);
+                    setRelatedProducts([...related, ...others]);
+                } else {
+                    setRelatedProducts(related);
+                }
             }
         }
     }, [products, currentProduct]);

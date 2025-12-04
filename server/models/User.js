@@ -40,6 +40,10 @@ const userSchema = mongoose.Schema({
     referralEarnings: {
         type: Number,
         default: 0
+    },
+    priceAlertsEnabled: {
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true

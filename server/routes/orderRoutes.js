@@ -285,7 +285,7 @@ router.post('/', protect, orderValidation, async (req, res) => {
         const createdOrder = await order.save();
 
         // Auto-assign delivery agent based on pincode
-        const pinCode = shippingAddress.postalCode;
+        const pinCode = String(shippingAddress.postalCode);
         const agent = await assignAgentByPinCode(pinCode);
 
         if (agent) {

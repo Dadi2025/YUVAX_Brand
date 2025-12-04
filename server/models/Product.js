@@ -17,7 +17,20 @@ const productSchema = mongoose.Schema({
     reviews: { type: Number, default: 0 },
     stock: { type: Number, default: 0 },
     availablePinCodes: [{ type: String }], // Empty array = available everywhere
-    unavailablePinCodes: [{ type: String }] // Specific PIN codes where not available
+    unavailablePinCodes: [{ type: String }], // Specific PIN codes where not available
+
+    // Phase 2 Features
+    sizeChart: [{
+        size: { type: String, required: true },
+        chest: { type: Number },
+        waist: { type: Number },
+        length: { type: Number },
+        shoulder: { type: Number }
+    }],
+    completeTheLook: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }]
 }, {
     timestamps: true
 });

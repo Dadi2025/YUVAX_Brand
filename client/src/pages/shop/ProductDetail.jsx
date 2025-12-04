@@ -229,6 +229,7 @@ const ProductDetail = () => {
                 isOpen={showSizeGuide}
                 onClose={() => setShowSizeGuide(false)}
                 category={product.category}
+                productSizeChart={product.sizeChart}
             />
 
             {showSizeCalculator && (
