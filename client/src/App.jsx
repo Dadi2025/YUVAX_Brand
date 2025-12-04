@@ -5,8 +5,10 @@ import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/layout/Navbar';
 import Toast from './components/common/Toast';
 import FashionAssistant from './components/features/FashionAssistant';
+import SocialProofNotification from './components/features/SocialProofNotification';
 import Home from './pages/Home';
 import Footer from './components/layout/Footer';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 
 // Lazy load pages for better performance
 const Shop = lazy(() => import('./pages/shop/Shop'));
@@ -52,6 +54,7 @@ function App() {
             <Navbar />
             <Toast />
             <FashionAssistant />
+            <SocialProofNotification />
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -84,6 +87,7 @@ function App() {
               </Routes>
             </Suspense>
             <Footer />
+            <MobileBottomNav />
           </div>
         </Router>
       </AppProvider>

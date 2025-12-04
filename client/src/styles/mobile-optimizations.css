@@ -1,0 +1,326 @@
+/* ========================================
+   MOBILE OPTIMIZATIONS & BOTTOM NAV
+   ======================================== */
+
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-light);
+    padding: 0.75rem 0;
+    display: none;
+    z-index: 999;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    position: relative;
+    min-width: 60px;
+}
+
+.mobile-nav-item.active {
+    color: var(--accent-cyan);
+}
+
+.mobile-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: var(--accent-cyan);
+    border-radius: 0 0 3px 3px;
+}
+
+.mobile-nav-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.mobile-nav-item:active .mobile-nav-icon {
+    transform: scale(0.9);
+}
+
+.mobile-nav-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mobile-nav-badge {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.5rem;
+    background: var(--accent-cyan);
+    color: black;
+    font-size: 0.65rem;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Adjust main content padding for mobile nav */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 70px;
+    }
+}
+
+/* Image Lazy Loading Placeholder */
+.lazy-image-container {
+    position: relative;
+    overflow: hidden;
+    background: #1a1a1a;
+}
+
+.lazy-image-container.loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+.lazy-image {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.lazy-image.loaded {
+    opacity: 1;
+}
+
+/* Swipe Indicator for Mobile */
+.swipe-indicator {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.swipe-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.swipe-dot.active {
+    background: var(--accent-cyan);
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* Touch Feedback */
+@media (max-width: 768px) {
+
+    button,
+    a,
+    .clickable {
+        -webkit-tap-highlight-color: rgba(0, 243, 255, 0.2);
+    }
+
+    button:active,
+    a:active,
+    .clickable:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Pull to Refresh Indicator */
+.pull-to-refresh {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1001;
+    transition: transform 0.3s ease;
+}
+
+.pull-to-refresh.visible {
+    transform: translateX(-50%) translateY(0);
+}
+
+.pull-to-refresh-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mobile Product Grid Optimization */
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .product-card {
+        font-size: 0.875rem;
+    }
+
+    .quick-action-btn {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* Horizontal Scroll Container (for mobile) */
+.horizontal-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 1rem 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.horizontal-scroll-item {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+}
+
+@media (max-width: 768px) {
+    .horizontal-scroll-item {
+        flex: 0 0 70vw;
+    }
+}
+
+/* Mobile Modal Optimizations */
+@media (max-width: 768px) {
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .modal-overlay {
+        align-items: flex-end;
+    }
+}
+
+/* Safe Area Insets for Notched Devices */
+@supports (padding: max(0px)) {
+    .mobile-bottom-nav {
+        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+
+    body {
+        padding-bottom: max(70px, calc(70px + env(safe-area-inset-bottom)));
+    }
+}
+
+/* Improved Touch Targets */
+@media (max-width: 768px) {
+
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+    }
+
+    .nav-link {
+        padding: 0.75rem;
+    }
+}
+
+/* Mobile Search Optimization */
+@media (max-width: 768px) {
+    .search-input {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 90px;
+    right: 1.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    color: white;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 243, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 998;
+    font-size: 1.5rem;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(0, 243, 255, 0.6);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+@media (min-width: 769px) {
+    .fab {
+        display: none;
+    }
+}

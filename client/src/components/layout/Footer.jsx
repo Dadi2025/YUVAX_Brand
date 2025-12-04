@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
+import TrustBadges from '../features/TrustBadges';
 
 const Footer = () => {
     return (
@@ -49,6 +50,9 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Trust Badges */}
+                <TrustBadges />
 
                 <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
                     <p>&copy; {new Date().getFullYear()} YUVA X. All rights reserved.</p>
