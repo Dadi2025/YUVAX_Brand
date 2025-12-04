@@ -1,10 +1,18 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import ProductCard from '../../components/features/ProductCard';
 
 const OrderConfirmation = () => {
     const location = useLocation();
-    const { orders } = useApp();
+    const { orders, products } = useApp();
+
+    // Get random products for upsell
+    const relatedProducts = React.useMemo(() => {
+        if (!products || products.length === 0) return [];
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+    }, [products]);
 
     // Get order ID from URL
     const params = new URLSearchParams(location.search);
@@ -53,6 +61,18 @@ const OrderConfirmation = () => {
                         <p style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{estimatedDelivery}</p>
                     </div>
                 </div>
+
+                {/* Upsell Section */}
+                {relatedProducts.length > 0 && (
+                    <div style={{ marginBottom: '3rem', textAlign: 'left' }}>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', textAlign: 'center' }}>You Might Also Like</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                            {relatedProducts.map(product => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
                     <Link to="/profile" className="btn-secondary">View Orders</Link>

@@ -6,6 +6,8 @@ import fs from 'fs';
 import Review from '../models/Review.js';
 import Product from '../models/Product.js';
 import { protect } from '../middleware/auth.js';
+import loyaltyService from '../utils/loyaltyService.js';
+import loyaltyService from '../utils/loyaltyService.js';
 
 const router = express.Router();
 
@@ -129,6 +131,13 @@ router.post('/', protect, upload.array('photos', 3), reviewValidation, async (re
 
         // Populate user data before sending response
         await createdReview.populate('user', 'name');
+
+        // Award loyalty points for the review
+        try {
+            await loyaltyService.awardReviewPoints(req.user._id, createdReview._id);
+        } catch (pointsError) {
+            console.error('Error awarding review points:', pointsError);
+        }
 
         res.status(201).json(createdReview);
     } catch (error) {
