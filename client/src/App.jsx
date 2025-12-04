@@ -9,6 +9,7 @@ import SocialProofNotification from './components/features/SocialProofNotificati
 import Home from './pages/Home';
 import Footer from './components/layout/Footer';
 import MobileBottomNav from './components/layout/MobileBottomNav';
+import ChatWidget from './components/features/ChatWidget';
 
 // Lazy load pages for better performance
 const Shop = lazy(() => import('./pages/shop/Shop'));
