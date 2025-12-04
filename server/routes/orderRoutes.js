@@ -284,6 +284,19 @@ router.post('/', protect, orderValidation, async (req, res) => {
 
         const createdOrder = await order.save();
 
+        // Auto-assign delivery agent based on pincode
+        const pinCode = shippingAddress.postalCode;
+        const agent = await assignAgentByPinCode(pinCode);
+
+        if (agent) {
+            createdOrder.assignedAgent = agent._id;
+            createdOrder.agentAssignedAt = Date.now();
+            await createdOrder.save();
+            console.log(`✅ Order ${createdOrder._id} assigned to agent: ${agent.name} (PIN: ${pinCode})`);
+        } else {
+            console.log(`⚠️ No agent available for PIN code: ${pinCode}`);
+        }
+
         // Send WhatsApp notification
         if (createdOrder.user) {
             // Populate user to get phone number if not in shipping address
