@@ -18,6 +18,7 @@ import visualSearchRoutes from './routes/visualSearchRoutes.js';
 import pincodeRoutes from './routes/pincodeRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import gameRoutes from './routes/gameRoutes.js';
+import referralRoutes from './routes/referralRoutes.js';
 import { checkPriceDrops } from './utils/priceAlertService.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 
@@ -100,6 +101,7 @@ app.use('/api/visual-search', visualSearchRoutes);
 app.use('/api/pincode', pincodeRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/game', gameRoutes);
+app.use('/api/referral', referralRoutes);
 
 // 404 Handler
 app.use((req, res) => {

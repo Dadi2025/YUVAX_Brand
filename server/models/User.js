@@ -23,6 +23,23 @@ const userSchema = mongoose.Schema({
     points: {
         type: Number,
         default: 0
+    },
+    referralCode: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    walletBalance: {
+        type: Number,
+        default: 0
+    },
+    referralEarnings: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true
@@ -37,12 +54,27 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 userSchema.pre('save', async function (next) {
+    // Generate referral code for new users
+    if (this.isNew && !this.referralCode) {
+        this.referralCode = generateReferralCode();
+    }
+
     if (!this.isModified('password')) {
         next();
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
+
+// Helper function to generate unique referral code
+function generateReferralCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+}
 
 const User = mongoose.model('User', userSchema);
 

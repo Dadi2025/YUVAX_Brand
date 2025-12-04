@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import User from '../models/User.js';
 import { protect, admin } from '../middleware/auth.js';
-import { sendOrderConfirmation } from '../utils/whatsappService.js';
 import { assignAgentByPinCode, markOrderCompleted } from '../utils/agentAssignment.js';
+import { sendOrderConfirmation, sendShippingUpdate, sendDeliveryUpdate } from '../utils/whatsappService.js';
 
 const router = express.Router();
 
@@ -113,6 +113,13 @@ router.put('/:id/status', protect, admin, async (req, res) => {
 
         const updatedOrder = await order.save();
 
+        // Send WhatsApp Notifications
+        if (req.body.status === 'Shipped') {
+            await sendShippingUpdate(updatedOrder);
+        } else if (req.body.status === 'Delivered') {
+            await sendDeliveryUpdate(updatedOrder);
+        }
+
         // Populate user data before sending response
         await updatedOrder.populate('user', 'id name email phone');
 
@@ -140,6 +147,8 @@ router.post('/simulate-courier', protect, admin, async (req, res) => {
             if (now - new Date(order.createdAt).getTime() > oneDay) {
                 order.status = 'Shipped';
                 await order.save();
+                // Send WhatsApp Shipping Notification
+                await sendShippingUpdate(order);
                 updatedCount++;
             }
         }
@@ -161,6 +170,8 @@ router.post('/simulate-courier', protect, admin, async (req, res) => {
                 }
 
                 await order.save();
+                // Send WhatsApp Delivery Notification
+                await sendDeliveryUpdate(order);
                 updatedCount++;
             }
         }
@@ -274,8 +285,10 @@ router.post('/', protect, orderValidation, async (req, res) => {
         const createdOrder = await order.save();
 
         // Send WhatsApp notification
-        if (shippingAddress.phone) {
-            await sendOrderConfirmation(shippingAddress.phone, createdOrder._id);
+        if (createdOrder.user) {
+            // Populate user to get phone number if not in shipping address
+            await createdOrder.populate('user', 'name phone');
+            await sendOrderConfirmation(createdOrder);
         }
 
         res.status(201).json(createdOrder);

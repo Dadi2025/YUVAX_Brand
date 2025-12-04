@@ -106,6 +106,14 @@ const Navbar = () => {
             )}
           </Link>
 
+          {/* Referral (for logged-in users) */}
+          {user && (
+            <Link to="/referral" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.25rem' }}>🎁</span>
+              <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Refer & Earn</span>
+            </Link>
+          )}
+
           {/* Cart */}
           <Link to="/cart" className="relative nav-link">
             <span style={{ fontSize: '1.25rem' }}>🛍</span>

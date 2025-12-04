@@ -30,6 +30,7 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const StyleWall = lazy(() => import('./pages/StyleWall'));
 const SpinWheel = lazy(() => import('./pages/SpinWheel'));
+const ReferralDashboard = lazy(() => import('./pages/user/ReferralDashboard'));
 
 // Loading component
 const PageLoader = () => (
@@ -77,6 +78,7 @@ function App() {
               <Route path="/terms" element={<Terms />} />
               <Route path="/style-wall" element={<StyleWall />} />
               <Route path="/spin-wheel" element={<SpinWheel />} />
+              <Route path="/referral" element={<ReferralDashboard />} />
             </Routes>
           </Suspense>
           <Footer />
