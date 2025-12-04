@@ -1,9 +1,9 @@
 import React from 'react';
 import { Share2, Mail, Facebook, Twitter } from 'lucide-react';
 
-const SocialShareButtons = ({ referralCode }) => {
-    const shareUrl = `${window.location.origin}/signup?ref=${referralCode}`;
-    const shareText = `Join me on YUVA X and get ₹200 off your first order! Use my code: ${referralCode}`;
+const SocialShareButtons = ({ referralCode, url, text }) => {
+    const shareUrl = url || `${window.location.origin}/signup?ref=${referralCode}`;
+    const shareText = text || `Join me on YUVA X and get ₹200 off your first order! Use my code: ${referralCode}`;
 
     const handleShare = (platform) => {
         let url = '';

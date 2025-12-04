@@ -10,6 +10,7 @@ import ReviewList from '../../components/features/ReviewList';
 import CompleteLook from '../../components/features/CompleteLook';
 import VirtualTryOn from '../../components/features/VirtualTryOn';
 import DeliveryCheck from '../../components/features/DeliveryCheck';
+import SocialShareButtons from '../../components/referral/SocialShareButtons';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -87,6 +88,14 @@ const ProductDetail = () => {
                         </div>
 
                         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>{product.description}</p>
+
+                        <div style={{ marginBottom: '2rem' }}>
+                            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Share this look:</p>
+                            <SocialShareButtons
+                                url={window.location.href}
+                                text={`Check out this amazing ${product.name} on YUVA X!`}
+                            />
+                        </div>
 
                         {/* Size Selector */}
                         <div style={{ marginBottom: '2rem' }}>

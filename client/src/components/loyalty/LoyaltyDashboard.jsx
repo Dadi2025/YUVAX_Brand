@@ -3,6 +3,7 @@ import { ShoppingBag, Star, Share2, Users, Gift } from 'lucide-react';
 import PointsBalance from './PointsBalance';
 import PointsHistory from './PointsHistory';
 import RedeemPoints from './RedeemPoints';
+import loyaltyService from '../../services/loyaltyService';
 import '../../styles/loyalty.css';
 
 const LoyaltyDashboard = () => {
@@ -10,58 +11,56 @@ const LoyaltyDashboard = () => {
     const [data, setData] = useState(null);
     const [history, setHistory] = useState([]);
     const [earnOpportunities, setEarnOpportunities] = useState([]);
+    const [error, setError] = useState(null);
 
-    // Mock data for development - replace with API calls later
     useEffect(() => {
-        // Simulate API fetch
-        setTimeout(() => {
-            setData({
-                points: 2450,
-                tier: 'Silver',
-                totalSpent: 12500,
-                nextTier: 'Gold',
-                nextTierThreshold: 15000,
-                progressToNextTier: 83.3,
-                amountToNextTier: 2500
-            });
+        const fetchData = async () => {
+            try {
+                // Check for birthday bonus first
+                await loyaltyService.checkBirthdayBonus();
 
-            setHistory([
-                { _id: '1', description: 'Purchase - Order #12345', points: 450, type: 'earn', createdAt: new Date().toISOString() },
-                { _id: '2', description: 'Referral Bonus', points: 200, type: 'earn', createdAt: new Date(Date.now() - 86400000).toISOString() },
-                { _id: '3', description: 'Redeemed for Discount', points: 1000, type: 'redeem', createdAt: new Date(Date.now() - 172800000).toISOString() }
-            ]);
+                const [dashboardData, historyData, opportunitiesData] = await Promise.all([
+                    loyaltyService.getDashboardData(),
+                    loyaltyService.getHistory(),
+                    loyaltyService.getEarnOpportunities()
+                ]);
 
-            setEarnOpportunities([
-                { icon: <ShoppingBag size={20} />, action: 'Shop & Earn', points: '10 pts / ₹100', desc: 'Earn on every order' },
-                { icon: <Star size={20} />, action: 'Write Reviews', points: '50 pts', desc: 'Share your thoughts' },
-                { icon: <Users size={20} />, action: 'Refer Friends', points: '200 pts', desc: 'When they buy' },
-                { icon: <Share2 size={20} />, action: 'Social Share', points: '20 pts', desc: 'Spread the love' },
-                { icon: <Gift size={20} />, action: 'Birthday', points: '500 pts', desc: 'Special gift' }
-            ]);
+                setData(dashboardData);
+                setHistory(historyData);
+                setEarnOpportunities(opportunitiesData);
+            } catch (err) {
+                console.error('Error fetching loyalty data:', err);
+                setError('Failed to load loyalty data. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            setLoading(false);
-        }, 1000);
+        fetchData();
     }, []);
 
-    const handleRedeem = (points) => {
+    const handleRedeem = async (points) => {
         if (window.confirm(`Are you sure you want to redeem ${points} points?`)) {
-            // API call would go here
-            alert(`Redeemed ${points} points! Code: LOYALTY${Date.now()}`);
-            // Update local state for demo
-            setData(prev => ({ ...prev, points: prev.points - points }));
-            setHistory(prev => [{
-                _id: Date.now().toString(),
-                description: `Redeemed ${points} points`,
-                points: points,
-                type: 'redeem',
-                createdAt: new Date().toISOString()
-            }, ...prev]);
+            try {
+                const result = await loyaltyService.redeemPoints(points);
+                alert(result.message);
+
+                // Refresh data
+                const [dashboardData, historyData] = await Promise.all([
+                    loyaltyService.getDashboardData(),
+                    loyaltyService.getHistory()
+                ]);
+
+                setData(dashboardData);
+                setHistory(historyData);
+            } catch (err) {
+                alert(err.response?.data?.message || 'Failed to redeem points');
+            }
         }
     };
 
-    if (loading) {
-        return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>Loading Loyalty Dashboard...</div>;
-    }
+    if (loading) return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>Loading Loyalty Dashboard...</div>;
+    if (error) return <div style={{ padding: '2rem', textAlign: 'center', color: '#ff4444' }}>{error}</div>;
 
     return (
         <div className="loyalty-dashboard">
@@ -88,10 +87,17 @@ const LoyaltyDashboard = () => {
                         <div className="earn-list">
                             {earnOpportunities.map((item, index) => (
                                 <div key={index} className="earn-item">
-                                    <div className="earn-icon">{item.icon}</div>
+                                    <div className="earn-icon">
+                                        {item.action.includes('Shop') && <ShoppingBag size={20} />}
+                                        {item.action.includes('Review') && <Star size={20} />}
+                                        {item.action.includes('Refer') && <Users size={20} />}
+                                        {item.action.includes('Share') && <Share2 size={20} />}
+                                        {item.action.includes('Birthday') && <Gift size={20} />}
+                                        {item.action.includes('Spin') && <Star size={20} />}
+                                    </div>
                                     <div className="earn-details">
                                         <h4>{item.action}</h4>
-                                        <p>{item.desc}</p>
+                                        <p>{item.description}</p>
                                     </div>
                                     <div className="earn-points">{item.points}</div>
                                 </div>
