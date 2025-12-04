@@ -37,6 +37,7 @@ const Footer = () => {
                             <Link to="/contact" style={{ color: 'var(--text-muted)' }}>Contact Us</Link>
                             <Link to="/faq" style={{ color: 'var(--text-muted)' }}>FAQ</Link>
                             <Link to="/feedback" style={{ color: 'var(--text-muted)' }}>Feedback</Link>
+                            <Link to="/spin-wheel" style={{ color: 'var(--text-muted)' }}>🎁 Spin & Win</Link>
                         </div>
                     </div>
 

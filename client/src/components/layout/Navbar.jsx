@@ -65,8 +65,6 @@ const Navbar = () => {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/shop" className="nav-link">Collections</Link>
           <Link to="/style-wall" className="nav-link">Style Wall</Link>
-          <Link to="/spin-wheel" className="nav-link" style={{ color: 'var(--accent-cyan)' }}>🎁 Spin & Win</Link>
-          <Link to="/feedback" className="nav-link">Feedback</Link>
 
           {/* Dashboard Links */}
           {user && <Link to="/profile" className="nav-link" style={{ color: 'var(--accent-purple)' }}>👤 My Account</Link>}
