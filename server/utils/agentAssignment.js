@@ -7,14 +7,31 @@ import Agent from '../models/Agent.js';
  */
 export const assignAgentByPinCode = async (pinCode) => {
     try {
+        console.log(`\n🔍 ===== AGENT ASSIGNMENT DEBUG =====`);
+        console.log(`📍 Searching for agents with PIN code: ${pinCode} (type: ${typeof pinCode})`);
+
         // Find active agents covering this PIN code
         const agents = await Agent.find({
             pinCodes: pinCode,
             isActive: true
         }).sort({ assignedOrders: 1, rating: -1 }); // Sort by workload (ascending) and rating (descending)
 
+        console.log(`📋 Found ${agents.length} active agent(s) for PIN ${pinCode}`);
+
+        if (agents.length > 0) {
+            agents.forEach((a, idx) => {
+                console.log(`   Agent ${idx + 1}: ${a.name} (${a.email}) - Pincodes: ${a.pinCodes.join(', ')} - Workload: ${a.assignedOrders}`);
+            });
+        }
+
         if (agents.length === 0) {
-            console.log(`No agents available for PIN code: ${pinCode}`);
+            console.log(`⚠️ No agents available for PIN code: ${pinCode}`);
+            console.log(`   Checking all agents in database...`);
+            const allAgents = await Agent.find({});
+            console.log(`   Total agents in DB: ${allAgents.length}`);
+            allAgents.forEach(a => {
+                console.log(`   - ${a.name}: isActive=${a.isActive}, pincodes=${a.pinCodes.join(', ')}`);
+            });
             return null;
         }
 
@@ -25,10 +42,13 @@ export const assignAgentByPinCode = async (pinCode) => {
         selectedAgent.assignedOrders += 1;
         await selectedAgent.save();
 
-        console.log(`Agent ${selectedAgent.name} assigned for PIN code: ${pinCode}`);
+        console.log(`✅ Order assigned to agent: ${selectedAgent.name} (${selectedAgent.email})`);
+        console.log(`   New workload: ${selectedAgent.assignedOrders} assigned orders`);
+        console.log(`🔍 ===== END ASSIGNMENT DEBUG =====\n`);
+
         return selectedAgent;
     } catch (error) {
-        console.error('Agent assignment error:', error);
+        console.error('❌ Agent assignment error:', error);
         return null;
     }
 };
