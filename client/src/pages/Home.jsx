@@ -5,6 +5,8 @@ import FlashSaleBanner from '../components/flash-sale/FlashSaleBanner';
 import FlashSaleGrid from '../components/flash-sale/FlashSaleGrid';
 import { useApp } from '../context/AppContext';
 import loyaltyService from '../services/loyaltyService';
+import TrendingSection from '../components/features/TrendingSection';
+import RecommendedProducts from '../components/features/RecommendedProducts';
 
 const Home = () => {
   const { products } = useApp();
@@ -56,6 +58,16 @@ const Home = () => {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+      </section>
+
+      {/* Trending Section */}
+      <section className="container" style={{ marginTop: '4rem' }}>
+        <TrendingSection />
+      </section>
+
+      {/* Personalized Recommendations */}
+      <section className="container" style={{ marginTop: '4rem' }}>
+        <RecommendedProducts title="Recommended For You" />
       </section>
 
       <section className="newsletter-section">

@@ -11,6 +11,7 @@ import CompleteLook from '../../components/features/CompleteLook';
 import VirtualTryOn from '../../components/features/VirtualTryOn';
 import DeliveryCheck from '../../components/features/DeliveryCheck';
 import SocialShareButtons from '../../components/referral/SocialShareButtons';
+import FrequentlyBoughtTogether from '../../components/features/FrequentlyBoughtTogether';
 
 const ProductDetail = () => {
     const { id } = useParams();

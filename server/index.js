@@ -24,6 +24,7 @@ import loyaltyRoutes from './routes/loyaltyRoutes.js';
 import spinRoutes from './routes/spinRoutes.js';
 import flashSaleRoutes from './routes/flashSaleRoutes.js';
 import returnRoutes from './routes/returnRoutes.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
 import { checkPriceDrops } from './utils/priceAlertService.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 
@@ -112,6 +113,7 @@ app.use('/api/loyalty', loyaltyRoutes);
 app.use('/api/spin', spinRoutes);
 app.use('/api/flash-sales', flashSaleRoutes);
 app.use('/api/returns', returnRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 // 404 Handler
 app.use((req, res) => {
