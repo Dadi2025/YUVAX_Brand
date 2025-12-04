@@ -2,46 +2,58 @@ import React, { useState } from 'react';
 import MyReturns from '../../components/returns/MyReturns';
 import ReturnRequestForm from '../../components/returns/ReturnRequestForm';
 import { ArrowLeft, Plus } from 'lucide-react';
+import loyaltyService from '../../services/loyaltyService';
+import api from '../../services/api'; // Direct api access for orders if needed
 
 const Returns = () => {
     const [view, setView] = useState('list'); // 'list' or 'create'
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [returns, setReturns] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [orders, setOrders] = useState([]); // To select order for return
 
-    // Mock data
-    const mockReturns = [
-        {
-            _id: 'RET12345678',
-            order: { orderNumber: 'ORD98765' },
-            createdAt: new Date().toISOString(),
-            status: 'approved',
-            items: [{ product: 'PROD1', quantity: 1 }],
-            statusHistory: [
-                { status: 'requested', label: 'Requested' },
-                { status: 'approved', label: 'Approved' }
-            ]
+    // Fetch returns
+    React.useEffect(() => {
+        const fetchReturns = async () => {
+            try {
+                const data = await loyaltyService.getMyReturns();
+                setReturns(data);
+            } catch (err) {
+                console.error('Error fetching returns:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchReturns();
+    }, [view]); // Refresh when view changes (after submission)
+
+    // Fetch eligible orders when switching to create view
+    const handleCreateReturn = async () => {
+        try {
+            // In a real app, we'd have an endpoint for "orders eligible for return"
+            // For now, we'll just fetch recent orders
+            const response = await api.get('/orders/my-orders');
+            setOrders(response.data);
+            setView('create');
+        } catch (err) {
+            console.error('Error fetching orders:', err);
+            alert('Failed to load orders');
         }
-    ];
-
-    // Mock order for return creation
-    const mockOrder = {
-        _id: 'ORD98765',
-        orderNumber: 'ORD98765',
-        items: [
-            { _id: '1', name: 'Neon Cyber Jacket', price: 4999, quantity: 1, product: 'PROD1' },
-            { _id: '2', name: 'Holographic Pants', price: 2999, quantity: 1, product: 'PROD2' }
-        ]
     };
 
-    const handleCreateReturn = () => {
-        // In real app, this would likely come from an order details page or a selector
-        setSelectedOrder(mockOrder);
-        setView('create');
+    const handleSelectOrder = (order) => {
+        setSelectedOrder(order);
     };
 
-    const handleSubmitReturn = (data) => {
-        console.log('Return submitted:', data);
-        alert('Return request submitted successfully!');
-        setView('list');
+    const handleSubmitReturn = async (data) => {
+        try {
+            await loyaltyService.createReturnRequest(data);
+            alert('Return request submitted successfully!');
+            setView('list');
+            setSelectedOrder(null);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to submit return request');
+        }
     };
 
     return (
@@ -79,9 +91,24 @@ const Returns = () => {
             </div>
 
             {view === 'list' ? (
-                <MyReturns returns={mockReturns} />
+                loading ? <div style={{ color: 'white', textAlign: 'center' }}>Loading...</div> : <MyReturns returns={returns} />
             ) : (
-                <ReturnRequestForm order={selectedOrder} onSubmit={handleSubmitReturn} />
+                selectedOrder ? (
+                    <ReturnRequestForm order={selectedOrder} onSubmit={handleSubmitReturn} />
+                ) : (
+                    <div className="returns-list">
+                        <h3>Select an Order to Return</h3>
+                        {orders.map(order => (
+                            <div key={order._id} className="return-card" style={{ cursor: 'pointer' }} onClick={() => handleSelectOrder(order)}>
+                                <div className="return-card-header">
+                                    <div>Order #{order.orderNumber}</div>
+                                    <div>{new Date(order.createdAt).toLocaleDateString()}</div>
+                                </div>
+                                <div>{order.items.length} Items • ₹{order.totalAmount}</div>
+                            </div>
+                        ))}
+                    </div>
+                )
             )}
         </div>
     );
