@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/layout/Navbar';
 import Toast from './components/common/Toast';
 import FashionAssistant from './components/features/FashionAssistant';
@@ -44,47 +45,49 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <AppProvider>
-      <Router>
-        <div style={{ background: 'var(--bg-dark)', minHeight: '100vh', color: 'var(--text-main)' }}>
-          <Navbar />
-          <Toast />
-          <FashionAssistant />
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/order-confirmation" element={<OrderConfirmation />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/feedback" element={<Feedback />} />
-              <Route path="/track-order/:orderId" element={<TrackOrder />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+    <LanguageProvider>
+      <AppProvider>
+        <Router>
+          <div style={{ background: 'var(--bg-dark)', minHeight: '100vh', color: 'var(--text-main)' }}>
+            <Navbar />
+            <Toast />
+            <FashionAssistant />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/feedback" element={<Feedback />} />
+                <Route path="/track-order/:orderId" element={<TrackOrder />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-              {/* Delivery Agent Routes */}
-              <Route path="/delivery/login" element={<DeliveryLogin />} />
-              <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
+                {/* Delivery Agent Routes */}
+                <Route path="/delivery/login" element={<DeliveryLogin />} />
+                <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
 
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/style-wall" element={<StyleWall />} />
-              <Route path="/spin-wheel" element={<SpinWheel />} />
-              <Route path="/referral" element={<ReferralDashboard />} />
-            </Routes>
-          </Suspense>
-          <Footer />
-        </div>
-      </Router>
-    </AppProvider>
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/style-wall" element={<StyleWall />} />
+                <Route path="/spin-wheel" element={<SpinWheel />} />
+                <Route path="/referral" element={<ReferralDashboard />} />
+              </Routes>
+            </Suspense>
+            <Footer />
+          </div>
+        </Router>
+      </AppProvider>
+    </LanguageProvider>
   );
 }
 

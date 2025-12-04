@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../data/translations';
 import VisualSearch from '../features/VisualSearch';
 
 const Navbar = () => {
   const { getCartCount, wishlist, user, logout } = useApp();
+  const { currentLanguage, changeLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -137,6 +140,26 @@ const Navbar = () => {
               </span>
             )}
           </Link>
+
+          {/* Language Toggle */}
+          <button
+            onClick={() => changeLanguage(currentLanguage === 'en' ? 'hi' : 'en')}
+            style={{
+              background: 'none',
+              border: '1px solid var(--border-light)',
+              borderRadius: '6px',
+              padding: '0.5rem 0.75rem',
+              color: 'var(--text-main)',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-card)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+          >
+            {currentLanguage === 'en' ? 'हिं' : 'EN'}
+          </button>
 
           {/* User Menu */}
           {user ? (
