@@ -92,7 +92,7 @@ const loyaltyService = {
 
     // Referral
     getReferralStats: async () => {
-        const response = await api.get('/referral/stats');
+        const response = await api.get('/referral/my-referral');
         return response.data;
     },
 

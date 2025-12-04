@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
+import loyaltyService from '../utils/loyaltyService.js';
 
 const router = express.Router();
 
@@ -70,19 +71,82 @@ router.post('/apply', async (req, res) => {
         newUser.walletBalance += 100; // New user gets ₹100
         await newUser.save();
 
-        // Reward referrer
-        referrer.walletBalance += 500; // Referrer gets ₹500
-        referrer.referralEarnings += 500;
+        // Calculate Referrer Bonus (Tiered System)
+        // 1-4 referrals: ₹200
+        // 5-9 referrals: ₹200 + ₹500 bonus (on 5th)
+        // 10+ referrals: ₹200 + ₹1000 bonus (on 10th)
+
+        const currentReferrals = await User.countDocuments({ referredBy: referrer._id });
+        let bonusAmount = 200; // Base bonus
+        let message = 'Referral applied successfully!';
+
+        // Check for milestone bonuses
+        if (currentReferrals === 4) { // This is the 5th referral (0-indexed count before this one was 4)
+            bonusAmount += 500;
+            message += ' Referrer unlocked Silver Tier Bonus!';
+        } else if (currentReferrals === 9) { // This is the 10th referral
+            bonusAmount += 1000;
+            message += ' Referrer unlocked Gold Tier Bonus!';
+        }
+
+        referrer.walletBalance += bonusAmount;
+        referrer.referralEarnings += bonusAmount;
         await referrer.save();
 
+        // Award Loyalty Points (200 pts)
+        try {
+            await loyaltyService.awardReferralPoints(referrer._id, newUser._id);
+        } catch (err) {
+            console.error('Error awarding referral points:', err);
+        }
+
         res.json({
-            message: 'Referral applied successfully!',
+            message,
             bonus: 100,
-            referrerBonus: 500
+            referrerBonus: bonusAmount
         });
     } catch (error) {
         console.error('Apply referral error:', error);
         res.status(500).json({ message: 'Failed to apply referral code' });
+    }
+});
+
+// @desc    Get referral leaderboard
+// @route   GET /api/referral/leaderboard
+// @access  Public
+router.get('/leaderboard', async (req, res) => {
+    try {
+        // Get top 10 referrers
+        const topReferrers = await User.find({ referralEarnings: { $gt: 0 } })
+            .sort({ referralEarnings: -1 })
+            .limit(10)
+            .select('name referralEarnings referralStats');
+
+        // If no stats yet, return mock data for demo purposes
+        if (topReferrers.length === 0) {
+            return res.json([
+                { name: 'Rahul K.', referralEarnings: 9000, referralCount: 45 },
+                { name: 'Priya S.', referralEarnings: 7600, referralCount: 38 },
+                { name: 'Amit M.', referralEarnings: 6400, referralCount: 32 },
+                { name: 'Sneha R.', referralEarnings: 5600, referralCount: 28 },
+                { name: 'Vikram J.', referralEarnings: 5000, referralCount: 25 }
+            ]);
+        }
+
+        // Map to simpler format
+        const leaderboard = await Promise.all(topReferrers.map(async (user) => {
+            const count = await User.countDocuments({ referredBy: user._id });
+            return {
+                name: user.name,
+                referralEarnings: user.referralEarnings,
+                referralCount: count
+            };
+        }));
+
+        res.json(leaderboard);
+    } catch (error) {
+        console.error('Leaderboard error:', error);
+        res.status(500).json({ message: 'Failed to fetch leaderboard' });
     }
 });
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Copy, Check, Users, DollarSign, TrendingUp } from 'lucide-react';
 import SocialShareButtons from '../../components/referral/SocialShareButtons';
 import ReferralLeaderboard from '../../components/referral/ReferralLeaderboard';
+import ReferralProgress from '../../components/referral/ReferralProgress';
 import loyaltyService from '../../services/loyaltyService';
 import '../../styles/referral.css';
 
@@ -75,6 +76,8 @@ const ReferralDashboard = () => {
                     <div className="stat-label">Your Rank</div>
                 </div>
             </div>
+
+            <ReferralProgress totalReferrals={userStats.totalReferrals} />
 
             <ReferralLeaderboard leaderboard={leaderboard} />
         </div>
