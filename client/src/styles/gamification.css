@@ -1,0 +1,260 @@
+/* Gamification Styles */
+
+/* Spin Wheel Container */
+.spin-wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: radial-gradient(circle at center, rgba(20, 20, 30, 0.9) 0%, rgba(10, 10, 20, 0.95) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.05);
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.wheel-wrapper {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 2rem 0;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 40px;
+    background: #ff00ff;
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+    z-index: 10;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.5));
+}
+
+.wheel-canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid #00ffff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    background: #1a1a2e;
+}
+
+.wheel-section {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 50%;
+    transform-origin: 0% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    padding-left: 20px;
+    box-sizing: border-box;
+}
+
+.wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    z-index: 5;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wheel-center::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: #1a1a2e;
+    border-radius: 50%;
+}
+
+/* Spin Button */
+.spin-button {
+    background: linear-gradient(45deg, #00ffff, #0088ff);
+    color: #000;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    border-radius: 50px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    margin-top: 1rem;
+}
+
+.spin-button:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+}
+
+.spin-button:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Streak Tracker */
+.streak-tracker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.streak-flame {
+    color: #ff4500;
+    animation: pulse 1.5s infinite;
+}
+
+.streak-count {
+    font-weight: 700;
+    color: #fff;
+}
+
+.streak-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Reward Notification Modal */
+.reward-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.reward-modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.reward-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: bounce 1s infinite;
+}
+
+.reward-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #00ffff, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.reward-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 1rem 0;
+}
+
+.reward-code-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    margin: 1.5rem 0;
+    font-family: monospace;
+    font-size: 1.2rem;
+    color: #00ffff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reward-code-box:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: #00ffff;
+}
+
+.claim-button {
+    background: #00ffff;
+    color: black;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.claim-button:hover {
+    transform: scale(1.05);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}

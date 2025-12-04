@@ -1,0 +1,221 @@
+/* Flash Sale Styles */
+
+/* Banner */
+.flash-sale-banner {
+    background: linear-gradient(90deg, #ff0055, #ff00aa);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+}
+
+.flash-sale-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 3s infinite;
+}
+
+.flash-content h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.flash-content p {
+    margin: 0.5rem 0 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Countdown Timer */
+.countdown-timer {
+    display: flex;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.time-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: monospace;
+    line-height: 1;
+}
+
+.time-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-top: 0.2rem;
+}
+
+.time-separator {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: -0.2rem;
+    opacity: 0.5;
+}
+
+/* Flash Sale Grid */
+.flash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.flash-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.flash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: #ff0055;
+}
+
+.flash-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff0055;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.flash-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.flash-details {
+    padding: 1.2rem;
+}
+
+.flash-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.flash-prices {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.flash-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff0055;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Stock Indicator */
+.stock-indicator {
+    margin-top: 0.5rem;
+}
+
+.stock-bar-bg {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.3rem;
+}
+
+.stock-bar-fill {
+    height: 100%;
+    background: #ff0055;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.stock-text {
+    font-size: 0.8rem;
+    color: #ff0055;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+.flash-button {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #ff0055;
+    color: #ff0055;
+    padding: 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.flash-button:hover {
+    background: #ff0055;
+    color: white;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 200%;
+    }
+}
+
+@media (max-width: 768px) {
+    .flash-sale-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+}
