@@ -24,6 +24,21 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    // Loyalty Program Fields
+    loyaltyPoints: {
+        type: Number,
+        default: 0
+    },
+    loyaltyTier: {
+        type: String,
+        enum: ['Bronze', 'Silver', 'Gold'],
+        default: 'Bronze'
+    },
+    totalSpent: {
+        type: Number,
+        default: 0
+    },
+    // Referral Program Fields
     referralCode: {
         type: String,
         unique: true,
@@ -32,6 +47,12 @@ const userSchema = mongoose.Schema({
     referredBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    referralStats: {
+        totalReferrals: { type: Number, default: 0 },
+        successfulReferrals: { type: Number, default: 0 },
+        referralEarnings: { type: Number, default: 0 },
+        referralRank: { type: Number, default: 0 }
     },
     walletBalance: {
         type: Number,
@@ -44,6 +65,13 @@ const userSchema = mongoose.Schema({
     priceAlertsEnabled: {
         type: Boolean,
         default: true
+    },
+    // Birthday for special offers
+    birthday: {
+        type: Date
+    },
+    lastBirthdayReward: {
+        type: Date
     }
 }, {
     timestamps: true
