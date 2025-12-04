@@ -218,6 +218,9 @@ const ProductDetail = () => {
                 {/* Complete the Look */}
                 <CompleteLook currentProduct={product} />
 
+                {/* Frequently Bought Together */}
+                <FrequentlyBoughtTogether productId={product.id} />
+
                 {/* Customer Reviews Section */}
                 <div style={{ marginTop: '4rem' }}>
                     <ReviewList productId={product.id} key={refreshReviews} />

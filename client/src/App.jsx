@@ -95,9 +95,13 @@ function App() {
             <MobileBottomNav />
           </div>
         </Router>
+        <Toast />
+        <SocialProofNotification />
+        <ChatWidget />
       </AppProvider>
     </LanguageProvider>
   );
 }
 
 export default App;
+

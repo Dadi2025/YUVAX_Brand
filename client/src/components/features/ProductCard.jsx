@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, compact = false }) => {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const inWishlist = isInWishlist(product?.id);
@@ -26,6 +26,26 @@ const ProductCard = ({ product }) => {
   };
 
   const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
+
+  // Compact mode for chat widget
+  if (compact) {
+    return (
+      <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+        <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <img src={product.image} alt={product.name} style={{ width: '100%', height: '120px', objectFit: 'cover', filter: 'grayscale(100%)' }} />
+          <div style={{ padding: '0.75rem' }}>
+            <h4 style={{ fontSize: '0.9rem', color: 'white', margin: '0 0 0.5rem' }}>{product.name}</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--accent-cyan)' }}>₹{product.price}</span>
+              {product.originalPrice && (
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₹{product.originalPrice}</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
   return (
     <Link to={`/product/${product.id}`} className="product-card group relative" style={{ textDecoration: 'none', display: 'block' }}>
