@@ -201,6 +201,12 @@ const Navbar = () => {
                   <Link to="/profile" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
                     Profile
                   </Link>
+                  <Link to="/loyalty" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
+                    Loyalty Program
+                  </Link>
+                  <Link to="/returns" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
+                    My Returns
+                  </Link>
                   <button
                     onClick={() => { logout(); setShowUserMenu(false); }}
                     className="nav-link"

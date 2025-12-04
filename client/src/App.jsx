@@ -34,6 +34,8 @@ const Terms = lazy(() => import('./pages/Terms'));
 const StyleWall = lazy(() => import('./pages/StyleWall'));
 const SpinWheel = lazy(() => import('./pages/SpinWheel'));
 const ReferralDashboard = lazy(() => import('./pages/user/ReferralDashboard'));
+const LoyaltyDashboard = lazy(() => import('./pages/user/LoyaltyDashboard'));
+const Returns = lazy(() => import('./pages/user/Returns'));
 
 // Loading component
 const PageLoader = () => (
@@ -84,6 +86,8 @@ function App() {
                 <Route path="/style-wall" element={<StyleWall />} />
                 <Route path="/spin-wheel" element={<SpinWheel />} />
                 <Route path="/referral" element={<ReferralDashboard />} />
+                <Route path="/loyalty" element={<LoyaltyDashboard />} />
+                <Route path="/returns" element={<Returns />} />
               </Routes>
             </Suspense>
             <Footer />
