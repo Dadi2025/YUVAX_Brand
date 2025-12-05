@@ -33,19 +33,27 @@ router.get('/razorpay-key', protect, (req, res) => {
 router.post('/create-razorpay-order', protect, paymentLimiter, async (req, res) => {
     try {
         const { amount } = req.body;
+        console.log(`[Razorpay] Creating order for amount: ${amount}`);
+
+        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+            console.error('[Razorpay] Keys missing in environment');
+            return res.status(500).json({ message: 'Server configuration error: Razorpay keys missing' });
+        }
 
         const options = {
-            amount: amount * 100, // Amount in paise
+            amount: Math.round(Number(amount) * 100), // Amount in paise (integer)
             currency: 'INR',
             receipt: `receipt_${Date.now()}`
         };
+        console.log('[Razorpay] Order options:', options);
 
         const order = await razorpay.orders.create(options);
+        console.log('[Razorpay] Order created:', order);
 
         res.json(order);
     } catch (error) {
-        console.error('Razorpay Order Error:', error);
-        res.status(500).json({ message: 'Something went wrong with payment initialization' });
+        console.error('[Razorpay] Order Creation Error:', error);
+        res.status(500).json({ message: 'Failed to create Razorpay order', error: error.message });
     }
 });
 
@@ -54,6 +62,7 @@ router.post('/create-razorpay-order', protect, paymentLimiter, async (req, res) 
 // @access  Private
 router.post('/verify-payment', protect, paymentLimiter, async (req, res) => {
     try {
+        console.log('[Razorpay] Verifying payment:', req.body);
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         const sign = razorpay_order_id + '|' + razorpay_payment_id;
@@ -62,13 +71,18 @@ router.post('/verify-payment', protect, paymentLimiter, async (req, res) => {
             .update(sign.toString())
             .digest('hex');
 
+        console.log(`[Razorpay] Expected Signature: ${expectedSign}`);
+        console.log(`[Razorpay] Received Signature: ${razorpay_signature}`);
+
         if (razorpay_signature === expectedSign) {
+            console.log('[Razorpay] Payment verified successfully');
             res.json({ message: 'Payment verified successfully' });
         } else {
+            console.error('[Razorpay] Signature mismatch');
             res.status(400).json({ message: 'Invalid signature sent!' });
         }
     } catch (error) {
-        console.error('Payment Verification Error:', error);
+        console.error('[Razorpay] Payment Verification Error:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });

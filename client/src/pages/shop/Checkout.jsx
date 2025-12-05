@@ -165,6 +165,12 @@ const Checkout = () => {
                 }
 
                 // Get Razorpay Key from Server
+                const token = localStorage.getItem('yuva-token');
+                if (!token) {
+                    showToast('Please login to place an order', 'error');
+                    return;
+                }
+
                 const keyRes = await fetch('/api/payment/razorpay-key', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -184,6 +190,11 @@ const Checkout = () => {
                     },
                     body: JSON.stringify({ amount: total })
                 });
+
+                if (!result.ok) {
+                    const errorData = await result.json();
+                    throw new Error(errorData.message || 'Failed to initialize payment');
+                }
 
                 const data = await result.json();
 
@@ -227,11 +238,11 @@ const Checkout = () => {
                                 const order = await placeOrder(orderDetails);
                                 navigate(`/order-confirmation?orderId=${order._id || order.id}`);
                             } else {
-                                showToast('Payment verification failed', 'error');
+                                showToast(verifyData.message || 'Payment verification failed', 'error');
                             }
                         } catch (error) {
-                            console.error(error);
-                            showToast('Payment verification failed', 'error');
+                            console.error('[Frontend] Payment verification error:', error);
+                            showToast(error.message || 'Payment verification failed', 'error');
                         }
                     },
                     prefill: {
@@ -260,8 +271,8 @@ const Checkout = () => {
                 navigate(`/order-confirmation?orderId=${order._id || order.id}`);
             }
         } catch (error) {
-            console.error('Order placement error:', error);
-            showToast('Order placement failed', 'error');
+            console.error('Order placement error details:', error);
+            showToast(error.message || 'Order placement failed', 'error');
         } finally {
             setLoading(false);
         }
