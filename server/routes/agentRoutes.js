@@ -274,6 +274,12 @@ router.put('/orders/:id/deliver', protect, async (req, res) => {
         order.isDelivered = true;
         order.deliveredAt = Date.now();
 
+        // AUTOMATICALLY MARK COD AS PAID
+        if (order.paymentMethod === 'cod') {
+            order.isPaid = true;
+            order.paidAt = Date.now();
+        }
+
         // Update agent stats
         agent.assignedOrders = Math.max(0, agent.assignedOrders - 1);
         agent.completedOrders += 1;
@@ -313,6 +319,11 @@ router.put('/orders/:id/return-pickup', protect, async (req, res) => {
         // We set status to 'Returned' to indicate the process is physically underway/complete from customer side.
         order.returnStatus = 'Picked Up';
         order.status = 'Returned';
+
+        // INITIATE REFUND AUTOMATICALLY
+        if (order.returnStatus === 'Picked Up') {
+            order.refundStatus = 'Pending';
+        }
 
         // Update agent stats (handle potential undefined)
         const currentAssigned = agent.assignedOrders || 0;
