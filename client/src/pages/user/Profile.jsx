@@ -7,6 +7,7 @@ const Profile = () => {
     const { user, logout, getUserOrders } = useApp();
     const navigate = useNavigate();
     const [returnModalOrder, setReturnModalOrder] = useState(null);
+    const [filterStatus, setFilterStatus] = useState('All');
 
     if (!user) {
         navigate('/login');
@@ -84,10 +85,39 @@ const Profile = () => {
 
                         {/* Order History */}
                         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '2rem' }}>
-                            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Order History</h3>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <h3 style={{ fontSize: '1.5rem', margin: 0 }}>Order History</h3>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    {['All', 'Pending', 'Delivered', 'Returned'].map(status => (
+                                        <button
+                                            key={status}
+                                            onClick={() => setFilterStatus(status)}
+                                            style={{
+                                                background: filterStatus === status ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.1)',
+                                                color: filterStatus === status ? 'black' : 'var(--text-muted)',
+                                                border: 'none',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            {status}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
                             {userOrders.length > 0 ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    {userOrders.map(order => (
+                                    {userOrders.filter(order => {
+                                        if (filterStatus === 'All') return true;
+                                        if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
+                                        if (filterStatus === 'Delivered') return order.status === 'Delivered';
+                                        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Approved' || order.returnStatus === 'Completed';
+                                        return true;
+                                    }).map(order => (
                                         <div key={order._id || order.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '1.5rem' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
                                                 <div>

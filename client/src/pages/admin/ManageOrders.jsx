@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 
 const ManageOrders = () => {
     const { orders, updateOrderStatus, fetchAllOrders, user, showToast } = useApp();
+    const [filterStatus, setFilterStatus] = React.useState('All');
 
     React.useEffect(() => {
         if (user && user.isAdmin) {
@@ -120,10 +121,18 @@ const ManageOrders = () => {
         }
     };
 
+    const filteredOrders = orders.filter(order => {
+        if (filterStatus === 'All') return true;
+        if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
+        if (filterStatus === 'Delivered') return order.status === 'Delivered';
+        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Approved' || order.returnStatus === 'Completed';
+        return true;
+    });
+
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Manage Orders ({orders.length})</h2>
+                <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Manage Orders ({filteredOrders.length})</h2>
                 <button
                     onClick={handleSimulateCourier}
                     className="btn-secondary"
@@ -140,23 +149,63 @@ const ManageOrders = () => {
                 gap: '1rem',
                 marginBottom: '2rem'
             }}>
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                <div
+                    onClick={() => setFilterStatus('All')}
+                    style={{
+                        background: filterStatus === 'All' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
+                        padding: '1.5rem',
+                        borderRadius: '8px',
+                        border: `1px solid ${filterStatus === 'All' ? 'var(--accent-cyan)' : 'var(--border-light)'}`,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                    }}
+                >
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{orders.length}</div>
                     <div style={{ color: 'var(--text-muted)' }}>Total Orders</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                <div
+                    onClick={() => setFilterStatus('Pending')}
+                    style={{
+                        background: filterStatus === 'Pending' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
+                        padding: '1.5rem',
+                        borderRadius: '8px',
+                        border: `1px solid ${filterStatus === 'Pending' ? 'var(--accent-purple)' : 'var(--border-light)'}`,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                    }}
+                >
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--accent-purple)' }}>
                         {orders.filter(o => ['Processing', 'Shipped'].includes(o.status)).length}
                     </div>
                     <div style={{ color: 'var(--text-muted)' }}>Pending</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                <div
+                    onClick={() => setFilterStatus('Delivered')}
+                    style={{
+                        background: filterStatus === 'Delivered' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
+                        padding: '1.5rem',
+                        borderRadius: '8px',
+                        border: `1px solid ${filterStatus === 'Delivered' ? '#4ade80' : 'var(--border-light)'}`,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                    }}
+                >
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#4ade80' }}>
                         {orders.filter(o => o.status === 'Delivered').length}
                     </div>
                     <div style={{ color: 'var(--text-muted)' }}>Delivered</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                <div
+                    onClick={() => setFilterStatus('Returned')}
+                    style={{
+                        background: filterStatus === 'Returned' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
+                        padding: '1.5rem',
+                        borderRadius: '8px',
+                        border: `1px solid ${filterStatus === 'Returned' ? '#facc15' : 'var(--border-light)'}`,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                    }}
+                >
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#facc15' }}>
                         {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Approved' || o.returnStatus === 'Completed').length}
                     </div>
@@ -179,8 +228,8 @@ const ManageOrders = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {Array.isArray(orders) && orders.length > 0 ? (
-                            orders.map((order, index) => {
+                        {Array.isArray(filteredOrders) && filteredOrders.length > 0 ? (
+                            filteredOrders.map((order, index) => {
                                 if (!order) return null;
                                 const orderId = order._id || order.id || `order-${index}`;
                                 const dateStr = order.createdAt || order.date;

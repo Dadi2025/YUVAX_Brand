@@ -26,7 +26,16 @@ const AdminDashboard = () => {
             <div className="container">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <h1 style={{ fontSize: '3rem' }}>ADMIN DASHBOARD</h1>
-                    <button onClick={handleLogout} className="btn-secondary">Logout</button>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <button
+                            onClick={() => setActiveTab('orders')}
+                            className="btn-secondary"
+                            style={{ background: activeTab === 'orders' ? 'var(--accent-cyan)' : 'transparent', color: activeTab === 'orders' ? 'black' : 'var(--accent-cyan)', border: '1px solid var(--accent-cyan)' }}
+                        >
+                            Manage Orders
+                        </button>
+                        <button onClick={handleLogout} className="btn-secondary">Logout</button>
+                    </div>
                 </div>
 
                 {/* Tabs */}

@@ -5,6 +5,7 @@ import { useApp } from '../../context/AppContext';
 
 const DeliveryDashboard = () => {
     const [orders, setOrders] = useState([]);
+    const [filterStatus, setFilterStatus] = useState('All');
     const [agent, setAgent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -27,21 +28,6 @@ const DeliveryDashboard = () => {
 
     const fetchAssignedOrders = async (token, agentId) => {
         try {
-            // We need a specific endpoint for agent's own orders or use the existing one
-            // Since we implemented GET /api/agents/:id/orders for admin, we can reuse it if we allow agent access
-            // Or better, let's assume the backend allows agents to fetch their own orders via a new endpoint or existing one.
-            // For now, let's try the admin one but we might need to update backend permissions.
-            // Actually, let's use the one we planned: GET /api/agents/my-orders (Wait, I didn't implement that yet!)
-            // I'll use the existing /api/agents/:id/orders but I need to ensure the backend allows it.
-            // The backend route is: router.get('/:id/orders', protect, admin, ...) -> It requires ADMIN!
-
-            // FIX: I need to update the backend to allow agents to fetch their own orders.
-            // For now, I'll simulate it by fetching all orders and filtering client-side if I was admin, 
-            // but I am not admin.
-
-            // I will implement a new endpoint in the next step: router.get('/my-orders', protect, ...)
-            // For now, let's assume it exists: /api/agents/my-orders
-
             const res = await fetch('/api/agents/my-orders', {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -52,7 +38,6 @@ const DeliveryDashboard = () => {
                 const data = await res.json();
                 setOrders(data);
             } else {
-                // Fallback for demo if endpoint missing
                 console.error('Failed to fetch orders');
             }
         } catch (error) {
@@ -73,11 +58,6 @@ const DeliveryDashboard = () => {
 
         try {
             const token = localStorage.getItem('agent-token');
-            // We can use the existing order status update endpoint if we allow agents
-            // PUT /api/orders/:id/status -> requires Admin
-            // I need to update backend permissions or create a specific endpoint for agents.
-            // Let's assume: PUT /api/agents/orders/:id/deliver
-
             const res = await fetch(`/api/agents/orders/${orderId}/deliver`, {
                 method: 'PUT',
                 headers: {
@@ -138,6 +118,14 @@ const DeliveryDashboard = () => {
         }
     };
 
+    const filteredOrders = orders.filter(order => {
+        if (filterStatus === 'All') return true;
+        if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
+        if (filterStatus === 'Delivered') return order.status === 'Delivered';
+        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Picked Up';
+        return true;
+    });
+
     if (loading) return (
         <div style={{ minHeight: '100vh', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ textAlign: 'center' }}>
@@ -177,44 +165,104 @@ const DeliveryDashboard = () => {
                                 <p style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '1rem' }}>Delivery Partner Dashboard</p>
                             </div>
                         </div>
-                        <button
-                            onClick={() => setShowPasswordModal(true)}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.3)',
-                                border: 'none',
-                                padding: '0.75rem 1.5rem',
-                                borderRadius: '8px',
-                                color: 'black',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                fontSize: '0.875rem'
-                            }}
-                        >
-                            🔒 Change Password
-                        </button>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                onClick={() => setFilterStatus('All')}
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.3)',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '8px',
+                                    color: 'black',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.875rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
+                                📦 My Orders
+                            </button>
+                            <button
+                                onClick={() => setShowPasswordModal(true)}
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.3)',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '8px',
+                                    color: 'black',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.875rem'
+                                }}
+                            >
+                                🔒 Change Password
+                            </button>
+                        </div>
                     </div>
 
                     {/* Stats */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                        <div
+                            onClick={() => setFilterStatus('All')}
+                            style={{
+                                background: filterStatus === 'All' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'All' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
                                 {orders.length}
                             </div>
                             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Total Assigned</div>
                         </div>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                        <div
+                            onClick={() => setFilterStatus('Pending')}
+                            style={{
+                                background: filterStatus === 'Pending' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'Pending' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
                                 {orders.filter(o => ['Processing', 'Shipped'].includes(o.status)).length}
                             </div>
                             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Pending Orders</div>
                         </div>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                        <div
+                            onClick={() => setFilterStatus('Delivered')}
+                            style={{
+                                background: filterStatus === 'Delivered' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'Delivered' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
                                 {orders.filter(o => o.status === 'Delivered').length}
                             </div>
                             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Delivered Orders</div>
                         </div>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                        <div
+                            onClick={() => setFilterStatus('Returned')}
+                            style={{
+                                background: filterStatus === 'Returned' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'Returned' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
                                 {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Picked Up').length}
                             </div>
@@ -232,10 +280,10 @@ const DeliveryDashboard = () => {
                 {/* Orders Section */}
                 <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Package size={24} color="var(--accent-cyan)" />
-                    Your Deliveries
+                    {filterStatus === 'All' ? 'All Deliveries' : `${filterStatus} Deliveries`}
                 </h2>
 
-                {orders.length === 0 ? (
+                {filteredOrders.length === 0 ? (
                     <div style={{
                         background: 'rgba(255, 255, 255, 0.03)',
                         border: '2px dashed var(--border-light)',
@@ -244,12 +292,12 @@ const DeliveryDashboard = () => {
                         textAlign: 'center'
                     }}>
                         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📦</div>
-                        <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>No Deliveries Yet</h3>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>No {filterStatus !== 'All' ? filterStatus : ''} Deliveries Found</h3>
                         <p style={{ color: 'var(--text-muted)' }}>Orders will appear here when assigned to your area</p>
                     </div>
                 ) : (
                     <div style={{ display: 'grid', gap: '1.5rem' }}>
-                        {orders.map(order => (
+                        {filteredOrders.map(order => (
                             <div key={order._id} style={{
                                 background: 'rgba(255, 255, 255, 0.03)',
                                 border: '1px solid var(--border-light)',
