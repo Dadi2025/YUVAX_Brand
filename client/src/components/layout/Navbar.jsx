@@ -66,84 +66,10 @@ const Navbar = () => {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/shop" className="nav-link">Collections</Link>
 
-          {/* Women's Category Dropdown */}
-          <div
-            style={{ position: 'relative' }}
-            onMouseEnter={() => setShowWomenMenu(true)}
-            onMouseLeave={() => setShowWomenMenu(false)}
-          >
-            <Link to="/shop?gender=Women" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              Women
-              <span style={{ fontSize: '0.7rem' }}>▼</span>
-            </Link>
-            {showWomenMenu && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                marginTop: '0.5rem',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-light)',
-                borderRadius: '8px',
-                minWidth: '200px',
-                zIndex: 1000,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
-              }}>
-                <Link
-                  to="/shop?category=Sarees&gender=Women"
-                  className="nav-link"
-                  style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem' }}
-                  onClick={() => setShowWomenMenu(false)}
-                >
-                  Sarees
-                </Link>
-                <Link
-                  to="/shop?category=Half Saree&gender=Women"
-                  className="nav-link"
-                  style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem' }}
-                  onClick={() => setShowWomenMenu(false)}
-                >
-                  Half Saree
-                </Link>
-                <Link
-                  to="/shop?category=Kurta&gender=Women"
-                  className="nav-link"
-                  style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem' }}
-                  onClick={() => setShowWomenMenu(false)}
-                >
-                  Kurta & Anarkali
-                </Link>
-                <Link
-                  to="/shop?category=Western&gender=Women"
-                  className="nav-link"
-                  style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem' }}
-                  onClick={() => setShowWomenMenu(false)}
-                >
-                  Western Wear
-                </Link>
-                <Link
-                  to="/shop?category=Tops&gender=Women"
-                  className="nav-link"
-                  style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem' }}
-                  onClick={() => setShowWomenMenu(false)}
-                >
-                  Tops
-                </Link>
-                <Link
-                  to="/shop?category=Leggings&gender=Women"
-                  className="nav-link"
-                  style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem' }}
-                  onClick={() => setShowWomenMenu(false)}
-                >
-                  Leggings
-                </Link>
-              </div>
-            )}
-          </div>
-
           <Link to="/style-wall" className="nav-link">Style Wall</Link>
 
           {/* Dashboard Links */}
+          {user && <Link to="/profile" className="nav-link" style={{ color: 'var(--accent-cyan)' }}>📦 Orders</Link>}
           {user && <Link to="/profile" className="nav-link" style={{ color: 'var(--accent-purple)' }}>👤 My Account</Link>}
           {isAgentLoggedIn && <Link to="/delivery/dashboard" className="nav-link" style={{ color: 'var(--accent-cyan)' }}>📊 Dashboard</Link>}
           {isAdminLoggedIn && <Link to="/admin/dashboard" className="nav-link" style={{ color: 'var(--accent-purple)' }}>📊 Dashboard</Link>}

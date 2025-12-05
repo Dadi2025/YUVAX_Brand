@@ -176,6 +176,32 @@ const Shop = () => {
                             ))}
                         </div>
 
+                        {/* Women's Subcategories - Only show when Women is selected */}
+                        {selectedGender === 'Women' && (
+                            <div style={{ marginBottom: '2rem', paddingLeft: '1rem', borderLeft: '2px solid var(--accent-purple)' }}>
+                                <h3 style={{ fontSize: '0.875rem', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent-purple)' }}>Women's Categories</h3>
+                                {['Sarees', 'Half Saree', 'Kurta', 'Western', 'Tops', 'Leggings'].map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        style={{
+                                            display: 'block',
+                                            width: '100%',
+                                            textAlign: 'left',
+                                            padding: '0.4rem 0',
+                                            background: 'none',
+                                            border: 'none',
+                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                                            cursor: 'pointer',
+                                            fontSize: '0.8rem'
+                                        }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
                         {/* Size Filter */}
                         <div style={{ marginBottom: '2rem' }}>
                             <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Size</h3>

@@ -184,7 +184,7 @@ export const defaultProducts = [
     }
 ];
 
-export const categories = ['All', 'Hoodies', 'T-Shirts', 'Pants', 'Accessories'];
+export const categories = ['All', 'Hoodies', 'T-Shirts', 'Pants', 'Accessories', 'Sarees', 'Half Saree', 'Kurta', 'Western', 'Tops', 'Leggings'];
 
 export const genders = ['All', 'Men', 'Women', 'Unisex'];
 
