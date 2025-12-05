@@ -5,7 +5,7 @@ const DeliveryChecker = () => {
     const [status, setStatus] = useState(null); // null, 'loading', 'express', 'standard', 'invalid'
     const [msg, setMsg] = useState('');
 
-    const checkDelivery = (e) => {
+    const checkDelivery = async (e) => {
         e.preventDefault();
         if (pincode.length !== 6) {
             setStatus('invalid');
@@ -15,17 +15,27 @@ const DeliveryChecker = () => {
 
         setStatus('loading');
 
-        // Simulate API call
-        setTimeout(() => {
-            // Mock Logic: Pincodes starting with 11, 40, 56 are Metro/Express
-            if (['11', '40', '56', '50', '60'].some(prefix => pincode.startsWith(prefix))) {
-                setStatus('express');
-                setMsg('⚡ YUVA Now: Delivery by Tomorrow, 10 PM');
+        try {
+            const res = await fetch(`/api/pincode/${pincode}`);
+            const data = await res.json();
+
+            if (res.ok && data.serviceable) {
+                if (data.deliveryDays <= 2) {
+                    setStatus('express');
+                    setMsg(`⚡ YUVA Now: Delivery in ${data.deliveryDays} day${data.deliveryDays > 1 ? 's' : ''}`);
+                } else {
+                    setStatus('standard');
+                    setMsg(`Standard Delivery: ${data.deliveryDays} days${data.isCodAvailable ? ' • COD Available' : ''}`);
+                }
             } else {
-                setStatus('standard');
-                setMsg('Standard Delivery: 3-5 Business Days');
+                setStatus('invalid');
+                setMsg(data.message || 'Delivery not available for this pincode');
             }
-        }, 800);
+        } catch (error) {
+            console.error('Pincode check error:', error);
+            setStatus('invalid');
+            setMsg('Unable to check delivery. Please try again.');
+        }
     };
 
     return (
@@ -59,7 +69,7 @@ const DeliveryChecker = () => {
 
             {status && status !== 'loading' && (
                 <div className={`mt-2 text-xs flex items-center gap-2 animate-fade-in ${status === 'express' ? 'text-[var(--accent-cyan)]' :
-                        status === 'standard' ? 'text-[var(--text-muted)]' : 'text-red-500'
+                    status === 'standard' ? 'text-[var(--text-muted)]' : 'text-red-500'
                     }`}>
                     <span>{status === 'express' ? '🚀' : status === 'standard' ? '🚚' : '⚠️'}</span>
                     <span>{msg}</span>

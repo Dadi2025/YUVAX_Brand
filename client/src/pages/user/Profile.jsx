@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import OrderReturnModal from '../../components/returns/OrderReturnModal';
 
 const Profile = () => {
     const { user, logout, getUserOrders } = useApp();
     const navigate = useNavigate();
+    const [returnModalOrder, setReturnModalOrder] = useState(null);
 
     if (!user) {
         navigate('/login');
@@ -12,6 +14,16 @@ const Profile = () => {
     }
 
     const userOrders = getUserOrders();
+
+    // Check if order is eligible for return (delivered + within 14 days)
+    const isReturnEligible = (order) => {
+        if (order.status !== 'Delivered') return false;
+
+        const deliveryDate = new Date(order.deliveredAt || order.createdAt);
+        const daysSinceDelivery = Math.floor((new Date() - deliveryDate) / (1000 * 60 * 60 * 24));
+
+        return daysSinceDelivery <= 14;
+    };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -128,13 +140,24 @@ const Profile = () => {
                                                         {new Date(new Date(order.createdAt || order.date).getTime() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                                                     </span>
                                                 </p>
-                                                <button
-                                                    onClick={() => navigate(`/track-order/${order._id || order.id}`)}
-                                                    className="btn-primary"
-                                                    style={{ width: '100%', marginTop: '1rem' }}
-                                                >
-                                                    TRACK ORDER
-                                                </button>
+                                                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                                                    <button
+                                                        onClick={() => navigate(`/track-order/${order._id || order.id}`)}
+                                                        className="btn-primary"
+                                                        style={{ flex: 1 }}
+                                                    >
+                                                        TRACK ORDER
+                                                    </button>
+                                                    {isReturnEligible(order) && (
+                                                        <button
+                                                            onClick={() => setReturnModalOrder(order)}
+                                                            className="btn-secondary"
+                                                            style={{ flex: 1 }}
+                                                        >
+                                                            RETURN/EXCHANGE
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -146,6 +169,18 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Return/Exchange Modal */}
+            {returnModalOrder && (
+                <OrderReturnModal
+                    order={returnModalOrder}
+                    onClose={() => setReturnModalOrder(null)}
+                    onSuccess={() => {
+                        // Optionally refresh orders or show success message
+                        setReturnModalOrder(null);
+                    }}
+                />
+            )}
         </div>
     );
 };
