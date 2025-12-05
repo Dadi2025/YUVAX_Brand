@@ -287,6 +287,81 @@ router.put('/orders/:id/deliver', protect, async (req, res) => {
     }
 });
 
+// @desc    Mark return as picked up (Agent)
+// @route   PUT /api/agents/orders/:id/return-pickup
+// @access  Private (Agent)
+router.put('/orders/:id/return-pickup', protect, async (req, res) => {
+    try {
+        const agent = await Agent.findById(req.user._id);
+        if (!agent) {
+            return res.status(401).json({ message: 'Not authorized as agent' });
+        }
+
+        const order = await Order.findById(req.params.id);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Verify assignment
+        if (order.assignedAgent.toString() !== agent._id.toString()) {
+            return res.status(403).json({ message: 'Order not assigned to you' });
+        }
+
+        order.returnStatus = 'Picked Up';
+        // Optionally update main status if needed, but usually return status is separate or main status becomes 'Returned'
+        // Let's set main status to 'Returned' when picked up or when received at warehouse.
+        // For simplicity, let's say 'Return Picked Up' -> 'Returned'
+        order.status = 'Returned';
+
+        // Update agent stats
+        agent.assignedOrders = Math.max(0, agent.assignedOrders - 1);
+        agent.completedOrders += 1;
+        await agent.save();
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error('Agent return pickup error:', error);
+        res.status(500).json({ message: 'Failed to update order' });
+    }
+});
+
+// @desc    Mark exchange as completed (Agent)
+// @route   PUT /api/agents/orders/:id/exchange-complete
+// @access  Private (Agent)
+router.put('/orders/:id/exchange-complete', protect, async (req, res) => {
+    try {
+        const agent = await Agent.findById(req.user._id);
+        if (!agent) {
+            return res.status(401).json({ message: 'Not authorized as agent' });
+        }
+
+        const order = await Order.findById(req.params.id);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Verify assignment
+        if (order.assignedAgent.toString() !== agent._id.toString()) {
+            return res.status(403).json({ message: 'Order not assigned to you' });
+        }
+
+        order.exchangeStatus = 'Completed';
+        order.status = 'Delivered'; // Exchange completed means new item delivered
+
+        // Update agent stats
+        agent.assignedOrders = Math.max(0, agent.assignedOrders - 1);
+        agent.completedOrders += 1;
+        await agent.save();
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error('Agent exchange complete error:', error);
+        res.status(500).json({ message: 'Failed to update order' });
+    }
+});
+
 // @desc    Get all agents
 // @route   GET /api/agents
 // @access  Private/Admin

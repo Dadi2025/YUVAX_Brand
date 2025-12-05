@@ -204,7 +204,7 @@ const DeliveryDashboard = () => {
                         </div>
                         <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                                {orders.filter(o => o.status !== 'Delivered').length}
+                                {orders.filter(o => ['Processing', 'Shipped'].includes(o.status)).length}
                             </div>
                             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Pending Orders</div>
                         </div>
@@ -213,6 +213,12 @@ const DeliveryDashboard = () => {
                                 {orders.filter(o => o.status === 'Delivered').length}
                             </div>
                             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Delivered Orders</div>
+                        </div>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Picked Up').length}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Returned Orders</div>
                         </div>
                         <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
@@ -274,14 +280,16 @@ const DeliveryDashboard = () => {
                                             #{order._id.slice(-6)}
                                         </div>
                                         <div style={{
-                                            background: order.status === 'Delivered' ? '#4ade80' : 'var(--accent-cyan)',
+                                            background: order.status === 'Delivered' ? '#4ade80' :
+                                                order.status === 'Returned' ? '#facc15' : 'var(--accent-cyan)',
                                             color: 'black',
                                             padding: '0.5rem 1rem',
                                             borderRadius: '8px',
                                             fontWeight: 'bold',
                                             fontSize: '0.875rem'
                                         }}>
-                                            {order.status === 'Delivered' ? '✓ Delivered' : '🚚 ' + order.status}
+                                            {order.status === 'Delivered' ? '✓ Delivered' :
+                                                order.status === 'Returned' ? '↩ Returned' : '🚚 ' + order.status}
                                         </div>
                                     </div>
                                     <div style={{
@@ -316,6 +324,82 @@ const DeliveryDashboard = () => {
                                     </div>
                                 </div>
 
+                                {/* Return/Exchange Status */}
+                                {(order.returnStatus === 'Approved' || order.exchangeStatus === 'Approved') && (
+                                    <div style={{
+                                        background: 'rgba(250, 204, 21, 0.1)',
+                                        border: '1px solid rgba(250, 204, 21, 0.3)',
+                                        padding: '1rem',
+                                        borderRadius: '12px',
+                                        marginBottom: '1rem',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}>
+                                        <div style={{ color: '#facc15', fontWeight: 'bold' }}>
+                                            {order.returnStatus === 'Approved' ? '↩ Return Approved' : '🔄 Exchange Approved'}
+                                        </div>
+                                        {order.returnStatus === 'Approved' && (
+                                            <button
+                                                onClick={async () => {
+                                                    if (!window.confirm('Confirm return pickup?')) return;
+                                                    try {
+                                                        const token = localStorage.getItem('agent-token');
+                                                        const res = await fetch(`/api/agents/orders/${order._id}/return-pickup`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Authorization': `Bearer ${token}` }
+                                                        });
+                                                        if (res.ok) {
+                                                            showToast('Return marked as picked up', 'success');
+                                                            fetchAssignedOrders(token, agent._id);
+                                                        } else showToast('Failed to update', 'error');
+                                                    } catch (e) { showToast('Error', 'error'); }
+                                                }}
+                                                style={{
+                                                    background: '#facc15',
+                                                    color: 'black',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Pick Up Return
+                                            </button>
+                                        )}
+                                        {order.exchangeStatus === 'Approved' && (
+                                            <button
+                                                onClick={async () => {
+                                                    if (!window.confirm('Confirm exchange completion?')) return;
+                                                    try {
+                                                        const token = localStorage.getItem('agent-token');
+                                                        const res = await fetch(`/api/agents/orders/${order._id}/exchange-complete`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Authorization': `Bearer ${token}` }
+                                                        });
+                                                        if (res.ok) {
+                                                            showToast('Exchange completed', 'success');
+                                                            fetchAssignedOrders(token, agent._id);
+                                                        } else showToast('Failed to update', 'error');
+                                                    } catch (e) { showToast('Error', 'error'); }
+                                                }}
+                                                style={{
+                                                    background: '#facc15',
+                                                    color: 'black',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Complete Exchange
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Customer Contact */}
                                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
                                     <a
@@ -343,7 +427,7 @@ const DeliveryDashboard = () => {
                                 </div>
 
                                 {/* Action Button */}
-                                {order.status !== 'Delivered' && (
+                                {order.status !== 'Delivered' && order.status !== 'Returned' && (
                                     <button
                                         onClick={() => markDelivered(order._id)}
                                         style={{

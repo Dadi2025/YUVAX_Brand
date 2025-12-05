@@ -133,6 +133,37 @@ const ManageOrders = () => {
                 </button>
             </div>
 
+            {/* Stats Section */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
+                marginBottom: '2rem'
+            }}>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{orders.length}</div>
+                    <div style={{ color: 'var(--text-muted)' }}>Total Orders</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--accent-purple)' }}>
+                        {orders.filter(o => ['Processing', 'Shipped'].includes(o.status)).length}
+                    </div>
+                    <div style={{ color: 'var(--text-muted)' }}>Pending</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#4ade80' }}>
+                        {orders.filter(o => o.status === 'Delivered').length}
+                    </div>
+                    <div style={{ color: 'var(--text-muted)' }}>Delivered</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#facc15' }}>
+                        {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Approved' || o.returnStatus === 'Completed').length}
+                    </div>
+                    <div style={{ color: 'var(--text-muted)' }}>Returned</div>
+                </div>
+            </div>
+
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
