@@ -128,37 +128,16 @@ const Shop = () => {
                             </div>
                         )}
 
-                        {/* Categories */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category</h3>
-                            {categories.map(cat => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setSelectedCategory(cat)}
-                                    style={{
-                                        display: 'block',
-                                        width: '100%',
-                                        textAlign: 'left',
-                                        padding: '0.5rem 0',
-                                        background: 'none',
-                                        border: 'none',
-                                        color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                        cursor: 'pointer',
-                                        fontSize: '0.875rem'
-                                    }}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
-
                         {/* Gender Filter */}
                         <div style={{ marginBottom: '2rem' }}>
                             <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gender</h3>
                             {genders.map(gender => (
                                 <button
                                     key={gender}
-                                    onClick={() => setSelectedGender(gender)}
+                                    onClick={() => {
+                                        setSelectedGender(gender);
+                                        setSelectedCategory('All'); // Reset category when gender changes
+                                    }}
                                     style={{
                                         display: 'block',
                                         width: '100%',
@@ -176,11 +155,11 @@ const Shop = () => {
                             ))}
                         </div>
 
-                        {/* Women's Subcategories - Only show when Women is selected */}
-                        {selectedGender === 'Women' && (
-                            <div style={{ marginBottom: '2rem', paddingLeft: '1rem', borderLeft: '2px solid var(--accent-purple)' }}>
-                                <h3 style={{ fontSize: '0.875rem', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent-purple)' }}>Women's Categories</h3>
-                                {['Sarees', 'Half Saree', 'Kurta', 'Western', 'Tops', 'Leggings'].map(cat => (
+                        {/* Categories - Gender Based */}
+                        {selectedGender === 'Men' && (
+                            <div style={{ marginBottom: '2rem' }}>
+                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Men's Categories</h3>
+                                {['All', 'Hoodies', 'T-Shirts', 'Pants', 'Accessories'].map(cat => (
                                     <button
                                         key={cat}
                                         onClick={() => setSelectedCategory(cat)}
@@ -188,12 +167,87 @@ const Shop = () => {
                                             display: 'block',
                                             width: '100%',
                                             textAlign: 'left',
-                                            padding: '0.4rem 0',
+                                            padding: '0.5rem 0',
                                             background: 'none',
                                             border: 'none',
                                             color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
                                             cursor: 'pointer',
-                                            fontSize: '0.8rem'
+                                            fontSize: '0.875rem'
+                                        }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {selectedGender === 'Women' && (
+                            <div style={{ marginBottom: '2rem' }}>
+                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Women's Categories</h3>
+                                {['All', 'Sarees', 'Half Saree', 'Kurta', 'Western', 'Tops', 'Leggings'].map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        style={{
+                                            display: 'block',
+                                            width: '100%',
+                                            textAlign: 'left',
+                                            padding: '0.5rem 0',
+                                            background: 'none',
+                                            border: 'none',
+                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                                            cursor: 'pointer',
+                                            fontSize: '0.875rem'
+                                        }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {selectedGender === 'Unisex' && (
+                            <div style={{ marginBottom: '2rem' }}>
+                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Categories</h3>
+                                {['All', 'Accessories'].map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        style={{
+                                            display: 'block',
+                                            width: '100%',
+                                            textAlign: 'left',
+                                            padding: '0.5rem 0',
+                                            background: 'none',
+                                            border: 'none',
+                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                                            cursor: 'pointer',
+                                            fontSize: '0.875rem'
+                                        }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {selectedGender === 'All' && (
+                            <div style={{ marginBottom: '2rem' }}>
+                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>All Categories</h3>
+                                {categories.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        style={{
+                                            display: 'block',
+                                            width: '100%',
+                                            textAlign: 'left',
+                                            padding: '0.5rem 0',
+                                            background: 'none',
+                                            border: 'none',
+                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                                            cursor: 'pointer',
+                                            fontSize: '0.875rem'
                                         }}
                                     >
                                         {cat}

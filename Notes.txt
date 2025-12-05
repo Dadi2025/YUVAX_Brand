@@ -15,4 +15,6 @@ http://localhost:5173/admin/login
 
 delivery agent
 ----------------------
+agent@spoo.com
+agent123
 http://localhost:5173/delivery/login
