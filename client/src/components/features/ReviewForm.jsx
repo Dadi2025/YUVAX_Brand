@@ -103,21 +103,26 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
         <form onSubmit={handleSubmit} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Write a Review</h3>
 
+
             {/* Rating */}
             <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Your Rating</label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                     {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
+                        <div
                             key={star}
-                            size={32}
-                            style={{ cursor: 'pointer', transition: 'all 0.2s' }}
-                            fill={(hoverRating || rating) >= star ? 'var(--accent-cyan)' : 'none'}
-                            stroke={(hoverRating || rating) >= star ? 'var(--accent-cyan)' : 'var(--text-muted)'}
+                            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                             onMouseEnter={() => setHoverRating(star)}
                             onMouseLeave={() => setHoverRating(0)}
                             onClick={() => setRating(star)}
-                        />
+                        >
+                            <Star
+                                size={32}
+                                style={{ transition: 'all 0.2s', pointerEvents: 'none' }}
+                                fill={(hoverRating || rating) >= star ? 'var(--accent-cyan)' : 'none'}
+                                stroke={(hoverRating || rating) >= star ? 'var(--accent-cyan)' : 'var(--text-muted)'}
+                            />
+                        </div>
                     ))}
                 </div>
             </div>

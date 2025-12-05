@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { useApp } from '../../context/AppContext';
@@ -10,6 +10,10 @@ const Checkout = () => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [saveAddress, setSaveAddress] = useState(false);
+    const [savedAddresses, setSavedAddresses] = useState([]);
+    const [selectedAddressId, setSelectedAddressId] = useState('');
+    const [showNewAddressForm, setShowNewAddressForm] = useState(true);
     const [shippingInfo, setShippingInfo] = useState({
         name: user?.name || '',
         phone: user?.phone || '',
@@ -20,6 +24,31 @@ const Checkout = () => {
         country: 'India'
     });
     const [paymentMethod, setPaymentMethod] = useState('upi');
+
+    // Fetch saved addresses on mount
+    useEffect(() => {
+        if (user?.addresses && user.addresses.length > 0) {
+            setSavedAddresses(user.addresses);
+            setShowNewAddressForm(false);
+        }
+    }, [user]);
+
+    // Load selected address
+    const loadAddress = (addressId) => {
+        const address = savedAddresses.find((_, idx) => idx.toString() === addressId);
+        if (address) {
+            setShippingInfo({
+                name: user?.name || '',
+                phone: user?.phone || '',
+                address: address.street || '',
+                city: address.city || '',
+                state: address.state || '',
+                postalCode: address.zip || '',
+                country: address.country || 'India'
+            });
+            setShowNewAddressForm(false);
+        }
+    };
 
     const loadRazorpay = () => {
         return new Promise((resolve) => {
@@ -267,114 +296,187 @@ const Checkout = () => {
                         {step === 1 && (
                             <div>
                                 <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Shipping Information</h2>
-                                <div style={{ display: 'grid', gap: '1rem' }}>
-                                    <div>
-                                        <input
-                                            type="text"
-                                            placeholder="Full Name"
-                                            value={shippingInfo.name}
-                                            onChange={(e) => handleInputChange('name', e.target.value)}
+
+                                {/* Saved Addresses Dropdown */}
+                                {savedAddresses.length > 0 && !showNewAddressForm && (
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Select Saved Address</label>
+                                        <select
+                                            value={selectedAddressId}
+                                            onChange={(e) => {
+                                                setSelectedAddressId(e.target.value);
+                                                if (e.target.value) {
+                                                    loadAddress(e.target.value);
+                                                }
+                                            }}
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
                                                 background: 'rgba(255,255,255,0.05)',
-                                                border: `1px solid ${errors.name ? '#ff4444' : 'var(--border-light)'}`,
+                                                border: '1px solid var(--border-light)',
                                                 borderRadius: '4px',
-                                                color: 'white'
+                                                color: 'white',
+                                                marginBottom: '1rem'
                                             }}
-                                        />
-                                        <ErrorMessage message={errors.name} />
-                                    </div>
-                                    <div>
-                                        <input
-                                            type="tel"
-                                            placeholder="Phone Number (10 digits)"
-                                            value={shippingInfo.phone}
-                                            onChange={(e) => handleInputChange('phone', e.target.value)}
-                                            maxLength={10}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                background: 'rgba(255,255,255,0.05)',
-                                                border: `1px solid ${errors.phone ? '#ff4444' : 'var(--border-light)'}`,
-                                                borderRadius: '4px',
-                                                color: 'white'
+                                        >
+                                            <option value="">Select an address</option>
+                                            {savedAddresses.map((addr, idx) => (
+                                                <option key={idx} value={idx}>
+                                                    {addr.street}, {addr.city}, {addr.state} - {addr.zip}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowNewAddressForm(true);
+                                                setSelectedAddressId('');
+                                                setShippingInfo({
+                                                    name: user?.name || '',
+                                                    phone: user?.phone || '',
+                                                    address: '',
+                                                    city: '',
+                                                    state: '',
+                                                    postalCode: '',
+                                                    country: 'India'
+                                                });
                                             }}
-                                        />
-                                        <ErrorMessage message={errors.phone} />
+                                            className="btn-secondary"
+                                            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                                        >
+                                            + Add New Address
+                                        </button>
                                     </div>
-                                    <div>
-                                        <textarea
-                                            placeholder="Address"
-                                            value={shippingInfo.address}
-                                            onChange={(e) => handleInputChange('address', e.target.value)}
-                                            rows={3}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                background: 'rgba(255,255,255,0.05)',
-                                                border: `1px solid ${errors.address ? '#ff4444' : 'var(--border-light)'}`,
-                                                borderRadius: '4px',
-                                                color: 'white'
-                                            }}
-                                        />
-                                        <ErrorMessage message={errors.address} />
-                                    </div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                        <div>
-                                            <input
-                                                type="text"
-                                                placeholder="City"
-                                                value={shippingInfo.city}
-                                                onChange={(e) => handleInputChange('city', e.target.value)}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '0.75rem',
-                                                    background: 'rgba(255,255,255,0.05)',
-                                                    border: `1px solid ${errors.city ? '#ff4444' : 'var(--border-light)'}`,
-                                                    borderRadius: '4px',
-                                                    color: 'white'
-                                                }}
-                                            />
-                                            <ErrorMessage message={errors.city} />
+                                )}
+
+                                {/* Address Form */}
+                                {(showNewAddressForm || savedAddresses.length === 0) && (
+                                    <>
+                                        <div style={{ display: 'grid', gap: '1rem' }}>
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Full Name"
+                                                    value={shippingInfo.name}
+                                                    onChange={(e) => handleInputChange('name', e.target.value)}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        background: 'rgba(255,255,255,0.05)',
+                                                        border: `1px solid ${errors.name ? '#ff4444' : 'var(--border-light)'}`,
+                                                        borderRadius: '4px',
+                                                        color: 'white'
+                                                    }}
+                                                />
+                                                <ErrorMessage message={errors.name} />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Phone Number (10 digits)"
+                                                    value={shippingInfo.phone}
+                                                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                                                    maxLength={10}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        background: 'rgba(255,255,255,0.05)',
+                                                        border: `1px solid ${errors.phone ? '#ff4444' : 'var(--border-light)'}`,
+                                                        borderRadius: '4px',
+                                                        color: 'white'
+                                                    }}
+                                                />
+                                                <ErrorMessage message={errors.phone} />
+                                            </div>
+                                            <div>
+                                                <textarea
+                                                    placeholder="Address"
+                                                    value={shippingInfo.address}
+                                                    onChange={(e) => handleInputChange('address', e.target.value)}
+                                                    rows={3}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        background: 'rgba(255,255,255,0.05)',
+                                                        border: `1px solid ${errors.address ? '#ff4444' : 'var(--border-light)'}`,
+                                                        borderRadius: '4px',
+                                                        color: 'white'
+                                                    }}
+                                                />
+                                                <ErrorMessage message={errors.address} />
+                                            </div>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="City"
+                                                        value={shippingInfo.city}
+                                                        onChange={(e) => handleInputChange('city', e.target.value)}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.75rem',
+                                                            background: 'rgba(255,255,255,0.05)',
+                                                            border: `1px solid ${errors.city ? '#ff4444' : 'var(--border-light)'}`,
+                                                            borderRadius: '4px',
+                                                            color: 'white'
+                                                        }}
+                                                    />
+                                                    <ErrorMessage message={errors.city} />
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="State"
+                                                        value={shippingInfo.state}
+                                                        onChange={(e) => handleInputChange('state', e.target.value)}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.75rem',
+                                                            background: 'rgba(255,255,255,0.05)',
+                                                            border: `1px solid ${errors.state ? '#ff4444' : 'var(--border-light)'}`,
+                                                            borderRadius: '4px',
+                                                            color: 'white'
+                                                        }}
+                                                    />
+                                                    <ErrorMessage message={errors.state} />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Pincode (6 digits)"
+                                                    value={shippingInfo.postalCode}
+                                                    onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                                                    maxLength={6}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.75rem',
+                                                        background: 'rgba(255,255,255,0.05)',
+                                                        border: `1px solid ${errors.postalCode ? '#ff4444' : 'var(--border-light)'}`,
+                                                        borderRadius: '4px',
+                                                        color: 'white'
+                                                    }}
+                                                />
+                                                <ErrorMessage message={errors.postalCode} />
+                                            </div>
                                         </div>
-                                        <div>
+
+                                        {/* Save Address Checkbox */}
+                                        <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                             <input
-                                                type="text"
-                                                placeholder="State"
-                                                value={shippingInfo.state}
-                                                onChange={(e) => handleInputChange('state', e.target.value)}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '0.75rem',
-                                                    background: 'rgba(255,255,255,0.05)',
-                                                    border: `1px solid ${errors.state ? '#ff4444' : 'var(--border-light)'}`,
-                                                    borderRadius: '4px',
-                                                    color: 'white'
-                                                }}
+                                                type="checkbox"
+                                                id="saveAddress"
+                                                checked={saveAddress}
+                                                onChange={(e) => setSaveAddress(e.target.checked)}
+                                                style={{ cursor: 'pointer' }}
                                             />
-                                            <ErrorMessage message={errors.state} />
+                                            <label htmlFor="saveAddress" style={{ cursor: 'pointer', fontSize: '0.875rem' }}>
+                                                Save this address for future orders
+                                            </label>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <input
-                                            type="text"
-                                            placeholder="Pincode (6 digits)"
-                                            value={shippingInfo.postalCode}
-                                            onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                                            maxLength={6}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                background: 'rgba(255,255,255,0.05)',
-                                                border: `1px solid ${errors.postalCode ? '#ff4444' : 'var(--border-light)'}`,
-                                                borderRadius: '4px',
-                                                color: 'white'
-                                            }}
-                                        />
-                                        <ErrorMessage message={errors.postalCode} />
-                                    </div>
-                                </div>
+                                    </>
+                                )}
+
                                 <button onClick={handleContinueToPayment} className="btn-primary" style={{ marginTop: '2rem', width: '100%' }}>
                                     CONTINUE TO PAYMENT
                                 </button>
