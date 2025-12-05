@@ -10,6 +10,11 @@ const DeliveryDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+
+    // COD Modal State
+    const [codModal, setCodModal] = useState({ show: false, order: null });
+    const [codConfirmed, setCodConfirmed] = useState(false);
+
     const { showToast } = useApp();
     const navigate = useNavigate();
 
@@ -47,489 +52,665 @@ const DeliveryDashboard = () => {
         }
     };
 
-    if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Picked Up';
-    return true;
-});
+    const handleLogout = () => {
+        localStorage.removeItem('agent-token');
+        localStorage.removeItem('agent-info');
+        navigate('/delivery/login');
+    };
 
-if (loading) return (
-    <div style={{ minHeight: '100vh', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚚</div>
-            <div style={{ color: 'var(--text-muted)' }}>Loading your deliveries...</div>
+    const markDelivered = async (orderId) => {
+        const order = orders.find(o => o._id === orderId);
+
+        // COD Check
+        if (order.paymentMethod === 'cod') {
+            setCodModal({ show: true, order });
+            setCodConfirmed(false);
+            return;
+        }
+
+        // Standard Check
+        if (!window.confirm('Mark this order as Delivered?')) return;
+        await processDelivery(orderId);
+    };
+
+    const handleCodDelivered = async () => {
+        if (!codConfirmed || !codModal.order) return;
+        await processDelivery(codModal.order._id);
+        setCodModal({ show: false, order: null });
+        setCodConfirmed(false);
+    };
+
+    const processDelivery = async (orderId) => {
+        try {
+            const token = localStorage.getItem('agent-token');
+            const res = await fetch(`/api/agents/orders/${orderId}/deliver`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (res.ok) {
+                showToast('Order marked as Delivered', 'success');
+                // Refresh orders
+                fetchAssignedOrders(token, agent._id);
+            } else {
+                showToast('Failed to update status', 'error');
+            }
+        } catch (error) {
+            showToast('Error updating status', 'error');
+        }
+    };
+
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            showToast('Passwords do not match', 'error');
+            return;
+        }
+
+        if (passwordData.newPassword.length < 6) {
+            showToast('Password must be at least 6 characters', 'error');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('agent-token');
+            const res = await fetch('/api/agents/change-password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                showToast('Password changed successfully', 'success');
+                setShowPasswordModal(false);
+                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            } else {
+                showToast(data.message || 'Failed to change password', 'error');
+            }
+        } catch (error) {
+            showToast('Error changing password', 'error');
+        }
+    };
+
+    const filteredOrders = orders.filter(order => {
+        if (filterStatus === 'All') return true;
+        if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
+        if (filterStatus === 'Delivered') return order.status === 'Delivered';
+        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Picked Up';
+        return true;
+    });
+
+    if (loading) return (
+        <div style={{ minHeight: '100vh', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚚</div>
+                <div style={{ color: 'var(--text-muted)' }}>Loading your deliveries...</div>
+            </div>
         </div>
-    </div>
-);
+    );
 
-return (
-    <div style={{ minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem', background: 'var(--bg-dark)' }}>
-        <div className="container">
-            {/* Header Card */}
-            <div style={{
-                background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
-                borderRadius: '16px',
-                padding: '2rem',
-                marginBottom: '2rem',
-                boxShadow: '0 8px 32px rgba(0, 255, 255, 0.2)'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{
-                            width: '60px',
-                            height: '60px',
-                            borderRadius: '50%',
-                            background: 'rgba(255, 255, 255, 0.2)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '2rem'
-                        }}>
-                            🚚
-                        </div>
-                        <div>
-                            <h1 style={{ fontSize: '2rem', marginBottom: '0.25rem', color: 'black' }}>Hello, {agent?.name}!</h1>
-                            <p style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '1rem' }}>Delivery Partner Dashboard</p>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button
-                            onClick={() => setFilterStatus('All')}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.3)',
-                                border: 'none',
-                                padding: '0.75rem 1.5rem',
-                                borderRadius: '8px',
-                                color: 'black',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                fontSize: '0.875rem',
+    return (
+        <div style={{ minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem', background: 'var(--bg-dark)' }}>
+            <div className="container">
+                {/* Header Card */}
+                <div style={{
+                    background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
+                    borderRadius: '16px',
+                    padding: '2rem',
+                    marginBottom: '2rem',
+                    boxShadow: '0 8px 32px rgba(0, 255, 255, 0.2)'
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{
+                                width: '60px',
+                                height: '60px',
+                                borderRadius: '50%',
+                                background: 'rgba(255, 255, 255, 0.2)',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem'
-                            }}
-                        >
-                            📦 My Orders
-                            <span style={{ background: 'black', color: 'white', borderRadius: '50%', padding: '0.1rem 0.4rem', fontSize: '0.75rem' }}>
-                                {orders.length}
-                            </span>
-                        </button>
-                        <button
-                            onClick={() => setShowPasswordModal(true)}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.3)',
-                                border: 'none',
-                                padding: '0.75rem 1.5rem',
-                                borderRadius: '8px',
-                                color: 'black',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                fontSize: '0.875rem'
-                            }}
-                        >
-                            🔒 Change Password
-                        </button>
-                    </div>
-                </div>
-
-                {/* Stats */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
-                    <div
-                        onClick={() => setFilterStatus('All')}
-                        style={{
-                            background: filterStatus === 'All' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
-                            padding: '1rem',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            border: filterStatus === 'All' ? '2px solid white' : '2px solid transparent'
-                        }}
-                    >
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                            {orders.length}
-                        </div>
-                        <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Total Assigned</div>
-                    </div>
-                    <div
-                        onClick={() => setFilterStatus('Pending')}
-                        style={{
-                            background: filterStatus === 'Pending' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
-                            padding: '1rem',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            border: filterStatus === 'Pending' ? '2px solid white' : '2px solid transparent'
-                        }}
-                    >
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                            {orders.filter(o => ['Processing', 'Shipped'].includes(o.status)).length}
-                        </div>
-                        <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Pending Orders</div>
-                    </div>
-                    <div
-                        onClick={() => setFilterStatus('Delivered')}
-                        style={{
-                            background: filterStatus === 'Delivered' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
-                            padding: '1rem',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            border: filterStatus === 'Delivered' ? '2px solid white' : '2px solid transparent'
-                        }}
-                    >
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                            {orders.filter(o => o.status === 'Delivered').length}
-                        </div>
-                        <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Delivered Orders</div>
-                    </div>
-                    <div
-                        onClick={() => setFilterStatus('Returned')}
-                        style={{
-                            background: filterStatus === 'Returned' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
-                            padding: '1rem',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            border: filterStatus === 'Returned' ? '2px solid white' : '2px solid transparent'
-                        }}
-                    >
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                            {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Picked Up').length}
-                        </div>
-                        <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Returned Orders</div>
-                    </div>
-                    <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
-                            ₹{orders.reduce((acc, order) => (order.paymentMethod === 'cod' && order.status !== 'Delivered') ? acc + order.totalPrice : acc, 0)}
-                        </div>
-                        <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Cash to Collect</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Orders Section */}
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Package size={24} color="var(--accent-cyan)" />
-                {filterStatus === 'All' ? 'All Deliveries' : `${filterStatus} Deliveries`}
-            </h2>
-
-            {filteredOrders.length === 0 ? (
-                <div style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '2px dashed var(--border-light)',
-                    borderRadius: '16px',
-                    padding: '4rem 2rem',
-                    textAlign: 'center'
-                }}>
-                    <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📦</div>
-                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>No {filterStatus !== 'All' ? filterStatus : ''} Deliveries Found</h3>
-                    <p style={{ color: 'var(--text-muted)' }}>Orders will appear here when assigned to your area</p>
-                </div>
-            ) : (
-                <div style={{ display: 'grid', gap: '1.5rem' }}>
-                    {filteredOrders.map(order => (
-                        <div key={order._id} style={{
-                            background: 'rgba(255, 255, 255, 0.03)',
-                            border: '1px solid var(--border-light)',
-                            borderRadius: '16px',
-                            padding: '1.5rem',
-                            transition: 'transform 0.2s, box-shadow 0.2s',
-                            cursor: 'pointer'
-                        }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-4px)';
-                                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 255, 255, 0.1)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = 'none';
+                                justifyContent: 'center',
+                                fontSize: '2rem'
                             }}>
-                            {/* Order Header */}
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    <div style={{
-                                        background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '8px',
-                                        fontFamily: 'monospace',
-                                        fontWeight: 'bold',
-                                        color: 'black'
-                                    }}>
-                                        #{order._id.slice(-6)}
+                                🚚
+                            </div>
+                            <div>
+                                <h1 style={{ fontSize: '2rem', marginBottom: '0.25rem', color: 'black' }}>Hello, {agent?.name}!</h1>
+                                <p style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '1rem' }}>Delivery Partner Dashboard</p>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                onClick={() => setFilterStatus('All')}
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.3)',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '8px',
+                                    color: 'black',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.875rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
+                                📦 My Orders
+                                <span style={{ background: 'black', color: 'white', borderRadius: '50%', padding: '0.1rem 0.4rem', fontSize: '0.75rem' }}>
+                                    {orders.length}
+                                </span>
+                            </button>
+                            <button
+                                onClick={() => setShowPasswordModal(true)}
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.3)',
+                                    border: 'none',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '8px',
+                                    color: 'black',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.875rem'
+                                }}
+                            >
+                                🔒 Change Password
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
+                        <div
+                            onClick={() => setFilterStatus('All')}
+                            style={{
+                                background: filterStatus === 'All' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'All' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                {orders.length}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Total Assigned</div>
+                        </div>
+                        <div
+                            onClick={() => setFilterStatus('Pending')}
+                            style={{
+                                background: filterStatus === 'Pending' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'Pending' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                {orders.filter(o => ['Processing', 'Shipped'].includes(o.status)).length}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Pending Orders</div>
+                        </div>
+                        <div
+                            onClick={() => setFilterStatus('Delivered')}
+                            style={{
+                                background: filterStatus === 'Delivered' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'Delivered' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                {orders.filter(o => o.status === 'Delivered').length}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Delivered Orders</div>
+                        </div>
+                        <div
+                            onClick={() => setFilterStatus('Returned')}
+                            style={{
+                                background: filterStatus === 'Returned' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: filterStatus === 'Returned' ? '2px solid white' : '2px solid transparent'
+                            }}
+                        >
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Picked Up').length}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Returned Orders</div>
+                        </div>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '12px' }}>
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'black' }}>
+                                ₹{orders.reduce((acc, order) => (order.paymentMethod === 'cod' && order.status !== 'Delivered') ? acc + order.totalPrice : acc, 0)}
+                            </div>
+                            <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '0.875rem' }}>Cash to Collect</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Orders Section */}
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Package size={24} color="var(--accent-cyan)" />
+                    {filterStatus === 'All' ? 'All Deliveries' : `${filterStatus} Deliveries`}
+                </h2>
+
+                {filteredOrders.length === 0 ? (
+                    <div style={{
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '2px dashed var(--border-light)',
+                        borderRadius: '16px',
+                        padding: '4rem 2rem',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📦</div>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>No {filterStatus !== 'All' ? filterStatus : ''} Deliveries Found</h3>
+                        <p style={{ color: 'var(--text-muted)' }}>Orders will appear here when assigned to your area</p>
+                    </div>
+                ) : (
+                    <div style={{ display: 'grid', gap: '1.5rem' }}>
+                        {filteredOrders.map(order => (
+                            <div key={order._id} style={{
+                                background: 'rgba(255, 255, 255, 0.03)',
+                                border: '1px solid var(--border-light)',
+                                borderRadius: '16px',
+                                padding: '1.5rem',
+                                transition: 'transform 0.2s, box-shadow 0.2s',
+                                cursor: 'pointer'
+                            }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
+                                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 255, 255, 0.1)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}>
+                                {/* Order Header */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <div style={{
+                                            background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
+                                            fontFamily: 'monospace',
+                                            fontWeight: 'bold',
+                                            color: 'black'
+                                        }}>
+                                            #{order._id.slice(-6)}
+                                        </div>
+                                        <div style={{
+                                            background: order.status === 'Delivered' ? '#4ade80' :
+                                                order.status === 'Returned' ? '#facc15' : 'var(--accent-cyan)',
+                                            color: 'black',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
+                                            fontWeight: 'bold',
+                                            fontSize: '0.875rem'
+                                        }}>
+                                            {order.status === 'Delivered' ? '✓ Delivered' :
+                                                order.status === 'Returned' ? '↩ Returned' : '🚚 ' + order.status}
+                                        </div>
                                     </div>
                                     <div style={{
-                                        background: order.status === 'Delivered' ? '#4ade80' :
-                                            order.status === 'Returned' ? '#facc15' : 'var(--accent-cyan)',
+                                        background: order.paymentMethod === 'cod' ? '#ffbb33' : '#4ade80',
                                         color: 'black',
                                         padding: '0.5rem 1rem',
                                         borderRadius: '8px',
                                         fontWeight: 'bold',
                                         fontSize: '0.875rem'
                                     }}>
-                                        {order.status === 'Delivered' ? '✓ Delivered' :
-                                            order.status === 'Returned' ? '↩ Returned' : '🚚 ' + order.status}
+                                        {order.paymentMethod === 'cod' ? `💰 COD ₹${order.totalPrice}` : '✓ Prepaid'}
                                     </div>
                                 </div>
-                                <div style={{
-                                    background: order.paymentMethod === 'cod' ? '#ffbb33' : '#4ade80',
-                                    color: 'black',
-                                    padding: '0.5rem 1rem',
-                                    borderRadius: '8px',
-                                    fontWeight: 'bold',
-                                    fontSize: '0.875rem'
-                                }}>
-                                    {order.paymentMethod === 'cod' ? `💰 COD ₹${order.totalPrice}` : '✓ Prepaid'}
-                                </div>
-                            </div>
 
-                            {/* Delivery Address */}
-                            <div style={{
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                padding: '1rem',
-                                borderRadius: '12px',
-                                marginBottom: '1rem'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'start', gap: '1rem' }}>
-                                    <MapPin size={20} color="var(--accent-cyan)" style={{ marginTop: '2px', flexShrink: 0 }} />
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.25rem' }}>
-                                            {order.shippingAddress?.address}
-                                        </div>
-                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                                            {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.postalCode}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Return/Exchange Status */}
-                            {(order.returnStatus === 'Approved' || order.exchangeStatus === 'Approved') && (
+                                {/* Delivery Address */}
                                 <div style={{
-                                    background: 'rgba(250, 204, 21, 0.1)',
-                                    border: '1px solid rgba(250, 204, 21, 0.3)',
+                                    background: 'rgba(255, 255, 255, 0.05)',
                                     padding: '1rem',
                                     borderRadius: '12px',
-                                    marginBottom: '1rem',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center'
+                                    marginBottom: '1rem'
                                 }}>
-                                    <div style={{ color: '#facc15', fontWeight: 'bold' }}>
-                                        {order.returnStatus === 'Approved' ? '↩ Return Approved' : '🔄 Exchange Approved'}
+                                    <div style={{ display: 'flex', alignItems: 'start', gap: '1rem' }}>
+                                        <MapPin size={20} color="var(--accent-cyan)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.25rem' }}>
+                                                {order.shippingAddress?.address}
+                                            </div>
+                                            <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                                                {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.postalCode}
+                                            </div>
+                                        </div>
                                     </div>
-                                    {order.returnStatus === 'Approved' && (
-                                        <button
-                                            onClick={async () => {
-                                                if (!window.confirm('Confirm return pickup?')) return;
-                                                try {
-                                                    const token = localStorage.getItem('agent-token');
-                                                    const res = await fetch(`/api/agents/orders/${order._id}/return-pickup`, {
-                                                        method: 'PUT',
-                                                        headers: { 'Authorization': `Bearer ${token}` }
-                                                    });
-                                                    if (res.ok) {
-                                                        showToast('Return marked as picked up', 'success');
-                                                        fetchAssignedOrders(token, agent._id);
-                                                    } else {
-                                                        const data = await res.json();
-                                                        showToast(data.message || data.error || 'Failed to update', 'error');
-                                                    }
-                                                } catch (e) { showToast('Error', 'error'); }
-                                            }}
-                                            style={{
-                                                background: '#facc15',
-                                                color: 'black',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                fontWeight: 'bold',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            Pick Up Return
-                                        </button>
-                                    )}
-                                    {order.exchangeStatus === 'Approved' && (
-                                        <button
-                                            onClick={async () => {
-                                                if (!window.confirm('Confirm exchange completion?')) return;
-                                                try {
-                                                    const token = localStorage.getItem('agent-token');
-                                                    const res = await fetch(`/api/agents/orders/${order._id}/exchange-complete`, {
-                                                        method: 'PUT',
-                                                        headers: { 'Authorization': `Bearer ${token}` }
-                                                    });
-                                                    if (res.ok) {
-                                                        showToast('Exchange completed', 'success');
-                                                        fetchAssignedOrders(token, agent._id);
-                                                    } else showToast('Failed to update', 'error');
-                                                } catch (e) { showToast('Error', 'error'); }
-                                            }}
-                                            style={{
-                                                background: '#facc15',
-                                                color: 'black',
-                                                border: 'none',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '6px',
-                                                fontWeight: 'bold',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            Complete Exchange
-                                        </button>
-                                    )}
                                 </div>
-                            )}
 
-                            {/* Customer Contact */}
-                            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                                <a
-                                    href={`tel:${order.user?.phone || '0000000000'}`}
-                                    style={{
-                                        flex: 1,
-                                        background: 'var(--accent-purple)',
-                                        color: 'white',
-                                        padding: '0.75rem 1rem',
-                                        borderRadius: '8px',
-                                        textDecoration: 'none',
+                                {/* Return/Exchange Status */}
+                                {(order.returnStatus === 'Approved' || order.exchangeStatus === 'Approved') && (
+                                    <div style={{
+                                        background: 'rgba(250, 204, 21, 0.1)',
+                                        border: '1px solid rgba(250, 204, 21, 0.3)',
+                                        padding: '1rem',
+                                        borderRadius: '12px',
+                                        marginBottom: '1rem',
                                         display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '0.5rem',
-                                        fontWeight: 'bold',
-                                        transition: 'transform 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                                >
-                                    <Phone size={18} />
-                                    Call Customer
-                                </a>
-                            </div>
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}>
+                                        <div style={{ color: '#facc15', fontWeight: 'bold' }}>
+                                            {order.returnStatus === 'Approved' ? '↩ Return Approved' : '🔄 Exchange Approved'}
+                                        </div>
+                                        {order.returnStatus === 'Approved' && (
+                                            <button
+                                                onClick={async () => {
+                                                    if (!window.confirm('Confirm return pickup?')) return;
+                                                    try {
+                                                        const token = localStorage.getItem('agent-token');
+                                                        const res = await fetch(`/api/agents/orders/${order._id}/return-pickup`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Authorization': `Bearer ${token}` }
+                                                        });
+                                                        if (res.ok) {
+                                                            showToast('Return marked as picked up', 'success');
+                                                            fetchAssignedOrders(token, agent._id);
+                                                        } else {
+                                                            const data = await res.json();
+                                                            showToast(data.message || data.error || 'Failed to update', 'error');
+                                                        }
+                                                    } catch (e) { showToast('Error', 'error'); }
+                                                }}
+                                                style={{
+                                                    background: '#facc15',
+                                                    color: 'black',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Pick Up Return
+                                            </button>
+                                        )}
+                                        {order.exchangeStatus === 'Approved' && (
+                                            <button
+                                                onClick={async () => {
+                                                    if (!window.confirm('Confirm exchange completion?')) return;
+                                                    try {
+                                                        const token = localStorage.getItem('agent-token');
+                                                        const res = await fetch(`/api/agents/orders/${order._id}/exchange-complete`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Authorization': `Bearer ${token}` }
+                                                        });
+                                                        if (res.ok) {
+                                                            showToast('Exchange completed', 'success');
+                                                            fetchAssignedOrders(token, agent._id);
+                                                        } else showToast('Failed to update', 'error');
+                                                    } catch (e) { showToast('Error', 'error'); }
+                                                }}
+                                                style={{
+                                                    background: '#facc15',
+                                                    color: 'black',
+                                                    border: 'none',
+                                                    padding: '0.5rem 1rem',
+                                                    borderRadius: '6px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Complete Exchange
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
 
-                            {/* Action Button */}
-                            {order.status !== 'Delivered' && order.status !== 'Returned' && (
-                                <button
-                                    onClick={() => markDelivered(order._id)}
+                                {/* Customer Contact */}
+                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                                    <a
+                                        href={`tel:${order.user?.phone || '0000000000'}`}
+                                        style={{
+                                            flex: 1,
+                                            background: 'var(--accent-purple)',
+                                            color: 'white',
+                                            padding: '0.75rem 1rem',
+                                            borderRadius: '8px',
+                                            textDecoration: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            fontWeight: 'bold',
+                                            transition: 'transform 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                    >
+                                        <Phone size={18} />
+                                        Call Customer
+                                    </a>
+                                </div>
+
+                                {/* Action Button */}
+                                {order.status !== 'Delivered' && order.status !== 'Returned' && (
+                                    <button
+                                        onClick={() => markDelivered(order._id)}
+                                        style={{
+                                            width: '100%',
+                                            background: 'linear-gradient(135deg, #4ade80, #22c55e)',
+                                            color: 'black',
+                                            border: 'none',
+                                            padding: '1rem',
+                                            borderRadius: '8px',
+                                            fontWeight: 'bold',
+                                            fontSize: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                    >
+                                        <CheckCircle size={20} />
+                                        Mark as Delivered
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Password Change Modal */}
+            {showPasswordModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '1rem'
+                }}>
+                    <div style={{
+                        background: '#1e1e1e',
+                        padding: '2rem',
+                        borderRadius: '16px',
+                        width: '100%',
+                        maxWidth: '400px',
+                        border: '1px solid var(--accent-cyan)',
+                        boxShadow: '0 8px 32px rgba(0, 255, 255, 0.3)'
+                    }}>
+                        <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>🔒 Change Password</h3>
+                        <form onSubmit={handlePasswordChange}>
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Current Password</label>
+                                <input
+                                    type="password"
+                                    value={passwordData.currentPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                    required
                                     style={{
                                         width: '100%',
-                                        background: 'linear-gradient(135deg, #4ade80, #22c55e)',
-                                        color: 'black',
-                                        border: 'none',
-                                        padding: '1rem',
+                                        padding: '0.75rem',
+                                        background: '#2a2a2a',
+                                        border: '1px solid var(--border-light)',
                                         borderRadius: '8px',
-                                        fontWeight: 'bold',
-                                        fontSize: '1rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '0.5rem',
-                                        cursor: 'pointer',
-                                        transition: 'transform 0.2s'
+                                        color: 'white',
+                                        fontSize: '1rem'
                                     }}
-                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                />
+                            </div>
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>New Password</label>
+                                <input
+                                    type="password"
+                                    value={passwordData.newPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        background: '#2a2a2a',
+                                        border: '1px solid var(--border-light)',
+                                        borderRadius: '8px',
+                                        color: 'white',
+                                        fontSize: '1rem'
+                                    }}
+                                />
+                            </div>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Confirm New Password</label>
+                                <input
+                                    type="password"
+                                    value={passwordData.confirmPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        background: '#2a2a2a',
+                                        border: '1px solid var(--border-light)',
+                                        borderRadius: '8px',
+                                        color: 'white',
+                                        fontSize: '1rem'
+                                    }}
+                                />
+                            </div>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowPasswordModal(false);
+                                        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                                    }}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        background: 'none',
+                                        border: '1px solid var(--border-light)',
+                                        borderRadius: '8px',
+                                        color: 'white',
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold'
+                                    }}
                                 >
-                                    <CheckCircle size={20} />
-                                    Mark as Delivered
+                                    Cancel
                                 </button>
-                            )}
-                        </div>
-                    ))}
+                                <button
+                                    type="submit"
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        background: 'var(--accent-cyan)',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
-        </div>
 
-        {/* Password Change Modal */}
-        {showPasswordModal && (
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'rgba(0, 0, 0, 0.9)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 1000,
-                padding: '1rem'
-            }}>
-                {/* ... (Password Modal Content) ... */}
+            {/* COD Confirmation Modal */}
+            {codModal.show && codModal.order && (
                 <div style={{
-                    background: '#1e1e1e',
-                    padding: '2rem',
-                    borderRadius: '16px',
-                    width: '100%',
-                    maxWidth: '400px',
-                    border: '1px solid var(--accent-cyan)',
-                    boxShadow: '0 8px 32px rgba(0, 255, 255, 0.3)'
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '1rem'
                 }}>
-                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>🔒 Change Password</h3>
-                    <form onSubmit={handlePasswordChange}>
-                        {/* ... Fields ... */}
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Current Password</label>
-                            <input
-                                type="password"
-                                value={passwordData.currentPassword}
-                                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                                required
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    background: '#2a2a2a',
-                                    border: '1px solid var(--border-light)',
-                                    borderRadius: '8px',
-                                    color: 'white',
-                                    fontSize: '1rem'
-                                }}
-                            />
+                    <div style={{
+                        background: '#1e1e1e',
+                        padding: '2rem',
+                        borderRadius: '16px',
+                        width: '100%',
+                        maxWidth: '400px',
+                        border: '1px solid #ffbb33',
+                        boxShadow: '0 8px 32px rgba(255, 187, 51, 0.2)'
+                    }}>
+                        <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem', color: '#ffbb33', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            💰 Collect Payment
+                        </h3>
+                        <div style={{ background: 'rgba(255, 187, 51, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Total Amount to Collect:</p>
+                            <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white' }}>₹{codModal.order.totalPrice}</p>
                         </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>New Password</label>
+
+                        <label style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', cursor: 'pointer', marginBottom: '2rem' }}>
                             <input
-                                type="password"
-                                value={passwordData.newPassword}
-                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                required
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    background: '#2a2a2a',
-                                    border: '1px solid var(--border-light)',
-                                    borderRadius: '8px',
-                                    color: 'white',
-                                    fontSize: '1rem'
-                                }}
+                                type="checkbox"
+                                onChange={(e) => setCodConfirmed(e.target.checked)}
+                                style={{ transform: 'scale(1.5)', marginTop: '4px' }}
                             />
-                        </div>
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Confirm New Password</label>
-                            <input
-                                type="password"
-                                value={passwordData.confirmPassword}
-                                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                required
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    background: '#2a2a2a',
-                                    border: '1px solid var(--border-light)',
-                                    borderRadius: '8px',
-                                    color: 'white',
-                                    fontSize: '1rem'
-                                }}
-                            />
-                        </div>
+                            <span style={{ fontSize: '0.875rem', lineHeight: '1.4' }}>
+                                I confirm that I have collected the full cash amount of <strong>₹{codModal.order.totalPrice}</strong> from the customer.
+                            </span>
+                        </label>
+
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button
-                                type="button"
                                 onClick={() => {
-                                    setShowPasswordModal(false);
-                                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                                    setCodModal({ show: false, order: null });
+                                    setCodConfirmed(false);
                                 }}
                                 style={{
                                     flex: 1,
-                                    padding: '0.75rem',
+                                    padding: '1rem',
                                     background: 'none',
                                     border: '1px solid var(--border-light)',
                                     borderRadius: '8px',
@@ -541,111 +722,28 @@ return (
                                 Cancel
                             </button>
                             <button
-                                type="submit"
+                                onClick={handleCodDelivered}
+                                disabled={!codConfirmed}
                                 style={{
                                     flex: 1,
-                                    padding: '0.75rem',
-                                    background: 'var(--accent-cyan)',
+                                    padding: '1rem',
+                                    background: codConfirmed ? '#ffbb33' : 'rgba(255, 187, 51, 0.3)',
                                     border: 'none',
                                     borderRadius: '8px',
                                     color: 'black',
                                     fontWeight: 'bold',
-                                    cursor: 'pointer'
+                                    cursor: codConfirmed ? 'pointer' : 'not-allowed',
+                                    transition: 'all 0.2s'
                                 }}
                             >
-                                Update Password
+                                Confirm & Deliver
                             </button>
                         </div>
-                    </form>
-                </div>
-            </div>
-        )}
-
-        {/* COD Confirmation Modal */}
-        {codModal.show && codModal.order && (
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'rgba(0, 0, 0, 0.9)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 1000,
-                padding: '1rem'
-            }}>
-                <div style={{
-                    background: '#1e1e1e',
-                    padding: '2rem',
-                    borderRadius: '16px',
-                    width: '100%',
-                    maxWidth: '400px',
-                    border: '1px solid #ffbb33',
-                    boxShadow: '0 8px 32px rgba(255, 187, 51, 0.2)'
-                }}>
-                    <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem', color: '#ffbb33', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        💰 Collect Payment
-                    </h3>
-                    <div style={{ background: 'rgba(255, 187, 51, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Total Amount to Collect:</p>
-                        <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white' }}>₹{codModal.order.totalPrice}</p>
-                    </div>
-
-                    <label style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', cursor: 'pointer', marginBottom: '2rem' }}>
-                        <input
-                            type="checkbox"
-                            onChange={(e) => setCodConfirmed(e.target.checked)}
-                            style={{ transform: 'scale(1.5)', marginTop: '4px' }}
-                        />
-                        <span style={{ fontSize: '0.875rem', lineHeight: '1.4' }}>
-                            I confirm that I have collected the full cash amount of <strong>₹{codModal.order.totalPrice}</strong> from the customer.
-                        </span>
-                    </label>
-
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button
-                            onClick={() => {
-                                setCodModal({ show: false, order: null });
-                                setCodConfirmed(false);
-                            }}
-                            style={{
-                                flex: 1,
-                                padding: '1rem',
-                                background: 'none',
-                                border: '1px solid var(--border-light)',
-                                borderRadius: '8px',
-                                color: 'white',
-                                cursor: 'pointer',
-                                fontWeight: 'bold'
-                            }}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleCodDelivered}
-                            disabled={!codConfirmed}
-                            style={{
-                                flex: 1,
-                                padding: '1rem',
-                                background: codConfirmed ? '#ffbb33' : 'rgba(255, 187, 51, 0.3)',
-                                border: 'none',
-                                borderRadius: '8px',
-                                color: 'black',
-                                fontWeight: 'bold',
-                                cursor: codConfirmed ? 'pointer' : 'not-allowed',
-                                transition: 'all 0.2s'
-                            }}
-                        >
-                            Confirm & Deliver
-                        </button>
                     </div>
                 </div>
-            </div>
-        )}
-    </div>
-);
+            )}
+        </div>
+    );
 };
 
 export default DeliveryDashboard;
