@@ -170,6 +170,7 @@ const ProductDetail = () => {
                                 onClick={() => addToCart(product, selectedSize, quantity)}
                                 className="btn-primary"
                                 style={{ flex: 1, padding: '1rem' }}
+                                data-testid="add-to-cart-btn"
                             >
                                 ADD TO CART
                             </button>

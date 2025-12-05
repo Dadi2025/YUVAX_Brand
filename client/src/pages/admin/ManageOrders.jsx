@@ -215,101 +215,174 @@ const ManageOrders = () => {
 
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <div style={{ marginBottom: '0.5rem' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Return:</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ color: getStatusColor(order.returnStatus), fontWeight: 'bold' }}>{order.returnStatus}</span>
-                            {order.returnStatus === 'Requested' && (
-                                <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                    <button onClick={() => handleReturnStatusUpdate(orderId, 'Approved')} style={{ background: '#4ade80', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Approve">✓</button>
-                                    <button onClick={() => handleReturnStatusUpdate(orderId, 'Rejected')} style={{ background: '#ef4444', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Reject">✕</button>
-                                </div>
-                            )}
-                        </div>
-                        {order.returnReason && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.returnReason}>{order.returnReason}</div>}
+                    <thead>
+                        <tr style={{ background: 'rgba(255,255,255,0.05)' }}>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Order ID</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Date</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Customer</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Items</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Total</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Agent</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Status</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Return/Exchange</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid var(--border-light)' }}>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Array.isArray(filteredOrders) && filteredOrders.length > 0 ? (
+                            filteredOrders.map((order, index) => {
+                                if (!order) return null;
+                                const orderId = order._id || order.id || `order-${index}`;
+                                const dateStr = order.createdAt || order.date;
+                                const formattedDate = dateStr ? new Date(dateStr).toLocaleDateString() : 'N/A';
+                                const customerName = order.user ? order.user.name : (order.shippingAddress ? order.shippingAddress.name : 'Guest');
+                                const items = order.orderItems || order.items || [];
 
-                        {/* Refund Controls */}
-                        {order.returnStatus === 'Approved' && (
-                            <div style={{ marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.5rem' }}>
-                                {order.refundStatus === 'Completed' ? (
-                                    <div style={{ fontSize: '0.75rem', color: '#4ade80', fontWeight: 'bold' }}>
-                                        Refunded: ₹{order.refundAmount}
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={() => handleRefund(orderId)}
-                                        style={{
-                                            background: 'var(--accent-cyan)',
-                                            color: 'black',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            padding: '0.25rem 0.5rem',
-                                            cursor: 'pointer',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 'bold',
-                                            width: '100%'
-                                        }}
-                                    >
-                                        Process Refund
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                    </div>
+                                return (
+                                    <tr key={orderId} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                                        <td style={{ padding: '1rem' }}>{orderId}</td>
+                                        <td style={{ padding: '1rem' }}>{formattedDate}</td>
+                                        <td style={{ padding: '1rem' }}>{customerName}</td>
+                                        <td style={{ padding: '1rem' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                                {items.map((item, idx) => (
+                                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <img
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                                                        />
+                                                        <div>
+                                                            <a
+                                                                href={`/shop/product/${item.product}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontSize: '0.875rem' }}
+                                                            >
+                                                                {item.name}
+                                                            </a>
+                                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                                                Size: {item.size} | Qty: {item.quantity}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td style={{ padding: '1rem' }}>₹{order.totalPrice || order.total}</td>
+                                        <td style={{ padding: '1rem' }}>
+                                            {order.assignedAgent ? (
+                                                <div style={{ fontSize: '0.875rem' }}>
+                                                    <div style={{ fontWeight: 'bold' }}>{order.assignedAgent.name}</div>
+                                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{order.assignedAgent.phone}</div>
+                                                </div>
+                                            ) : (
+                                                <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Unassigned</span>
                                             )}
-                    {order.exchangeStatus && order.exchangeStatus !== 'None' && (
-                        <div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Exchange:</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span style={{ color: getStatusColor(order.exchangeStatus), fontWeight: 'bold' }}>{order.exchangeStatus}</span>
-                                {order.exchangeStatus === 'Requested' && (
-                                    <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                        <button onClick={() => handleExchangeStatusUpdate(orderId, 'Approved')} style={{ background: '#4ade80', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Approve">✓</button>
-                                        <button onClick={() => handleExchangeStatusUpdate(orderId, 'Rejected')} style={{ background: '#ef4444', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Reject">✕</button>
-                                    </div>
-                                )}
-                            </div>
-                            {order.exchangeReason && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.exchangeReason}>{order.exchangeReason}</div>}
-                        </div>
-                    )}
-                    {(!order.returnStatus || order.returnStatus === 'None') && (!order.exchangeStatus || order.exchangeStatus === 'None') && (
-                        <span style={{ color: 'var(--text-muted)' }}>-</span>
-                    )}
-                </td>
-                <td style={{ padding: '1rem' }}>
-                    <select
-                        value={order.status || 'Processing'}
-                        onChange={(e) => updateOrderStatus(orderId, e.target.value)}
-                        style={{
-                            padding: '0.5rem',
-                            background: '#2a2a2a',
-                            border: '1px solid var(--border-light)',
-                            borderRadius: '4px',
-                            color: 'white',
-                            cursor: 'pointer',
-                            fontSize: '0.875rem'
-                        }}
-                    >
-                        <option value="Processing" style={{ background: '#2a2a2a', color: 'white' }}>Processing</option>
-                        <option value="Shipped" style={{ background: '#2a2a2a', color: 'white' }}>Shipped</option>
-                        <option value="Delivered" style={{ background: '#2a2a2a', color: 'white' }}>Delivered</option>
-                        <option value="Cancelled" style={{ background: '#2a2a2a', color: 'white' }}>Cancelled</option>
-                    </select>
-                </td>
-            </tr>
-            );
+                                        </td>
+                                        <td style={{ padding: '1rem' }}>
+                                            <select
+                                                value={order.status}
+                                                onChange={(e) => updateOrderStatus(orderId, e.target.value)}
+                                                style={{
+                                                    background: 'rgba(0,0,0,0.3)',
+                                                    border: '1px solid var(--border-light)',
+                                                    color: getStatusColor(order.status),
+                                                    padding: '0.5rem',
+                                                    borderRadius: '4px'
+                                                }}
+                                            >
+                                                <option value="Processing">Processing</option>
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
+                                        </td>
+                                        <td style={{ padding: '1rem' }}>
+                                            {/* Return/Exchange Logic */}
+                                            {order.returnStatus && order.returnStatus !== 'None' && (
+                                                <div style={{ marginBottom: '0.5rem' }}>
+                                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Return:</div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <span style={{ color: getStatusColor(order.returnStatus), fontWeight: 'bold' }}>{order.returnStatus}</span>
+                                                        {order.returnStatus === 'Requested' && (
+                                                            <div style={{ display: 'flex', gap: '0.25rem' }}>
+                                                                <button onClick={() => handleReturnStatusUpdate(orderId, 'Approved')} style={{ background: '#4ade80', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Approve">✓</button>
+                                                                <button onClick={() => handleReturnStatusUpdate(orderId, 'Rejected')} style={{ background: '#ef4444', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Reject">✕</button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {order.returnReason && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.returnReason}>{order.returnReason}</div>}
+
+                                                    {/* Refund Controls */}
+                                                    {order.returnStatus === 'Approved' && (
+                                                        <div style={{ marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.5rem' }}>
+                                                            {order.refundStatus === 'Completed' ? (
+                                                                <div style={{ fontSize: '0.75rem', color: '#4ade80', fontWeight: 'bold' }}>
+                                                                    Refunded: ₹{order.refundAmount}
+                                                                </div>
+                                                            ) : (
+                                                                <button
+                                                                    onClick={() => handleRefund(orderId)}
+                                                                    style={{
+                                                                        background: 'var(--accent-cyan)',
+                                                                        color: 'black',
+                                                                        border: 'none',
+                                                                        borderRadius: '4px',
+                                                                        padding: '0.25rem 0.5rem',
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '0.75rem',
+                                                                        fontWeight: 'bold',
+                                                                        width: '100%'
+                                                                    }}
+                                                                >
+                                                                    Process Refund
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {order.exchangeStatus && order.exchangeStatus !== 'None' && (
+                                                <div>
+                                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Exchange:</div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <span style={{ color: getStatusColor(order.exchangeStatus), fontWeight: 'bold' }}>{order.exchangeStatus}</span>
+                                                        {order.exchangeStatus === 'Requested' && (
+                                                            <div style={{ display: 'flex', gap: '0.25rem' }}>
+                                                                <button onClick={() => handleExchangeStatusUpdate(orderId, 'Approved')} style={{ background: '#4ade80', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Approve">✓</button>
+                                                                <button onClick={() => handleExchangeStatusUpdate(orderId, 'Rejected')} style={{ background: '#ef4444', border: 'none', borderRadius: '4px', padding: '0.25rem', cursor: 'pointer' }} title="Reject">✕</button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {order.exchangeReason && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.exchangeReason}>{order.exchangeReason}</div>}
+                                                </div>
+                                            )}
+                                            {(!order.returnStatus || order.returnStatus === 'None') && (!order.exchangeStatus || order.exchangeStatus === 'None') && (
+                                                <span style={{ color: 'var(--text-muted)' }}>-</span>
+                                            )}
+                                        </td>
+                                        <td style={{ padding: '1rem' }}>
+                                            <button
+                                                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}
+                                            >
+                                                🗑️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
                             })
-            ) : (
-            <tr>
-                <td colSpan="8" style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    {Array.isArray(orders) ? 'No orders found' : 'Error: Orders data is invalid'}
-                </td>
-            </tr>
+                        ) : (
+                            <tr>
+                                <td colSpan="8" style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                                    No orders found
+                                </td>
+                            </tr>
                         )}
-        </tbody>
-                </table >
-            </div >
-        </div >
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 };
 
