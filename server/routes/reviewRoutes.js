@@ -59,7 +59,20 @@ const reviewValidation = [
 // @access  Public
 router.get('/product/:productId', async (req, res) => {
     try {
-        const reviews = await Review.find({ product: req.params.productId })
+        // :productId can be numeric ID or ObjectId
+        // We need to find the Product _id first if it's numeric
+        let product;
+        if (req.params.productId.match(/^[0-9]+$/)) {
+            product = await Product.findOne({ id: req.params.productId });
+        } else {
+            product = await Product.findById(req.params.productId);
+        }
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const reviews = await Review.find({ product: product._id })
             .populate('user', 'name')
             .sort({ createdAt: -1 });
 
@@ -73,7 +86,7 @@ router.get('/product/:productId', async (req, res) => {
 // @desc    Create a review
 // @route   POST /api/reviews
 // @access  Private
-router.post('/', protect, upload.array('photos', 3), reviewValidation, async (req, res) => {
+router.post('/', protect, upload.array('images', 3), reviewValidation, async (req, res) => {
     // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -87,12 +100,19 @@ router.post('/', protect, upload.array('photos', 3), reviewValidation, async (re
         });
     }
 
-    const { product, rating, comment } = req.body;
+    const { product: productIdInput, rating, comment } = req.body;
 
     try {
-        // Check if product exists
-        const productExists = await Product.findOne({ id: product });
-        if (!productExists) {
+        // Check if product exists (handle numeric ID or ObjectId)
+        let product;
+        // Assuming frontend sends numeric ID predominantly based on current Product schema
+        // But let's support both.
+        product = await Product.findOne({ id: productIdInput });
+        if (!product && productIdInput.length === 24) {
+            product = await Product.findById(productIdInput);
+        }
+
+        if (!product) {
             if (req.files) {
                 req.files.forEach(file => fs.unlinkSync(file.path));
             }
@@ -102,7 +122,7 @@ router.post('/', protect, upload.array('photos', 3), reviewValidation, async (re
         // Check if user already reviewed this product
         const existingReview = await Review.findOne({
             user: req.user._id,
-            product: product
+            product: product._id
         });
 
         if (existingReview) {
@@ -112,21 +132,21 @@ router.post('/', protect, upload.array('photos', 3), reviewValidation, async (re
             return res.status(400).json({ message: 'You have already reviewed this product' });
         }
 
-        // Get photo paths
-        const photos = req.files ? req.files.map(file => `/${file.path.replace(/\\/g, '/')}`) : [];
+        // Get image paths
+        const images = req.files ? req.files.map(file => `/${file.path.replace(/\\/g, '/')}`) : [];
 
         const review = new Review({
             user: req.user._id,
-            product: parseInt(product),
+            product: product._id,
             rating: parseInt(rating),
             comment,
-            photos
+            images
         });
 
         const createdReview = await review.save();
 
         // Update product rating
-        await updateProductRating(product);
+        await updateProductRating(product._id);
 
         // Populate user data before sending response
         await createdReview.populate('user', 'name');
@@ -209,12 +229,12 @@ router.delete('/:id', protect, async (req, res) => {
 
         const productId = review.product;
 
-        // Delete associated photos
-        if (review.photos && review.photos.length > 0) {
-            review.photos.forEach(photo => {
-                const photoPath = photo.substring(1); // Remove leading slash
-                if (fs.existsSync(photoPath)) {
-                    fs.unlinkSync(photoPath);
+        // Delete associated images
+        if (review.images && review.images.length > 0) {
+            review.images.forEach(image => {
+                const imagePath = image.substring(1); // Remove leading slash
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
                 }
             });
         }
@@ -234,6 +254,7 @@ router.delete('/:id', protect, async (req, res) => {
 // Helper function to update product rating
 async function updateProductRating(productId) {
     try {
+        // productId is ObjectId
         const reviews = await Review.find({ product: productId });
 
         const numReviews = reviews.length;
@@ -242,7 +263,7 @@ async function updateProductRating(productId) {
             : 0;
 
         await Product.updateOne(
-            { id: productId },
+            { _id: productId }, // Find by _id now
             {
                 rating: Math.round(avgRating * 10) / 10,
                 numReviews: numReviews

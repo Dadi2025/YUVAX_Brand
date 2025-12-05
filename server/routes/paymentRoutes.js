@@ -20,6 +20,13 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret'
 });
 
+// @desc    Get Razorpay Key
+// @route   GET /api/payment/razorpay-key
+// @access  Private
+router.get('/razorpay-key', protect, (req, res) => {
+    res.json({ keyId: process.env.RAZORPAY_KEY_ID });
+});
+
 // @desc    Create Razorpay Order
 // @route   POST /api/payment/create-razorpay-order
 // @access  Private

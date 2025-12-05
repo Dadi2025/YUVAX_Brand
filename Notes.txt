@@ -17,3 +17,6 @@ delivery agent
 ----------------------
 password123
 http://localhost:5173/delivery/login
+
+key_id,key_secret
+rzp_test_RlyXTH2bMWqYKf,2IUraQoLs5F0ZdxZflCkvNnj

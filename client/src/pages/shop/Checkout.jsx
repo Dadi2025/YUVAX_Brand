@@ -164,8 +164,18 @@ const Checkout = () => {
                     return;
                 }
 
+                // Get Razorpay Key from Server
+                const keyRes = await fetch('/api/payment/razorpay-key', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const { keyId } = await keyRes.json();
+
+                if (!keyId) {
+                    showToast('Razorpay configuration missing', 'error');
+                    return;
+                }
+
                 // Create Order on Server
-                const token = localStorage.getItem('token');
                 const result = await fetch('/api/payment/create-razorpay-order', {
                     method: 'POST',
                     headers: {
@@ -178,7 +188,7 @@ const Checkout = () => {
                 const data = await result.json();
 
                 const options = {
-                    key: "rzp_test_placeholder", // Enter the Key ID generated from the Dashboard
+                    key: keyId, // Enter the Key ID generated from the Dashboard
                     amount: data.amount,
                     currency: data.currency,
                     name: "YUVA X",

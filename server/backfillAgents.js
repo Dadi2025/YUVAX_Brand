@@ -1,59 +1,71 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Order from './models/Order.js';
-import { assignAgentByPinCode } from './utils/agentAssignment.js';
+import Agent from './models/Agent.js';
 
 dotenv.config();
 
 const backfillAgents = async () => {
     try {
-        await mongoose.connect('mongodb://localhost/yuvax');
-        console.log('✅ MongoDB Connected\n');
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('Connected to MongoDB');
 
-        // Find all orders without assigned agents
-        const ordersWithoutAgents = await Order.find({ assignedAgent: null });
-
-        console.log(`📦 Found ${ordersWithoutAgents.length} orders without assigned agents\n`);
-
-        if (ordersWithoutAgents.length === 0) {
-            console.log('✅ All orders already have agents assigned!');
-            process.exit(0);
-        }
-
-        let successCount = 0;
-        let failCount = 0;
-
-        console.log('🔄 Starting backfill process...\n');
-
-        for (const order of ordersWithoutAgents) {
-            const pinCode = String(order.shippingAddress.postalCode);
-            console.log(`Processing Order ${order._id} (Pincode: ${pinCode})...`);
-
-            const agent = await assignAgentByPinCode(pinCode);
-
-            if (agent) {
-                order.assignedAgent = agent._id;
-                order.agentAssignedAt = Date.now();
-                await order.save();
-                console.log(`  ✅ Assigned to: ${agent.name} (${agent.email})\n`);
-                successCount++;
+        // 1. Ensure 'Test Agent' covers 110001, 110002, 110003
+        const testAgent = await Agent.findOne({ email: 'agent@test.com' });
+        if (testAgent) {
+            const desiredPins = ['110001', '110002', '110003'];
+            let modified = false;
+            desiredPins.forEach(pin => {
+                if (!testAgent.pinCodes.includes(pin)) {
+                    testAgent.pinCodes.push(pin);
+                    modified = true;
+                }
+            });
+            if (modified) {
+                await testAgent.save();
+                console.log('Updated Test Agent pincodes.');
             } else {
-                console.log(`  ⚠️  No agent available for pincode ${pinCode}\n`);
-                failCount++;
+                console.log('Test Agent already covers 110001.');
             }
         }
 
-        console.log('='.repeat(60));
-        console.log('📊 BACKFILL SUMMARY:');
-        console.log(`  Total orders processed: ${ordersWithoutAgents.length}`);
-        console.log(`  ✅ Successfully assigned: ${successCount}`);
-        console.log(`  ⚠️  No agent available: ${failCount}`);
-        console.log('='.repeat(60));
+        // 2. Ensure coverage for 516001 (User Request)
+        // We'll add this to a new agent or existing one
+        const kadapaPincode = '516001';
+        let kadapaAgent = await Agent.findOne({ pinCodes: kadapaPincode });
 
-        console.log('\n✅ Backfill complete!');
+        if (!kadapaAgent) {
+            console.log(`No agent found explicitly for ${kadapaPincode}. Assigning to 'Andhra Agent'.`);
+
+            // Check if 'Andhra Agent' exists by email
+            kadapaAgent = await Agent.findOne({ email: 'andhra@test.com' });
+
+            if (kadapaAgent) {
+                if (!kadapaAgent.pinCodes.includes(kadapaPincode)) {
+                    kadapaAgent.pinCodes.push(kadapaPincode);
+                    await kadapaAgent.save();
+                    console.log(`Updated Andhra Agent to cover ${kadapaPincode}`);
+                }
+            } else {
+                // Create new agent
+                kadapaAgent = await Agent.create({
+                    name: 'Andhra Agent',
+                    email: 'andhra@test.com',
+                    password: 'password123', // Hashed in pre-save hook usually
+                    phone: '9876543212',
+                    role: 'delivery_agent',
+                    pinCodes: [kadapaPincode],
+                    isActive: true
+                });
+                console.log(`Created new agent 'Andhra Agent' for ${kadapaPincode}`);
+            }
+        } else {
+            console.log(`Agent '${kadapaAgent.name}' already covers ${kadapaPincode}`);
+        }
+
+        console.log('Backfill complete.');
         process.exit(0);
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('Backfill error:', error);
         process.exit(1);
     }
 };

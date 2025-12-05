@@ -1,14 +1,10 @@
 import mongoose from 'mongoose';
 
-const reviewSchema = new mongoose.Schema({
+const reviewSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
-    },
-    product: {
-        type: Number,
-        required: true
     },
     rating: {
         type: Number,
@@ -18,12 +14,17 @@ const reviewSchema = new mongoose.Schema({
     },
     comment: {
         type: String,
-        required: true,
-        maxlength: 1000
+        required: true
     },
-    photos: [{
-        type: String
+    images: [{
+        type: String, // URLs to images
+        required: false
     }],
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Product'
+    },
     helpful: {
         type: Number,
         default: 0
