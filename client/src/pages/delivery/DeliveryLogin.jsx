@@ -130,6 +130,12 @@ const DeliveryLogin = () => {
                         </div>
                     </div>
 
+                    <div style={{ textAlign: 'right', marginBottom: '1.5rem' }}>
+                        <a href="/delivery/forgot-password" style={{ color: 'var(--accent-cyan)', fontSize: '0.875rem', textDecoration: 'none' }}>
+                            Forgot Password?
+                        </a>
+                    </div>
+
                     <button
                         type="submit"
                         disabled={loading}

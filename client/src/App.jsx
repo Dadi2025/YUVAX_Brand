@@ -27,6 +27,8 @@ const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const DeliveryLogin = lazy(() => import('./pages/delivery/DeliveryLogin'));
 const DeliveryDashboard = lazy(() => import('./pages/delivery/DeliveryDashboard'));
+const DeliveryForgotPassword = lazy(() => import('./pages/delivery/DeliveryForgotPassword'));
+const DeliveryResetPassword = lazy(() => import('./pages/delivery/DeliveryResetPassword'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const FAQ = lazy(() => import('./pages/FAQ'));
@@ -77,6 +79,8 @@ function App() {
 
                 {/* Delivery Agent Routes */}
                 <Route path="/delivery/login" element={<DeliveryLogin />} />
+                <Route path="/delivery/forgot-password" element={<DeliveryForgotPassword />} />
+                <Route path="/delivery/reset-password/:token" element={<DeliveryResetPassword />} />
                 <Route path="/delivery/dashboard" element={<DeliveryDashboard />} />
 
                 <Route path="/about" element={<About />} />

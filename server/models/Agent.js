@@ -46,6 +46,16 @@ const agentSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    resetPasswordToken: {
+        type: String
+    },
+    resetPasswordExpire: {
+        type: Date
+    },
+    mustChangePassword: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

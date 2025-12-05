@@ -86,6 +86,139 @@ router.put('/change-password', protect, async (req, res) => {
     }
 });
 
+// @desc    Reset agent password (Admin)
+// @route   PUT /api/agents/:id/reset-password
+// @access  Private/Admin
+router.put('/:id/reset-password', protect, admin, async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+
+        if (!newPassword) {
+            return res.status(400).json({ message: 'Please provide a new password' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters' });
+        }
+
+        const agent = await Agent.findById(req.params.id);
+
+        if (!agent) {
+            return res.status(404).json({ message: 'Agent not found' });
+        }
+
+        // Update password and set flag to force password change
+        agent.password = newPassword;
+        agent.mustChangePassword = true;
+        agent.resetPasswordToken = undefined;
+        agent.resetPasswordExpire = undefined;
+        await agent.save();
+
+        res.json({
+            message: 'Password reset successfully. Agent must change password on next login.',
+            agent: {
+                _id: agent._id,
+                name: agent.name,
+                email: agent.email
+            }
+        });
+    } catch (error) {
+        console.error('Admin reset password error:', error);
+        res.status(500).json({ message: 'Failed to reset password' });
+    }
+});
+
+
+
+// @desc    Forgot password - Request reset token
+// @route   POST /api/agents/forgot-password
+// @access  Public
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Please provide email address' });
+        }
+
+        const agent = await Agent.findOne({ email });
+
+        if (!agent) {
+            return res.json({
+                message: 'If an account exists with this email, a password reset link has been sent.'
+            });
+        }
+
+        // Generate reset token
+        const crypto = await import('crypto');
+        const resetToken = crypto.default.randomBytes(32).toString('hex');
+
+        // Hash token and set to resetPasswordToken field
+        const hashedToken = crypto.default
+            .createHash('sha256')
+            .update(resetToken)
+            .digest('hex');
+
+        agent.resetPasswordToken = hashedToken;
+        agent.resetPasswordExpire = Date.now() + 60 * 60 * 1000; // 1 hour
+        await agent.save();
+
+        // In production, send email with reset link
+        const resetUrl = `${req.protocol}://${req.get('host')}/delivery/reset-password/${resetToken}`;
+
+        res.json({
+            message: 'Password reset link sent to email',
+            resetToken, // For dev/testing only
+            resetUrl
+        });
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({ message: 'Failed to process password reset request' });
+    }
+});
+
+// @desc    Reset password with token
+// @route   PUT /api/agents/reset-password/:token
+// @access  Public
+router.put('/reset-password/:token', async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+
+        if (!newPassword) {
+            return res.status(400).json({ message: 'Please provide a new password' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters' });
+        }
+
+        const crypto = await import('crypto');
+        const hashedToken = crypto.default
+            .createHash('sha256')
+            .update(req.params.token)
+            .digest('hex');
+
+        const agent = await Agent.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!agent) {
+            return res.status(400).json({ message: 'Invalid or expired reset token' });
+        }
+
+        agent.password = newPassword;
+        agent.resetPasswordToken = undefined;
+        agent.resetPasswordExpire = undefined;
+        agent.mustChangePassword = false;
+        await agent.save();
+
+        res.json({ message: 'Password reset successfully. You can now login with your new password.' });
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'Failed to reset password' });
+    }
+});
 
 // @desc    Get logged-in agent's assigned orders
 // @route   GET /api/agents/my-orders
