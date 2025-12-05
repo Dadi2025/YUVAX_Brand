@@ -144,11 +144,26 @@ const Profile = () => {
 
                                             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '1rem' }}>
                                                 <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Items ({(order.orderItems || order.items || []).length})</p>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                                     {(order.orderItems || order.items || []).map((item, idx) => (
-                                                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                                                            <span>{item.name} (Size: {item.size}) × {item.quantity}</span>
-                                                            <span>₹{item.price * item.quantity}</span>
+                                                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem' }}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                                <img
+                                                                    src={item.image}
+                                                                    alt={item.name}
+                                                                    style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+                                                                />
+                                                                <div>
+                                                                    <a
+                                                                        href={`/shop/product/${item.product}`}
+                                                                        style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', display: 'block' }}
+                                                                    >
+                                                                        {item.name}
+                                                                    </a>
+                                                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Size: {item.size} | Qty: {item.quantity}</span>
+                                                                </div>
+                                                            </div>
+                                                            <span style={{ fontWeight: 'bold' }}>₹{item.price * item.quantity}</span>
                                                         </div>
                                                     ))}
                                                 </div>
