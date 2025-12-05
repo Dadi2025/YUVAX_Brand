@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Loader } from 'lucide-react';
 import axios from 'axios';
 import ProductCard from './ProductCard';
-import '../styles/chat.css';
+import '../../styles/chat.css';
 
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);

@@ -7,7 +7,6 @@ import Review from '../models/Review.js';
 import Product from '../models/Product.js';
 import { protect } from '../middleware/auth.js';
 import loyaltyService from '../utils/loyaltyService.js';
-import loyaltyService from '../utils/loyaltyService.js';
 
 const router = express.Router();
 

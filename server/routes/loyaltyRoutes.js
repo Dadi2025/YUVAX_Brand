@@ -1,5 +1,5 @@
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/auth.js';
 import loyaltyService from '../utils/loyaltyService.js';
 import PointsTransaction from '../models/PointsTransaction.js';
 import User from '../models/User.js';
