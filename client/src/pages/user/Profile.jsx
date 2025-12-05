@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import { Package, Clock, CheckCircle, RotateCcw, RefreshCw, XCircle } from 'lucide-react';
 import OrderReturnModal from '../../components/returns/OrderReturnModal';
 
 const Profile = () => {
@@ -87,43 +88,62 @@ const Profile = () => {
                         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '2rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <h3 style={{ fontSize: '1.5rem', margin: 0 }}>Order History</h3>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    {['All', 'Pending', 'Delivered', 'Returned', 'Exchanged', 'Rejected'].map(status => (
+                                <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                                    {[
+                                        { id: 'All', label: 'All Orders', icon: Package, color: 'var(--text-primary)' },
+                                        { id: 'Pending', label: 'Pending', icon: Clock, color: 'var(--accent-cyan)' },
+                                        { id: 'Delivered', label: 'Delivered', icon: CheckCircle, color: '#4ade80' },
+                                        { id: 'Returned', label: 'Returned', icon: RotateCcw, color: '#facc15' },
+                                        { id: 'Exchanged', label: 'Exchanged', icon: RefreshCw, color: '#a855f7' },
+                                        { id: 'Rejected', label: 'Rejected', icon: XCircle, color: '#ef4444' }
+                                    ].map(tab => (
                                         <button
-                                            key={status}
-                                            onClick={() => setFilterStatus(status)}
+                                            key={tab.id}
+                                            onClick={() => setFilterStatus(tab.id)}
                                             style={{
-                                                background: filterStatus === status ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.1)',
-                                                color: filterStatus === status ? 'black' : 'var(--text-muted)',
-                                                border: 'none',
-                                                padding: '0.25rem 0.75rem',
-                                                borderRadius: '4px',
+                                                background: filterStatus === tab.id ? tab.color : 'rgba(255,255,255,0.05)',
+                                                color: filterStatus === tab.id ? 'black' : 'var(--text-muted)',
+                                                border: filterStatus === tab.id ? 'none' : '1px solid var(--border-light)',
+                                                padding: '0.6rem 1.2rem',
+                                                borderRadius: '12px',
                                                 cursor: 'pointer',
-                                                fontSize: '0.75rem',
+                                                fontSize: '0.9rem',
                                                 fontWeight: 'bold',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '0.25rem'
+                                                gap: '0.5rem',
+                                                transition: 'all 0.2s ease',
+                                                boxShadow: filterStatus === tab.id ? '0 4px 12px rgba(0,0,0,0.2)' : 'none'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (filterStatus !== tab.id) {
+                                                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (filterStatus !== tab.id) {
+                                                    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                }
                                             }}
                                         >
-                                            {status}
+                                            <tab.icon size={16} />
+                                            {tab.label}
                                             <span style={{
-                                                background: 'rgba(0,0,0,0.2)',
-                                                borderRadius: '50%',
-                                                width: '18px',
-                                                height: '18px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '10px'
+                                                background: filterStatus === tab.id ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.1)',
+                                                borderRadius: '20px',
+                                                padding: '2px 8px',
+                                                fontSize: '0.75rem',
+                                                marginLeft: '4px'
                                             }}>
                                                 {userOrders.filter(o => {
-                                                    if (status === 'All') return true;
-                                                    if (status === 'Pending') return ['Processing', 'Shipped'].includes(o.status);
-                                                    if (status === 'Delivered') return o.status === 'Delivered';
-                                                    if (status === 'Returned') return (o.status === 'Returned' || (o.returnStatus !== 'None' && o.returnStatus !== 'Rejected')) && o.exchangeStatus === 'None';
-                                                    if (status === 'Exchanged') return (o.exchangeStatus !== 'None' && o.exchangeStatus !== 'Rejected');
-                                                    if (status === 'Rejected') return o.returnStatus === 'Rejected' || o.exchangeStatus === 'Rejected';
+                                                    if (tab.id === 'All') return true;
+                                                    if (tab.id === 'Pending') return ['Processing', 'Shipped'].includes(o.status);
+                                                    if (tab.id === 'Delivered') return o.status === 'Delivered';
+                                                    if (tab.id === 'Returned') return (o.status === 'Returned' || (o.returnStatus !== 'None' && o.returnStatus !== 'Rejected')) && o.exchangeStatus === 'None';
+                                                    if (tab.id === 'Exchanged') return (o.exchangeStatus !== 'None' && o.exchangeStatus !== 'Rejected');
+                                                    if (tab.id === 'Rejected') return o.returnStatus === 'Rejected' || o.exchangeStatus === 'Rejected';
                                                     return false;
                                                 }).length}
                                             </span>
