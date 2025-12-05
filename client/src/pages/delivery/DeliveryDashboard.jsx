@@ -183,6 +183,9 @@ const DeliveryDashboard = () => {
                                 }}
                             >
                                 📦 My Orders
+                                <span style={{ background: 'black', color: 'white', borderRadius: '50%', padding: '0.1rem 0.4rem', fontSize: '0.75rem' }}>
+                                    {orders.length}
+                                </span>
                             </button>
                             <button
                                 onClick={() => setShowPasswordModal(true)}
@@ -400,7 +403,10 @@ const DeliveryDashboard = () => {
                                                         if (res.ok) {
                                                             showToast('Return marked as picked up', 'success');
                                                             fetchAssignedOrders(token, agent._id);
-                                                        } else showToast('Failed to update', 'error');
+                                                        } else {
+                                                            const data = await res.json();
+                                                            showToast(data.message || data.error || 'Failed to update', 'error');
+                                                        }
                                                     } catch (e) { showToast('Error', 'error'); }
                                                 }}
                                                 style={{

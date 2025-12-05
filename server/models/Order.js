@@ -67,7 +67,7 @@ const orderSchema = mongoose.Schema({
     },
     returnStatus: {
         type: String,
-        enum: ['None', 'Requested', 'Approved', 'Rejected'],
+        enum: ['None', 'Requested', 'Approved', 'Rejected', 'Picked Up', 'Completed'],
         default: 'None'
     },
     returnReason: {

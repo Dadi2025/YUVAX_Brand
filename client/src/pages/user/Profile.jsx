@@ -88,7 +88,7 @@ const Profile = () => {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <h3 style={{ fontSize: '1.5rem', margin: 0 }}>Order History</h3>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    {['All', 'Pending', 'Delivered', 'Returned'].map(status => (
+                                    {['All', 'Pending', 'Delivered', 'Returned', 'Exchanged', 'Rejected'].map(status => (
                                         <button
                                             key={status}
                                             onClick={() => setFilterStatus(status)}
@@ -100,10 +100,33 @@ const Profile = () => {
                                                 borderRadius: '4px',
                                                 cursor: 'pointer',
                                                 fontSize: '0.75rem',
-                                                fontWeight: 'bold'
+                                                fontWeight: 'bold',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.25rem'
                                             }}
                                         >
                                             {status}
+                                            <span style={{
+                                                background: 'rgba(0,0,0,0.2)',
+                                                borderRadius: '50%',
+                                                width: '18px',
+                                                height: '18px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '10px'
+                                            }}>
+                                                {userOrders.filter(o => {
+                                                    if (status === 'All') return true;
+                                                    if (status === 'Pending') return ['Processing', 'Shipped'].includes(o.status);
+                                                    if (status === 'Delivered') return o.status === 'Delivered';
+                                                    if (status === 'Returned') return (o.status === 'Returned' || (o.returnStatus !== 'None' && o.returnStatus !== 'Rejected')) && o.exchangeStatus === 'None';
+                                                    if (status === 'Exchanged') return (o.exchangeStatus !== 'None' && o.exchangeStatus !== 'Rejected');
+                                                    if (status === 'Rejected') return o.returnStatus === 'Rejected' || o.exchangeStatus === 'Rejected';
+                                                    return false;
+                                                }).length}
+                                            </span>
                                         </button>
                                     ))}
                                 </div>
@@ -115,7 +138,9 @@ const Profile = () => {
                                         if (filterStatus === 'All') return true;
                                         if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
                                         if (filterStatus === 'Delivered') return order.status === 'Delivered';
-                                        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Approved' || order.returnStatus === 'Completed';
+                                        if (filterStatus === 'Returned') return (order.status === 'Returned' || (order.returnStatus !== 'None' && order.returnStatus !== 'Rejected')) && order.exchangeStatus === 'None';
+                                        if (filterStatus === 'Exchanged') return (order.exchangeStatus !== 'None' && order.exchangeStatus !== 'Rejected');
+                                        if (filterStatus === 'Rejected') return order.returnStatus === 'Rejected' || order.exchangeStatus === 'Rejected';
                                         return true;
                                     }).map(order => (
                                         <div key={order._id || order.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '1.5rem' }}>

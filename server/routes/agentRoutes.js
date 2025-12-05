@@ -292,8 +292,10 @@ router.put('/orders/:id/deliver', protect, async (req, res) => {
 // @access  Private (Agent)
 router.put('/orders/:id/return-pickup', protect, async (req, res) => {
     try {
+        // Ensure req.user is an Agent
         const agent = await Agent.findById(req.user._id);
         if (!agent) {
+            // If protect middleware attached a User, denial access
             return res.status(401).json({ message: 'Not authorized as agent' });
         }
 
@@ -303,26 +305,28 @@ router.put('/orders/:id/return-pickup', protect, async (req, res) => {
         }
 
         // Verify assignment
-        if (order.assignedAgent.toString() !== agent._id.toString()) {
+        if (order.assignedAgent && order.assignedAgent.toString() !== agent._id.toString()) {
             return res.status(403).json({ message: 'Order not assigned to you' });
         }
 
+        // Logic Note: Return Pickup means the agent has collected the item.
+        // We set status to 'Returned' to indicate the process is physically underway/complete from customer side.
         order.returnStatus = 'Picked Up';
-        // Optionally update main status if needed, but usually return status is separate or main status becomes 'Returned'
-        // Let's set main status to 'Returned' when picked up or when received at warehouse.
-        // For simplicity, let's say 'Return Picked Up' -> 'Returned'
         order.status = 'Returned';
 
-        // Update agent stats
-        agent.assignedOrders = Math.max(0, agent.assignedOrders - 1);
-        agent.completedOrders += 1;
+        // Update agent stats (handle potential undefined)
+        const currentAssigned = agent.assignedOrders || 0;
+        const currentCompleted = agent.completedOrders || 0;
+
+        agent.assignedOrders = Math.max(0, currentAssigned - 1);
+        agent.completedOrders = currentCompleted + 1;
         await agent.save();
 
         const updatedOrder = await order.save();
         res.json(updatedOrder);
     } catch (error) {
         console.error('Agent return pickup error:', error);
-        res.status(500).json({ message: 'Failed to update order' });
+        res.status(500).json({ message: 'Failed to update order', error: error.message });
     }
 });
 
