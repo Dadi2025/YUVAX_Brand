@@ -54,7 +54,16 @@ const DeliveryDashboard = () => {
     };
 
     const markDelivered = async (orderId) => {
-        if (!window.confirm('Mark this order as Delivered?')) return;
+        const order = orders.find(o => o._id === orderId);
+
+        if (order.paymentMethod === 'cod') {
+            const confirmed = window.confirm(
+                `💰 COD PAYMENT REQUIRED\n\nPlease confirm you have collected ₹${order.totalPrice} cash from the customer.`
+            );
+            if (!confirmed) return;
+        } else {
+            if (!window.confirm('Mark this order as Delivered?')) return;
+        }
 
         try {
             const token = localStorage.getItem('agent-token');
