@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../data/translations';
 import VisualSearch from '../features/VisualSearch';
+import './Navbar.css';
 
 const Navbar = () => {
   const { getCartCount, wishlist, user, logout } = useApp();
@@ -14,17 +15,24 @@ const Navbar = () => {
   const [showVisualSearch, setShowVisualSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showWomenMenu, setShowWomenMenu] = useState(false);
   const navigate = useNavigate();
 
-  // Scroll detection for sticky header
+  // Scroll detection for sticky header with debounce
   useEffect(() => {
+    let timeoutId;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        setIsScrolled(window.scrollY > 50);
+        timeoutId = null;
+      }, 50);
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   // Check if admin or agent is logged in
@@ -57,15 +65,14 @@ const Navbar = () => {
     <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
       <div className="container flex justify-between items-center h-full">
         {/* Logo */}
-        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', fontFamily: 'var(--font-display)' }}>
-          YUVA<span style={{ color: 'var(--accent-cyan)' }}>X</span>
+        <Link to="/" className="navbar-logo">
+          YUVA<span className="navbar-logo-accent">X</span>
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/shop" className="nav-link">Collections</Link>
-
           <Link to="/style-wall" className="nav-link">Style Wall</Link>
 
           {/* Dashboard Links */}
@@ -75,47 +82,30 @@ const Navbar = () => {
           {isAdminLoggedIn && <Link to="/admin/dashboard" className="nav-link" style={{ color: 'var(--accent-purple)' }}>📊 Dashboard</Link>}
         </div>
 
-
         {/* Icons */}
         <div className="hidden md:flex items-center gap-6">
           {/* Search Icon */}
           <button
             onClick={() => setShowSearch(!showSearch)}
-            className="nav-link"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            className="nav-link nav-icon-btn"
           >
-            <span style={{ fontSize: '1.25rem' }}>🔍</span>
+            <span className="nav-icon">🔍</span>
           </button>
 
           {/* Visual Search Icon */}
           <button
             onClick={() => setShowVisualSearch(true)}
-            className="nav-link"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            className="nav-link nav-icon-btn"
             title="Visual Search"
           >
-            <span style={{ fontSize: '1.25rem' }}>📷</span>
+            <span className="nav-icon">📷</span>
           </button>
 
           {/* Wishlist */}
-          <Link to="/wishlist" className="relative nav-link" style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontSize: '1.25rem' }}>♥</span>
+          <Link to="/wishlist" className="relative nav-link flex items-center">
+            <span className="nav-icon">♥</span>
             {wishlist.length > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                background: 'var(--accent-purple)',
-                color: 'white',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+              <span className="nav-badge nav-badge-purple">
                 {wishlist.length}
               </span>
             )}
@@ -123,31 +113,17 @@ const Navbar = () => {
 
           {/* Referral (for logged-in users) */}
           {user && (
-            <Link to="/referral" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.25rem' }}>🎁</span>
-              <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Refer & Earn</span>
+            <Link to="/referral" className="nav-link flex items-center gap-2">
+              <span className="nav-icon">🎁</span>
+              <span className="text-sm font-medium">Refer & Earn</span>
             </Link>
           )}
 
           {/* Cart */}
-          <Link to="/cart" className="relative nav-link" style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontSize: '1.25rem' }}>🛍</span>
+          <Link to="/cart" className="relative nav-link flex items-center">
+            <span className="nav-icon">🛍</span>
             {getCartCount() > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                background: 'var(--accent-cyan)',
-                color: 'black',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+              <span className="nav-badge nav-badge-cyan">
                 {getCartCount()}
               </span>
             )}
@@ -156,67 +132,40 @@ const Navbar = () => {
           {/* Language Toggle */}
           <button
             onClick={() => changeLanguage(currentLanguage === 'en' ? 'hi' : 'en')}
-            style={{
-              background: 'none',
-              border: '1px solid var(--border-light)',
-              borderRadius: '6px',
-              padding: '0.5rem 0.75rem',
-              color: 'var(--text-main)',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              transition: 'all 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              height: '36px'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-card)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+            className="language-toggle"
           >
             {currentLanguage === 'en' ? 'हिं' : 'EN'}
           </button>
 
           {/* User Menu */}
           {user ? (
-            <div style={{ position: 'relative' }}>
+            <div className="user-menu-container">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="nav-link"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', cursor: 'pointer' }}
+                className="nav-link user-menu-btn"
               >
-                <span style={{ fontSize: '1.25rem' }}>👤</span>
+                <span className="nav-icon">👤</span>
                 <span>{user.name}</span>
               </button>
               {showUserMenu && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  right: 0,
-                  marginTop: '0.5rem',
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-light)',
-                  borderRadius: '8px',
-                  minWidth: '150px',
-                  zIndex: 1000
-                }}>
+                <div className="user-dropdown">
                   {user.isAdmin && (
-                    <Link to="/admin/dashboard" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
+                    <Link to="/admin/dashboard" className="user-dropdown-item" onClick={() => setShowUserMenu(false)}>
                       Dashboard
                     </Link>
                   )}
-                  <Link to="/profile" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
+                  <Link to="/profile" className="user-dropdown-item" onClick={() => setShowUserMenu(false)}>
                     Profile
                   </Link>
-                  <Link to="/loyalty" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
+                  <Link to="/loyalty" className="user-dropdown-item" onClick={() => setShowUserMenu(false)}>
                     Loyalty Program
                   </Link>
-                  <Link to="/returns" className="nav-link" style={{ display: 'block', padding: '0.75rem 1rem' }} onClick={() => setShowUserMenu(false)}>
+                  <Link to="/returns" className="user-dropdown-item" onClick={() => setShowUserMenu(false)}>
                     My Returns
                   </Link>
                   <button
                     onClick={() => { logout(); setShowUserMenu(false); }}
-                    className="nav-link"
-                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'none', border: 'none', cursor: 'pointer' }}
+                    className="user-dropdown-item text-left"
                   >
                     Logout
                   </button>
@@ -228,21 +177,19 @@ const Navbar = () => {
             isAdminLoggedIn ? (
               <button
                 onClick={handleAdminLogout}
-                className="btn-primary"
-                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#ff4444', border: 'none', height: '36px', display: 'flex', alignItems: 'center' }}
+                className="logout-btn-primary"
               >
                 Logout
               </button>
             ) : isAgentLoggedIn ? (
               <button
                 onClick={handleAgentLogout}
-                className="btn-primary"
-                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#ff4444', border: 'none', height: '36px', display: 'flex', alignItems: 'center' }}
+                className="logout-btn-primary"
               >
                 Logout
               </button>
             ) : (
-              <Link to="/login" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', height: '36px', display: 'flex', alignItems: 'center' }}>
+              <Link to="/login" className="btn-primary flex items-center h-9 px-4 text-sm">
                 Login
               </Link>
             )
@@ -250,50 +197,31 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
+        <button className="md:hidden text-white bg-transparent border-none text-2xl cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? '✕' : '☰'}
         </button>
       </div>
 
       {/* Search Bar */}
       {showSearch && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          width: '100%',
-          background: 'var(--bg-dark)',
-          borderTop: '1px solid var(--border-light)',
-          padding: '1rem 0',
-          zIndex: 999
-        }}>
+        <div className="search-overlay">
           <div className="container">
-            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '1rem' }}>
+            <form onSubmit={handleSearch} className="search-form">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
                 autoFocus
-                style={{
-                  flex: 1,
-                  padding: '0.75rem 1rem',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-light)',
-                  borderRadius: '4px',
-                  color: 'white',
-                  outline: 'none',
-                  fontSize: '1rem'
-                }}
+                className="search-input"
               />
-              <button type="submit" className="btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
+              <button type="submit" className="btn-primary search-submit-btn">
                 Search
               </button>
               <button
                 type="button"
                 onClick={() => setShowSearch(false)}
-                className="btn-secondary"
-                style={{ padding: '0.75rem 1.5rem' }}
+                className="btn-secondary search-close-btn"
               >
                 Close
               </button>
@@ -304,8 +232,8 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full" style={{ background: 'var(--bg-dark)', borderTop: '1px solid var(--border-light)' }}>
-          <div className="flex flex-col p-8 gap-6">
+        <div className="md:hidden absolute top-full left-0 w-full mobile-menu">
+          <div className="mobile-menu-content">
             <Link to="/" className="nav-link" onClick={() => setIsOpen(false)}>Home</Link>
             <Link to="/shop" className="nav-link" onClick={() => setIsOpen(false)}>Collections</Link>
             <Link to="/style-wall" className="nav-link" onClick={() => setIsOpen(false)}>Style Wall</Link>
@@ -317,7 +245,7 @@ const Navbar = () => {
                   <Link to="/admin/dashboard" className="nav-link" onClick={() => setIsOpen(false)}>Dashboard</Link>
                 )}
                 <Link to="/profile" className="nav-link" onClick={() => setIsOpen(false)}>Profile</Link>
-                <button onClick={() => { logout(); setIsOpen(false); }} className="nav-link" style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
+                <button onClick={() => { logout(); setIsOpen(false); }} className="nav-link text-left bg-transparent border-none cursor-pointer">Logout</button>
               </>
             ) : (
               <Link to="/login" className="nav-link" onClick={() => setIsOpen(false)}>Login</Link>
