@@ -373,10 +373,16 @@ const ManageOrders = () => {
                                 );
                             })
                         ) : (
-            </tbody >
-                </table >
-            </div >
-        </div >
+                            <tr>
+                                <td colSpan="9" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                                    No orders found.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 };
 

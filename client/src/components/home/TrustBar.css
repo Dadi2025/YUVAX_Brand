@@ -1,0 +1,43 @@
+.trust-bar {
+    background: var(--bg-card);
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .trust-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+}
+
+.trust-icon {
+    font-size: 2rem;
+    color: var(--accent-cyan);
+    opacity: 0.8;
+}
+
+.trust-text h3 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.trust-text p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}

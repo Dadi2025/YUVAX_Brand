@@ -1,5 +1,7 @@
 import React from 'react';
 import Hero from '../components/layout/Hero';
+import CategoriesRail from '../components/home/CategoriesRail';
+import TrustBar from '../components/home/TrustBar';
 import ProductCard from '../components/features/ProductCard';
 import FlashSaleBanner from '../components/flash-sale/FlashSaleBanner';
 import FlashSaleGrid from '../components/flash-sale/FlashSaleGrid';
@@ -37,6 +39,9 @@ const Home = () => {
     <div style={{ minHeight: '100vh' }}>
       <Hero />
 
+      {/* Categories Rail */}
+      <CategoriesRail />
+
       {/* Flash Sale Section */}
       {flashSales.length > 0 && (
         <section className="container" style={{ marginTop: '2rem' }}>
@@ -69,6 +74,9 @@ const Home = () => {
       <section className="container" style={{ marginTop: '4rem' }}>
         <RecommendedProducts title="Recommended For You" />
       </section>
+
+      {/* Trust Signals */}
+      <TrustBar />
 
       <section className="newsletter-section">
         <div className="container">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import './ProductCard.css';
 
 const ProductCard = ({ product, compact = false }) => {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
@@ -30,107 +31,86 @@ const ProductCard = ({ product, compact = false }) => {
   // Compact mode for chat widget
   if (compact) {
     return (
-      <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-        <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <img src={product.image} alt={product.name} style={{ width: '100%', height: '120px', objectFit: 'cover', filter: 'grayscale(100%)' }} />
-          <div style={{ padding: '0.75rem' }}>
-            <h4 style={{ fontSize: '0.9rem', color: 'white', margin: '0 0 0.5rem' }}>{product.name}</h4>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--accent-cyan)' }}>₹{product.price}</span>
-              {product.originalPrice && (
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₹{product.originalPrice}</span>
-              )}
-            </div>
-          </div>
+      <Link to={`/product/${product.id}`} className="product-card" style={{ display: 'flex', flexDirection: 'row', height: '100px', padding: 0 }}>
+        <img src={product.image} alt={product.name} style={{ width: '80px', height: '100%', objectFit: 'cover' }} />
+        <div style={{ padding: '0.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <h4 className="product-name" style={{ fontSize: '0.9rem', marginBottom: '0.25rem' }}>{product.name}</h4>
+          <span className="price-current" style={{ fontSize: '1rem' }}>₹{product.price}</span>
         </div>
       </Link>
     );
   }
 
   return (
-    <Link to={`/product/${product.id}`} className="product-card group relative" style={{ textDecoration: 'none', display: 'block' }}>
+    <Link to={`/product/${product.id}`} className="product-card group">
       <div className="product-image-container">
         <img
           src={product.image}
           alt={product.name}
           className="product-image"
-          style={{ filter: 'grayscale(100%)', width: '100%', height: '100%', objectFit: 'cover' }}
         />
 
-        {/* Quick Actions */}
-        <div className="product-actions">
-          <button
-            onClick={handleWishlistToggle}
-            style={{
-              color: inWishlist ? 'var(--accent-purple)' : 'white',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '1.25rem'
-            }}
-          >
-            {inWishlist ? '❤️' : '♡'}
-          </button>
+        {/* Badges - Top Left */}
+        <div className="badge-container">
+          {product.isNewArrival && (
+            <span className="badge badge-new">New</span>
+          )}
+          {discount > 0 && (
+            <span className="badge badge-discount">
+              {discount}% OFF
+            </span>
+          )}
+        </div>
+
+        {/* Wishlist Button - Top Right */}
+        <button
+          onClick={handleWishlistToggle}
+          className={`btn-wishlist-icon ${inWishlist ? 'active' : ''}`}
+          title="Add to Wishlist"
+        >
+          {inWishlist ? '❤️' : '♡'}
+        </button>
+
+        {/* Quick Actions Overlay - Bottom */}
+        <div className="product-actions-overlay">
+          {/* Size Selector for Quick Add (Future enhancement: interactive) */}
+          {product.sizes && product.sizes.length > 0 && (
+            <div style={{ display: 'flex', gap: '5px', justifyContent: 'center', marginBottom: '5px' }}>
+              {product.sizes.slice(0, 5).map(size => (
+                <span key={size} style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.8)' }}>{size}</span>
+              ))}
+            </div>
+          )}
+
           <button
             onClick={handleAddToCart}
-            style={{
-              color: 'black',
-              background: 'var(--accent-cyan)',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0.5rem 1rem',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-              fontSize: '0.875rem'
-            }}
+            className="btn-quick-add"
           >
             ADD TO CART
           </button>
         </div>
-
-        {/* Badges */}
-        {product.isNewArrival && (
-          <div style={{ padding: '0.75rem', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-            <span style={{ fontSize: '0.625rem', fontWeight: 'bold', background: 'var(--accent-cyan)', color: 'black', padding: '0.25rem 0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>New</span>
-          </div>
-        )}
-        {discount > 0 && (
-          <div style={{ padding: '0.75rem', position: 'absolute', top: 0, right: 0, zIndex: 10 }}>
-            <span style={{ fontSize: '0.625rem', fontWeight: 'bold', background: 'var(--accent-purple)', color: 'white', padding: '0.25rem 0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              {discount}% OFF
-            </span>
-          </div>
-        )}
       </div>
 
-      <div style={{ padding: '1.25rem' }}>
-        <div className="flex justify-between items-center" style={{ marginBottom: '0.5rem' }}>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 500, letterSpacing: '0.025em', color: 'white' }}>{product.name}</h3>
-        </div>
-        <div className="flex justify-between items-center" style={{ marginBottom: '0.5rem' }}>
-          <div>
-            <span style={{ fontSize: '1.125rem', fontWeight: 'bold', color: 'var(--accent-cyan)' }}>₹{product.price}</span>
-            {product.originalPrice && (
-              <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', textDecoration: 'line-through', marginLeft: '0.5rem' }}>₹{product.originalPrice}</span>
-            )}
-          </div>
-        </div>
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>{product.category}</p>
+      <div className="product-info">
+        <h3 className="product-name" title={product.name}>{product.name}</h3>
 
-        {/* Rating */}
-        {product.rating && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-            <div style={{ color: 'var(--accent-cyan)', fontSize: '0.875rem' }}>
-              {'⭐'.repeat(Math.floor(product.rating))}
+        <div className="product-price-row">
+          <span className="price-current">₹{product.price}</span>
+          {product.originalPrice && (
+            <span className="price-original">₹{product.originalPrice}</span>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p className="product-category">{product.category}</p>
+
+          {/* Rating */}
+          {product.rating > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <span style={{ color: '#FFD700', fontSize: '0.8rem' }}>★</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{product.rating}</span>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>({product.reviews})</span>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-          {product.sizes?.slice(0, 4).map(size => (
-            <span key={size} style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem', border: '1px solid var(--border-light)', borderRadius: '4px' }}>{size}</span>
-          ))}
+          )}
         </div>
       </div>
     </Link>

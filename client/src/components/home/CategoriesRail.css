@@ -1,0 +1,100 @@
+.categories-rail {
+    padding: 1.5rem 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border-light);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
+    scrollbar-width: none;
+    /* Hide scrollbar Firefox */
+}
+
+.categories-rail::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar Chrome/Safari */
+}
+
+.categories-rail-content {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    min-width: min-content;
+}
+
+@media (min-width: 768px) {
+    .categories-rail-content {
+        justify-content: center;
+        gap: 3rem;
+    }
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    min-width: 80px;
+}
+
+.category-item:hover {
+    transform: translateY(-5px);
+}
+
+.category-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.category-item:hover .category-icon-wrapper {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.category-item:hover .category-image {
+    opacity: 1;
+}
+
+.category-label {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.category-item:hover .category-label {
+    color: var(--text-main);
+}
+
+/* Sale Badge */
+.category-item.sale .category-icon-wrapper {
+    border-color: #ff4444;
+}
+
+.category-item.sale:hover .category-icon-wrapper {
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+.category-item.sale .category-label {
+    color: #ff4444;
+}
