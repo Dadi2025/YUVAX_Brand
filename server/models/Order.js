@@ -24,6 +24,12 @@ const orderSchema = mongoose.Schema({
         postalCode: { type: String, required: true },
         country: { type: String, required: true }
     },
+    billingAddress: {
+        address: { type: String },
+        city: { type: String },
+        postalCode: { type: String },
+        country: { type: String }
+    },
     paymentMethod: {
         type: String,
         required: true

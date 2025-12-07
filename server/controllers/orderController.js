@@ -239,6 +239,8 @@ export const createOrder = async (req, res) => {
     const {
         orderItems,
         shippingAddress,
+        billingAddress, // New field
+        saveAddress,    // New field (boolean)
         paymentMethod,
         itemsPrice,
         taxPrice,
@@ -261,6 +263,7 @@ export const createOrder = async (req, res) => {
             orderItems,
             user: userId,
             shippingAddress,
+            billingAddress: billingAddress || shippingAddress, // Default to shipping if not provided
             paymentMethod,
             itemsPrice,
             taxPrice,
@@ -268,7 +271,30 @@ export const createOrder = async (req, res) => {
             totalPrice,
         });
 
+
         const createdOrder = await order.save();
+
+        // Auto-save address if requested
+        if (saveAddress) {
+            const user = await User.findById(userId);
+            if (user) {
+                // Check if address already exists to avoid duplicates (simple check by pincode/street)
+                const addressExists = user.addresses.some(
+                    addr => addr.zip === shippingAddress.postalCode && addr.street === shippingAddress.address
+                );
+
+                if (!addressExists) {
+                    user.addresses.push({
+                        street: shippingAddress.address,
+                        city: shippingAddress.city,
+                        state: "", // State not currently in Order schema shippingAddress object explicitly but is passed from frontend
+                        zip: shippingAddress.postalCode,
+                        country: shippingAddress.country
+                    });
+                    await user.save();
+                }
+            }
+        }
 
         // Auto-assign delivery agent based on pincode
         const pinCode = String(shippingAddress.postalCode);

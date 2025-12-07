@@ -23,6 +23,16 @@ const Checkout = () => {
         postalCode: '',
         country: 'India'
     });
+    const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
+    const [billingInfo, setBillingInfo] = useState({
+        name: '',
+        phone: '',
+        address: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: 'India'
+    });
     const [paymentMethod, setPaymentMethod] = useState('upi');
 
     // Fetch saved addresses on mount
@@ -32,6 +42,22 @@ const Checkout = () => {
             setShowNewAddressForm(false);
         }
     }, [user]);
+
+    // Sync billing info with shipping info when "Same as shipping" is checked
+    useEffect(() => {
+        if (billingSameAsShipping) {
+            setBillingInfo(prev => ({
+                ...prev,
+                name: shippingInfo.name,
+                phone: shippingInfo.phone,
+                address: shippingInfo.address,
+                city: shippingInfo.city,
+                state: shippingInfo.state,
+                postalCode: shippingInfo.postalCode,
+                country: shippingInfo.country
+            }));
+        }
+    }, [billingSameAsShipping, shippingInfo]);
 
     // Load selected address
     const loadAddress = (addressId) => {
@@ -228,6 +254,8 @@ const Checkout = () => {
                                 // Place actual order
                                 const orderDetails = {
                                     shippingAddress: shippingInfo,
+                                    billingAddress: billingSameAsShipping ? shippingInfo : billingInfo,
+                                    saveAddress,
                                     paymentMethod: 'Razorpay',
                                     paymentResult: {
                                         id: response.razorpay_payment_id,
@@ -265,6 +293,8 @@ const Checkout = () => {
                 // Existing Logic for COD/Other
                 const orderDetails = {
                     shippingAddress: shippingInfo,
+                    billingAddress: billingSameAsShipping ? shippingInfo : billingInfo,
+                    saveAddress,
                     paymentMethod: paymentMethod
                 };
                 const order = await placeOrder(orderDetails);
@@ -330,17 +360,9 @@ const Checkout = () => {
                                                     loadAddress(e.target.value);
                                                 }
                                             }}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                                background: 'rgba(255,255,255,0.05)',
-                                                border: '1px solid var(--border-light)',
-                                                borderRadius: '4px',
-                                                color: 'white',
-                                                marginBottom: '1rem'
-                                            }}
+                                            style={{ width: '100%', padding: '0.75rem', marginBottom: '1rem', borderRadius: '4px', border: '1px solid #333', background: '#000', color: '#fff' }}
                                         >
-                                            <option value="">Select an address</option>
+                                            <option value="">Select a saved address</option>
                                             {savedAddresses.map((addr, idx) => (
                                                 <option key={idx} value={idx}>
                                                     {addr.street}, {addr.city}, {addr.state} - {addr.zip}
@@ -383,10 +405,10 @@ const Checkout = () => {
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
-                                                        background: 'rgba(255,255,255,0.05)',
+                                                        background: '#FFFFFF',
                                                         border: `1px solid ${errors.name ? '#ff4444' : 'var(--border-light)'}`,
                                                         borderRadius: '4px',
-                                                        color: 'white'
+                                                        color: 'black'
                                                     }}
                                                 />
                                                 <ErrorMessage message={errors.name} />
@@ -397,35 +419,36 @@ const Checkout = () => {
                                                     placeholder="Phone Number (10 digits)"
                                                     value={shippingInfo.phone}
                                                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                                                    maxLength={10}
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
-                                                        background: 'rgba(255,255,255,0.05)',
+                                                        background: '#FFFFFF',
                                                         border: `1px solid ${errors.phone ? '#ff4444' : 'var(--border-light)'}`,
                                                         borderRadius: '4px',
-                                                        color: 'white'
+                                                        color: 'black'
                                                     }}
                                                 />
                                                 <ErrorMessage message={errors.phone} />
                                             </div>
+
                                             <div>
                                                 <textarea
                                                     placeholder="Address"
                                                     value={shippingInfo.address}
                                                     onChange={(e) => handleInputChange('address', e.target.value)}
-                                                    rows={3}
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
-                                                        background: 'rgba(255,255,255,0.05)',
+                                                        background: '#FFFFFF',
                                                         border: `1px solid ${errors.address ? '#ff4444' : 'var(--border-light)'}`,
                                                         borderRadius: '4px',
-                                                        color: 'white'
+                                                        color: 'black',
+                                                        minHeight: '100px'
                                                     }}
                                                 />
                                                 <ErrorMessage message={errors.address} />
                                             </div>
+
                                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                                 <div>
                                                     <input
@@ -436,10 +459,10 @@ const Checkout = () => {
                                                         style={{
                                                             width: '100%',
                                                             padding: '0.75rem',
-                                                            background: 'rgba(255,255,255,0.05)',
+                                                            background: '#FFFFFF',
                                                             border: `1px solid ${errors.city ? '#ff4444' : 'var(--border-light)'}`,
                                                             borderRadius: '4px',
-                                                            color: 'white'
+                                                            color: 'black'
                                                         }}
                                                     />
                                                     <ErrorMessage message={errors.city} />
@@ -453,32 +476,129 @@ const Checkout = () => {
                                                         style={{
                                                             width: '100%',
                                                             padding: '0.75rem',
-                                                            background: 'rgba(255,255,255,0.05)',
+                                                            background: '#FFFFFF',
                                                             border: `1px solid ${errors.state ? '#ff4444' : 'var(--border-light)'}`,
                                                             borderRadius: '4px',
-                                                            color: 'white'
+                                                            color: 'black'
                                                         }}
                                                     />
                                                     <ErrorMessage message={errors.state} />
                                                 </div>
                                             </div>
+
                                             <div>
                                                 <input
                                                     type="text"
                                                     placeholder="Pincode (6 digits)"
                                                     value={shippingInfo.postalCode}
                                                     onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                                                    maxLength={6}
                                                     style={{
                                                         width: '100%',
                                                         padding: '0.75rem',
-                                                        background: 'rgba(255,255,255,0.05)',
+                                                        background: '#FFFFFF',
                                                         border: `1px solid ${errors.postalCode ? '#ff4444' : 'var(--border-light)'}`,
                                                         borderRadius: '4px',
-                                                        color: 'white'
+                                                        color: 'black'
                                                     }}
                                                 />
                                                 <ErrorMessage message={errors.postalCode} />
+                                            </div>
+                                        </div>
+
+
+                                        {/* Billing Address Toggle */}
+                                        <div style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    id="billingSame"
+                                                    checked={billingSameAsShipping}
+                                                    onChange={(e) => setBillingSameAsShipping(e.target.checked)}
+                                                    style={{ cursor: 'pointer', width: '1.2rem', height: '1.2rem' }}
+                                                />
+                                                <label htmlFor="billingSame" style={{ cursor: 'pointer', fontSize: '1rem' }}>
+                                                    Billing address is same as shipping address
+                                                </label>
+                                            </div>
+
+                                            {/* Billing Inputs - Always visible, synced if Checked */}
+                                            <div style={{ display: 'grid', gap: '1rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                                                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Billing Address</h3>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Full Name"
+                                                        value={billingInfo.name}
+                                                        onChange={(e) => setBillingInfo({ ...billingInfo, name: e.target.value })}
+                                                        readOnly={billingSameAsShipping}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.75rem',
+                                                            background: '#FFFFFF',
+                                                            border: '1px solid var(--border-light)',
+                                                            borderRadius: '4px',
+                                                            color: 'black',
+                                                            opacity: billingSameAsShipping ? 0.7 : 1,
+                                                            cursor: billingSameAsShipping ? 'not-allowed' : 'text'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <textarea
+                                                        placeholder="Address"
+                                                        value={billingInfo.address}
+                                                        onChange={(e) => setBillingInfo({ ...billingInfo, address: e.target.value })}
+                                                        readOnly={billingSameAsShipping}
+                                                        rows={2}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.75rem',
+                                                            background: '#FFFFFF',
+                                                            border: '1px solid var(--border-light)',
+                                                            borderRadius: '4px',
+                                                            color: 'black',
+                                                            opacity: billingSameAsShipping ? 0.7 : 1,
+                                                            cursor: billingSameAsShipping ? 'not-allowed' : 'text'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="City"
+                                                        value={billingInfo.city}
+                                                        onChange={(e) => setBillingInfo({ ...billingInfo, city: e.target.value })}
+                                                        readOnly={billingSameAsShipping}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.75rem',
+                                                            background: '#FFFFFF',
+                                                            border: '1px solid var(--border-light)',
+                                                            borderRadius: '4px',
+                                                            color: 'black',
+                                                            opacity: billingSameAsShipping ? 0.7 : 1,
+                                                            cursor: billingSameAsShipping ? 'not-allowed' : 'text'
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Pincode"
+                                                        value={billingInfo.postalCode}
+                                                        onChange={(e) => setBillingInfo({ ...billingInfo, postalCode: e.target.value })}
+                                                        readOnly={billingSameAsShipping}
+                                                        maxLength={6}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.75rem',
+                                                            background: '#FFFFFF',
+                                                            border: '1px solid var(--border-light)',
+                                                            borderRadius: '4px',
+                                                            color: 'black',
+                                                            opacity: billingSameAsShipping ? 0.7 : 1,
+                                                            cursor: billingSameAsShipping ? 'not-allowed' : 'text'
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
 
@@ -600,7 +720,7 @@ const Checkout = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

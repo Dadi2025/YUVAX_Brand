@@ -2,6 +2,7 @@ import React from 'react';
 import Hero from '../components/layout/Hero';
 import CategoriesRail from '../components/home/CategoriesRail';
 import TrustBar from '../components/home/TrustBar';
+
 import ProductCard from '../components/features/ProductCard';
 import FlashSaleBanner from '../components/flash-sale/FlashSaleBanner';
 import FlashSaleGrid from '../components/flash-sale/FlashSaleGrid';
@@ -77,8 +78,7 @@ const Home = () => {
         <RecommendedProducts title="Recommended For You" />
       </section>
 
-      {/* Trust Signals */}
-      <TrustBar />
+
 
       <section className="newsletter-section">
         <div className="container">
@@ -99,6 +99,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Trust Signals */}
+      <TrustBar />
     </div>
   );
 };

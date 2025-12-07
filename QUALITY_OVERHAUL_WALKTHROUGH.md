@@ -25,9 +25,23 @@ This document details the transformation of the YUVAX UI from a "Cyberpunk" aest
 -   **Minimalism**: usage of borders removed. Relying on shadows and spacing.
 -   **Interactions**:
     -   Hover effects are now subtle zooms and "light-ups" rather than heavy glows.
-    -   "Quick Add" button uses a clean slide-up animation.
+    -   **Functional**: Added "Quick Add" button (slide-up) and **Discount Badges** (percentage off).
+    -   **Wishlist**: integrated toggle button on the card.
+
+## 4. Homepage Enhancements
+-   **Categories Rail**: Added a horizontal scrollable rail for quick access to key collections (Men, Women, Street, Tech).
+-   **Trust Signals**: Implemented a `TrustBar` (Free Shipping, COD, Easy Returns) to build user confidence.
+-   **Latest Drops**: Refined the "Featured Products" section header and spacing.
+
+## 5. Checkout Flow Refinement
+-   **Styles**: Fixed address input visibility (white background, black text) for better usability.
+-   **UX**:
+    -   Added "Same as Shipping" toggle for Billing Address.
+    -   Auto-save address to user profile for faster future checkouts.
 
 ## Verification Checklist
 - [x] **Visuals**: Check that new colors (Gold/Platinum) are visible.
 - [x] **Desktop**: Verify Navbar link centering and 4-column product grid.
 - [x] **Mobile**: Verify Product Cards handle touch inputs correctly (Quick Add visible).
+- [x] **New Features**: Check functionality of Categories Rail and Trust Bar.
+- [x] **Checkout**: Test the address form styling and auto-save feature.

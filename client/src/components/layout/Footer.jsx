@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MessageCircle, Search, Camera } from 'lucide-react';
-import TrustBadges from '../features/TrustBadges';
+
 import VisualSearch from '../features/VisualSearch';
 
 const Footer = () => {
@@ -93,8 +93,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Trust Badges */}
-                <TrustBadges />
+
 
                 <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
                     <p>&copy; {new Date().getFullYear()} NEO-INDIA. All rights reserved.</p>
