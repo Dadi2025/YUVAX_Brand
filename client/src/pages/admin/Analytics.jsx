@@ -133,9 +133,19 @@ const Analytics = () => {
                             <BarChart data={analyticsData.topProducts} layout="vertical">
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                                 <XAxis type="number" stroke="var(--text-muted)" />
-                                <YAxis dataKey="name" type="category" width={150} stroke="var(--text-muted)" style={{ fontSize: '0.8rem' }} />
+                                <YAxis dataKey="name" type="category" width={150} stroke="var(--text-muted)" style={{ fontSize: '0.8rem', cursor: 'pointer' }} onClick={(data) => {
+                                    // Handle clicking Y-Axis labels if possible, or leave as simple bar click
+                                }} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Bar dataKey="totalSold" fill="var(--accent-purple)" name="Units Sold" radius={[0, 4, 4, 0]} barSize={20} />
+                                <Bar
+                                    dataKey="totalSold"
+                                    fill="var(--accent-purple)"
+                                    name="Units Sold"
+                                    radius={[0, 4, 4, 0]}
+                                    barSize={20}
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={(data) => window.open(`/shop/product/${data._id}`, '_blank')}
+                                />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

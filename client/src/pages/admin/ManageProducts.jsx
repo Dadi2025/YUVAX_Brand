@@ -334,8 +334,10 @@ const ManageProducts = () => {
                             <tr key={product.id} style={{ borderTop: '1px solid var(--border-light)' }}>
                                 <td style={{ padding: '1rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                        <img src={product.image} alt={product.name} style={{ width: '50px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
-                                        <span>{product.name}</span>
+                                        <a href={`/shop/product/${product.id}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', color: 'inherit' }}>
+                                            <img src={product.image} alt={product.name} style={{ width: '50px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                                            <span>{product.name}</span>
+                                        </a>
                                     </div>
                                 </td>
                                 <td style={{ padding: '1rem' }}>{product.category}</td>

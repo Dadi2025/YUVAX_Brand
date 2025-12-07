@@ -247,11 +247,17 @@ const ManageOrders = () => {
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                                 {items.map((item, idx) => (
                                                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                        <img
-                                                            src={item.image}
-                                                            alt={item.name}
-                                                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
-                                                        />
+                                                        <a
+                                                            href={`/shop/product/${item.product}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            <img
+                                                                src={item.image}
+                                                                alt={item.name}
+                                                                style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                                                            />
+                                                        </a>
                                                         <div>
                                                             <a
                                                                 href={`/shop/product/${item.product}`}
