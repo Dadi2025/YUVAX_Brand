@@ -240,7 +240,17 @@ const ManageOrders = () => {
 
                                 return (
                                     <tr key={orderId} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                                        <td style={{ padding: '1rem' }}>{orderId}</td>
+                                        <td style={{ padding: '1rem' }}>
+                                            <a
+                                                href={`/track-order/${order._id || order.id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 'bold' }}
+                                                title="View Order Details"
+                                            >
+                                                {orderId}
+                                            </a>
+                                        </td>
                                         <td style={{ padding: '1rem' }}>{formattedDate}</td>
                                         <td style={{ padding: '1rem' }}>{customerName}</td>
                                         <td style={{ padding: '1rem' }}>
@@ -248,7 +258,7 @@ const ManageOrders = () => {
                                                 {items.map((item, idx) => (
                                                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                                         <a
-                                                            href={`/shop/product/${item.product}`}
+                                                            href={`/product/${item.product}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                         >

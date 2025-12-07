@@ -144,7 +144,7 @@ const Analytics = () => {
                                     radius={[0, 4, 4, 0]}
                                     barSize={20}
                                     style={{ cursor: 'pointer' }}
-                                    onClick={(data) => window.open(`/shop/product/${data._id}`, '_blank')}
+                                    onClick={(data) => window.open(`/product/${data._id}`, '_blank')}
                                 />
                             </BarChart>
                         </ResponsiveContainer>

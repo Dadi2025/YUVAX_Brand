@@ -18,7 +18,7 @@ const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { products, addToCart, addToWishlist, isInWishlist } = useApp();
-    const product = products.find(p => p.id === parseInt(id));
+    const product = products.find(p => p.id === parseInt(id) || p._id === id || p.id === id);
     const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
