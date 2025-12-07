@@ -262,7 +262,7 @@ const ManageOrders = () => {
                                                                 {item.name}
                                                             </a>
                                                             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                                                Size: {item.size} | Qty: {item.quantity}
+                                                                Size: {item.size || 'N/A'} | Color: {item.color || 'N/A'} | Qty: {item.quantity}
                                                             </div>
                                                         </div>
                                                     </div>

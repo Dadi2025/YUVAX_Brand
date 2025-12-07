@@ -618,7 +618,18 @@ const Checkout = () => {
                                     </>
                                 )}
 
-                                <button onClick={handleContinueToPayment} className="btn-primary" style={{ marginTop: '2rem', width: '100%' }}>
+                                <button
+                                    onClick={handleContinueToPayment}
+                                    className="btn-primary"
+                                    style={{
+                                        marginTop: '2rem',
+                                        width: '100%',
+                                        background: 'var(--accent-cyan)',
+                                        color: 'black',
+                                        border: 'none',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
                                     CONTINUE TO PAYMENT
                                 </button>
                             </div>
@@ -658,7 +669,19 @@ const Checkout = () => {
                                 </div>
                                 <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                                     <button onClick={() => setStep(1)} className="btn-secondary" style={{ flex: 1 }}>BACK</button>
-                                    <button onClick={() => setStep(3)} className="btn-primary" style={{ flex: 1 }}>REVIEW ORDER</button>
+                                    <button
+                                        onClick={() => setStep(3)}
+                                        className="btn-primary"
+                                        style={{
+                                            flex: 1,
+                                            background: 'var(--accent-cyan)',
+                                            color: 'black',
+                                            border: 'none',
+                                            fontWeight: 'bold'
+                                        }}
+                                    >
+                                        REVIEW ORDER
+                                    </button>
                                 </div>
                             </div>
                         )}
@@ -680,7 +703,18 @@ const Checkout = () => {
                                 </div>
                                 <div style={{ display: 'flex', gap: '1rem' }}>
                                     <button onClick={() => setStep(2)} className="btn-secondary" style={{ flex: 1 }} disabled={loading}>BACK</button>
-                                    <button onClick={handlePlaceOrder} className="btn-primary" style={{ flex: 1 }} disabled={loading}>
+                                    <button
+                                        onClick={handlePlaceOrder}
+                                        className="btn-primary"
+                                        style={{
+                                            flex: 1,
+                                            background: 'var(--accent-cyan)',
+                                            color: 'black',
+                                            border: 'none',
+                                            fontWeight: 'bold'
+                                        }}
+                                        disabled={loading}
+                                    >
                                         {loading ? 'PROCESSING...' : 'PLACE ORDER'}
                                     </button>
                                 </div>

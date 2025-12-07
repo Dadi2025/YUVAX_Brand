@@ -176,6 +176,53 @@ const ManageProducts = () => {
                         </div>
                     </div>
 
+                    {/* Sizes Selection */}
+                    <div style={{ marginTop: '1rem' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Available Sizes</label>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {sizes.map(size => (
+                                <label key={size} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: formData.sizes.includes(size) ? 'rgba(45, 212, 191, 0.2)' : 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '4px', border: formData.sizes.includes(size) ? '1px solid var(--accent-cyan)' : '1px solid var(--border-light)' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.sizes.includes(size)}
+                                        onChange={() => {
+                                            const newSizes = formData.sizes.includes(size)
+                                                ? formData.sizes.filter(s => s !== size)
+                                                : [...formData.sizes, size];
+                                            setFormData({ ...formData, sizes: newSizes });
+                                        }}
+                                        style={{ display: 'none' }}
+                                    />
+                                    {size}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Colors Selection */}
+                    <div style={{ marginTop: '1rem' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Available Colors</label>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {colors.map(color => (
+                                <label key={color} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: formData.colors.includes(color) ? 'rgba(192, 132, 252, 0.2)' : 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '4px', border: formData.colors.includes(color) ? '1px solid var(--accent-purple)' : '1px solid var(--border-light)' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.colors.includes(color)}
+                                        onChange={() => {
+                                            const newColors = formData.colors.includes(color)
+                                                ? formData.colors.filter(c => c !== color)
+                                                : [...formData.colors, color];
+                                            setFormData({ ...formData, colors: newColors });
+                                        }}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: color.toLowerCase() === 'neon cyan' ? '#00f3ff' : color.toLowerCase() }}></span>
+                                    {color}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
                     <div style={{ marginTop: '1rem' }}>
                         <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Image URL *</label>
                         <input

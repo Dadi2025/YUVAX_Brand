@@ -63,35 +63,35 @@ const AdminLogin = () => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ maxWidth: '400px', width: '100%', padding: '2rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
-                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', textAlign: 'center' }}>ADMIN LOGIN</h1>
-                <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '2rem', fontSize: '0.875rem' }}>
+        <div style={{ minHeight: '100vh', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F9FAFB' }}>
+            <div style={{ maxWidth: '400px', width: '100%', padding: '2rem', background: '#FFFFFF', border: '1px solid var(--border-light)', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', textAlign: 'center', color: '#111827' }}>ADMIN LOGIN</h1>
+                <p style={{ color: '#6B7280', textAlign: 'center', marginBottom: '2rem', fontSize: '0.875rem' }}>
                     Login with your admin account
                 </p>
 
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Email</label>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#374151', fontWeight: '600' }}>Email</label>
                         <input
                             type="email"
                             value={credentials.email}
                             onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                             required
                             autoComplete="email"
-                            style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-light)', borderRadius: '4px', color: 'white', outline: 'none' }}
+                            style={{ width: '100%', padding: '0.75rem', background: '#FFFFFF', border: '1px solid #D1D5DB', borderRadius: '6px', color: '#111827', outline: 'none' }}
                             placeholder="admin@example.com"
                         />
                     </div>
 
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Password</label>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#374151', fontWeight: '600' }}>Password</label>
                         <input
                             type="password"
                             value={credentials.password}
                             onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                             required
-                            style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-light)', borderRadius: '4px', color: 'white', outline: 'none' }}
+                            style={{ width: '100%', padding: '0.75rem', background: '#FFFFFF', border: '1px solid #D1D5DB', borderRadius: '6px', color: '#111827', outline: 'none' }}
                         />
                     </div>
 

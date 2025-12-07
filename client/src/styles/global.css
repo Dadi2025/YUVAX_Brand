@@ -30,6 +30,8 @@
 
   --accent-error: #EF4444;
   --accent-success: #10B981;
+  --accent-cyan: #2dd4bf;
+  --accent-purple: #c084fc;
 
   /* Typography */
   --font-main: 'Inter', sans-serif;

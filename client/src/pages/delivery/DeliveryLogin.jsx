@@ -46,23 +46,23 @@ const DeliveryLogin = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#121212',
+            background: '#F9FAFB',
             padding: '1rem'
         }}>
             <div style={{
                 width: '100%',
                 maxWidth: '400px',
-                background: '#1e1e1e',
+                background: '#FFFFFF',
                 padding: '2rem',
                 borderRadius: '12px',
-                border: '1px solid var(--border-light)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
+                border: '1px solid #E5E7EB',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <div style={{
                         width: '64px',
                         height: '64px',
-                        background: 'rgba(0, 255, 255, 0.1)',
+                        background: 'rgba(45, 212, 191, 0.1)',
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
@@ -71,8 +71,8 @@ const DeliveryLogin = () => {
                     }}>
                         <Truck size={32} color="var(--accent-cyan)" />
                     </div>
-                    <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Delivery Partner</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Login to access your dashboard</p>
+                    <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#111827' }}>Delivery Partner</h1>
+                    <p style={{ color: '#6B7280' }}>Login to access your dashboard</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -80,12 +80,12 @@ const DeliveryLogin = () => {
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            background: '#2a2a2a',
-                            border: '1px solid var(--border-light)',
+                            background: '#FFFFFF',
+                            border: '1px solid #D1D5DB',
                             borderRadius: '8px',
                             padding: '0.75rem'
                         }}>
-                            <User size={20} color="var(--text-muted)" style={{ marginRight: '0.75rem' }} />
+                            <User size={20} color="#6B7280" style={{ marginRight: '0.75rem' }} />
                             <input
                                 type="email"
                                 placeholder="Agent Email"
@@ -94,7 +94,7 @@ const DeliveryLogin = () => {
                                 style={{
                                     background: 'transparent',
                                     border: 'none',
-                                    color: 'white',
+                                    color: '#111827',
                                     width: '100%',
                                     outline: 'none'
                                 }}
@@ -107,12 +107,12 @@ const DeliveryLogin = () => {
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            background: '#2a2a2a',
-                            border: '1px solid var(--border-light)',
+                            background: '#FFFFFF',
+                            border: '1px solid #D1D5DB',
                             borderRadius: '8px',
                             padding: '0.75rem'
                         }}>
-                            <Lock size={20} color="var(--text-muted)" style={{ marginRight: '0.75rem' }} />
+                            <Lock size={20} color="#6B7280" style={{ marginRight: '0.75rem' }} />
                             <input
                                 type="password"
                                 placeholder="Password"
@@ -121,7 +121,7 @@ const DeliveryLogin = () => {
                                 style={{
                                     background: 'transparent',
                                     border: 'none',
-                                    color: 'white',
+                                    color: '#111827',
                                     width: '100%',
                                     outline: 'none'
                                 }}
