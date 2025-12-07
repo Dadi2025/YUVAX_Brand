@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../data/translations';
-import VisualSearch from '../features/VisualSearch';
-import GlobalSearch from '../features/GlobalSearch';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -12,9 +10,6 @@ const Navbar = () => {
   const { currentLanguage, changeLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-  const [showVisualSearch, setShowVisualSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
 
@@ -29,14 +24,7 @@ const Navbar = () => {
   const isAdminLoggedIn = localStorage.getItem('yuva-admin');
   const isAgentLoggedIn = localStorage.getItem('agent-token');
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
-      setShowSearch(false);
-      setSearchQuery('');
-    }
-  };
+
 
   const handleAdminLogout = () => {
     localStorage.removeItem('yuva-admin');
@@ -206,30 +194,7 @@ const Navbar = () => {
             {/* Separator for Utilities */}
             <div style={{ width: '1px', height: '24px', background: 'var(--border-light)', margin: '0 8px' }}></div>
 
-            {/* Search Icon */}
-            <button
-              onClick={() => setShowSearch(!showSearch)}
-              className="nav-link nav-icon-btn"
-              aria-label="Search"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </button>
 
-            {/* Visual Search Icon */}
-            <button
-              onClick={() => setShowVisualSearch(true)}
-              className="nav-link nav-icon-btn"
-              title="Visual Search"
-              aria-label="Visual Search"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                <circle cx="12" cy="13" r="4"></circle>
-              </svg>
-            </button>
 
             {/* Language Toggle */}
             <button
@@ -259,10 +224,7 @@ const Navbar = () => {
         </div>
 
         {/* Global Search Overlay */}
-        <GlobalSearch
-          isOpen={showSearch}
-          onClose={() => setShowSearch(false)}
-        />
+
 
         {/* Mobile Menu */}
         {isOpen && (
@@ -289,10 +251,7 @@ const Navbar = () => {
         )}
 
         {/* Visual Search Modal */}
-        <VisualSearch
-          isOpen={showVisualSearch}
-          onClose={() => setShowVisualSearch(false)}
-        />
+
       </nav>
     </>
   );

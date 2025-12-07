@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import ProductCard from '../../components/features/ProductCard';
 import ProductRecommendations from '../../components/features/ProductRecommendations';
@@ -16,6 +16,7 @@ import './ProductDetail.css'; // Import custom styles
 
 const ProductDetail = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { products, addToCart, addToWishlist, isInWishlist } = useApp();
     const product = products.find(p => p.id === parseInt(id));
     const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
@@ -32,6 +33,11 @@ const ProductDetail = () => {
     }
 
     const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+    const handleBuyNow = () => {
+        addToCart(product, selectedSize, quantity);
+        navigate('/cart');
+    };
 
     return (
         <div style={{ minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem' }}>
@@ -122,33 +128,32 @@ const ProductDetail = () => {
 
                         {/* Size Selector */}
                         <div style={{ marginBottom: '2rem' }}>
-                            <div className="size-header-container">
-                                <h3 className="section-label">Select Size</h3>
-                                <div className="size-helpers">
-                                    <button
-                                        onClick={() => setShowSizeCalculator(true)}
-                                        className="size-helper-btn"
-                                    >
-                                        Calculate My Size
-                                    </button>
-                                    <button
-                                        onClick={() => setShowSizeGuide(true)}
-                                        className="size-helper-btn"
-                                    >
-                                        Size Guide
-                                    </button>
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <h3 className="section-label">Select Size</h3>
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                                 {product.sizes.map(size => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
                                         className={`size-btn ${selectedSize === size ? 'active' : ''}`}
                                     >
+
                                         {size}
                                     </button>
                                 ))}
+                                <button
+                                    onClick={() => setShowSizeCalculator(true)}
+                                    className="size-helper-btn"
+                                    title="Calculate My Size"
+                                >
+                                    📏 Calculate Size
+                                </button>
+                                <button
+                                    onClick={() => setShowSizeGuide(true)}
+                                    className="size-helper-btn"
+                                    title="Size Guide"
+                                >
+                                    📋 Size Guide
+                                </button>
                             </div>
                         </div>
 
@@ -174,7 +179,7 @@ const ProductDetail = () => {
 
                         {/* Delivery Check - Moved Here */}
                         <div style={{ marginBottom: '2rem' }}>
-                            <DeliveryCheck />
+                            <DeliveryCheck onTryOn={() => setShowVirtualTryOn(true)} />
                         </div>
 
                         {/* Actions */}
@@ -187,10 +192,10 @@ const ProductDetail = () => {
                                 ADD TO CART
                             </button>
                             <button
-                                onClick={() => setShowVirtualTryOn(true)}
-                                className="action-btn btn-try-on"
+                                onClick={handleBuyNow}
+                                className="action-btn btn-buy-now"
                             >
-                                <span>✨</span> Try On
+                                BUY NOW
                             </button>
                             <button
                                 onClick={() => addToWishlist(product)}
@@ -261,25 +266,29 @@ const ProductDetail = () => {
                 productSizeChart={product.sizeChart}
             />
 
-            {showSizeCalculator && (
-                <SizeCalculator
-                    isOpen={showSizeCalculator}
-                    onClose={() => setShowSizeCalculator(false)}
-                    onSizeRecommended={(size) => {
-                        setSelectedSize(size);
-                        setShowSizeCalculator(false);
-                    }}
-                />
-            )}
+            {
+                showSizeCalculator && (
+                    <SizeCalculator
+                        isOpen={showSizeCalculator}
+                        onClose={() => setShowSizeCalculator(false)}
+                        onSizeRecommended={(size) => {
+                            setSelectedSize(size);
+                            setShowSizeCalculator(false);
+                        }}
+                    />
+                )
+            }
 
-            {showVirtualTryOn && (
-                <VirtualTryOn
-                    product={product}
-                    isOpen={showVirtualTryOn}
-                    onClose={() => setShowVirtualTryOn(false)}
-                />
-            )}
-        </div>
+            {
+                showVirtualTryOn && (
+                    <VirtualTryOn
+                        product={product}
+                        isOpen={showVirtualTryOn}
+                        onClose={() => setShowVirtualTryOn(false)}
+                    />
+                )
+            }
+        </div >
     );
 };
 

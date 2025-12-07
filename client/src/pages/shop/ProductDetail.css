@@ -73,7 +73,7 @@
 
 /* 4. Size Button Visibility */
 .size-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1rem;
     background: transparent;
     color: var(--text-main);
     /* Explicitly visible text */
@@ -107,18 +107,23 @@
 }
 
 .action-btn {
-    height: 54px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.9rem;
+    height: 56px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    letter-spacing: 0.05em;
+    gap: 0.75rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    /* Base Border Highlight */
+    border: 1px solid transparent;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn:active {
@@ -126,17 +131,20 @@
 }
 
 /* Add to Cart - Premium Primary */
+/* Add to Cart - "Void Gradient" with Highlight */
 .btn-add-cart {
-    background: var(--text-main);
-    color: var(--bg-main);
-    border: none;
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(145deg, #1a1a1a, #000000);
+    color: #fff;
+    /* Subtle white border for definition */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .btn-add-cart:hover {
-    background: #fff;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    background: linear-gradient(145deg, #252525, #0a0a0a);
 }
 
 /* Try On - AI Magic Feel */
@@ -219,21 +227,22 @@
 }
 
 .delivery-check-btn {
-    padding: 0 1rem;
-    background: transparent;
+    padding: 0 1.25rem;
+    background: var(--bg-main);
     border: 1px solid var(--accent-cyan);
     color: var(--accent-cyan);
-    border-radius: 4px;
-    font-weight: 600;
+    border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     transition: all 0.2s ease;
 }
 
 .delivery-check-btn:hover {
     background: var(--accent-cyan);
-    color: black;
+    color: #000;
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
 }
 
 @media (max-width: 640px) {
@@ -241,4 +250,107 @@
         grid-template-columns: 1fr;
         gap: 0.75rem;
     }
+}
+
+/* 7. Size Helper Buttons (New Inline Style) */
+.size-helper-btn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(6, 182, 212, 0.05));
+    border: 1px solid var(--accent-purple);
+    border-radius: 4px;
+    color: var(--accent-purple);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.size-helper-btn:hover {
+    color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.1);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+}
+
+/* Polished Button Styles - Premium Feel */
+
+/* Inline Try-On Button (in DeliveryCheck) */
+/* Inline Try-On Button - Neon Glass Highlight */
+.btn-try-on-inline {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(5px);
+    color: var(--accent-purple);
+    /* Neon Border Highlight */
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: inset 0 0 12px rgba(139, 92, 246, 0.05);
+}
+
+.btn-try-on-inline:hover {
+    background: var(--accent-purple);
+    color: white;
+    box-shadow: 0 0 15px rgba(188, 19, 254, 0.3);
+}
+
+/* Main Buy Now Button (in Action Grid) */
+/* Buy Now - "Electric Gradient" with Highlight */
+.btn-buy-now {
+    background: linear-gradient(135deg, #00f260 0%, #0575e6 100%);
+    color: #fff;
+    /* Glowing border effect */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-buy-now::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg) translateX(-150%);
+    transition: transform 0.5s;
+    z-index: -1;
+}
+
+.btn-buy-now:hover::before {
+    transform: skewX(-20deg) translateX(150%);
+}
+
+.btn-buy-now:hover {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Refined Add to Cart */
+.btn-add-cart {
+    background: #111;
+    color: #fff;
+    border: 1px solid #111;
+}
+
+.btn-add-cart:hover {
+    background: #000;
+    border-color: #000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }

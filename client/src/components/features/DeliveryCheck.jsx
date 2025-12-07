@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, CheckCircle, XCircle, Truck } from 'lucide-react';
 import { getAddressFromPincode } from '../../utils/pincodeService';
 
-const DeliveryCheck = () => {
+const DeliveryCheck = ({ onTryOn }) => {
     const [pincode, setPincode] = useState('');
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -32,24 +32,36 @@ const DeliveryCheck = () => {
         <div className="delivery-check-container">
             <h3 className="delivery-header">
                 <MapPin size={18} color="var(--accent-cyan)" />
-                Check Delivery Availability
+                Check Availability
             </h3>
 
-            <div className="delivery-input-group">
-                <input
-                    type="text"
-                    placeholder="Enter Pincode"
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="delivery-input"
-                />
-                <button
-                    onClick={checkDelivery}
-                    disabled={loading}
-                    className="delivery-check-btn"
-                >
-                    {loading ? '...' : 'Check'}
-                </button>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'stretch' }}>
+                <div className="delivery-input-group" style={{ flex: '1 1 50%', marginBottom: 0 }}>
+                    <input
+                        type="text"
+                        placeholder="Enter Pincode"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        className="delivery-input"
+                    />
+                    <button
+                        onClick={checkDelivery}
+                        disabled={loading}
+                        className="delivery-check-btn"
+                    >
+                        {loading ? '...' : 'Check'}
+                    </button>
+                </div>
+
+                {onTryOn && (
+                    <button
+                        onClick={onTryOn}
+                        className="btn-try-on-inline"
+                        style={{ flex: '1 1 50%' }}
+                    >
+                        ✨ TRY ON
+                    </button>
+                )}
             </div>
 
             {error && (

@@ -1,20 +1,61 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { MessageCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { MessageCircle, Search, Camera } from 'lucide-react';
 import TrustBadges from '../features/TrustBadges';
+import VisualSearch from '../features/VisualSearch';
 
 const Footer = () => {
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showVisualSearch, setShowVisualSearch] = useState(false);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
+            setSearchQuery('');
+        }
+    };
+
     return (
         <footer style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-light)', padding: '4rem 0 2rem 0', marginTop: 'auto' }}>
             <div className="container">
+                {/* Search & Brand Section */}
+                <div style={{ paddingBottom: '3rem', borderBottom: '1px solid var(--border-light)', marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
+                    <div>
+                        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', fontFamily: 'var(--font-display)', display: 'block', marginBottom: '0.5rem' }}>
+                            NEO-INDIA
+                        </Link>
+                        <p style={{ color: 'var(--text-muted)' }}>The future of Indian streetwear.</p>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: '4px', padding: '0.5rem 1rem', border: '1px solid var(--border-light)' }}>
+                            <Search size={18} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.9rem', width: '200px' }}
+                            />
+                        </form>
+                        <button
+                            onClick={() => setShowVisualSearch(true)}
+                            title="Visual Search using Camera"
+                            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', borderRadius: '4px', padding: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <Camera size={20} color="var(--text-main)" />
+                        </button>
+                    </div>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
                     {/* Brand */}
                     <div>
-                        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', fontFamily: 'var(--font-display)', display: 'block', marginBottom: '1rem' }}>
-                            NEO-INDIA <span style={{ color: 'var(--accent-cyan)' }}>FUTURE WEAR</span>
-                        </Link>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>About</h4>
                         <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                            Future-ready streetwear for the digital generation.
+                            Future-ready streetwear for the digital generation. Redefining style with tech and culture.
                         </p>
                     </div>
 
@@ -88,7 +129,12 @@ const Footer = () => {
             >
                 <MessageCircle size={32} />
             </a>
-        </footer >
+            {/* Visual Search Modal */}
+            <VisualSearch
+                isOpen={showVisualSearch}
+                onClose={() => setShowVisualSearch(false)}
+            />
+        </footer>
     );
 };
 

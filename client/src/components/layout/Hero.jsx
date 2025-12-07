@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import heroBanner from '../../assets/images/hero-banner.png';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -29,17 +30,17 @@ const Hero = () => {
         </div>
 
         <div className="relative hidden md:block">
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4/5', background: '#1a1a1a' }}>
-            <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top right, rgba(0, 243, 255, 0.1), rgba(188, 19, 254, 0.1))', mixBlendMode: 'overlay' }}></div>
+          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9', background: '#1a1a1a', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent 40%)' }}></div>
             <img
-              src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1000&auto=format&fit=crop"
+              src={heroBanner}
               alt="Hero Fashion"
               className="w-full h-full object-cover"
-              style={{ filter: 'grayscale(100%)' }}
+              style={{ filter: 'contrast(1.1) saturate(1.1)' }}
             />
 
             <div className="absolute bottom-8 left-8 z-20">
-              <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.6)' }}>COLLECTION 01</p>
+              <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'var(--accent-cyan)' }}>COLLECTION 01</p>
               <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>GENESIS</p>
             </div>
           </div>
