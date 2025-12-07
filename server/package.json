@@ -7,7 +7,8 @@
     "scripts": {
         "start": "node index.js",
         "dev": "nodemon index.js",
-        "seed": "node seeder.js"
+        "seed": "node seeder.js",
+        "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
     },
     "keywords": [
         "ecommerce",
@@ -34,6 +35,9 @@
         "razorpay": "^2.9.6"
     },
     "devDependencies": {
-        "nodemon": "^3.1.0"
+        "cross-env": "^10.1.0",
+        "jest": "^30.2.0",
+        "nodemon": "^3.1.0",
+        "supertest": "^7.1.4"
     }
 }

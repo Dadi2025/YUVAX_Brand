@@ -20,6 +20,8 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
+  position: relative;
+  /* Ensure context for absolute positioning */
 }
 
 /* Logo */
@@ -58,7 +60,10 @@
   color: var(--accent-primary);
 }
 
-/* Desktop Menu Container */
+.nav-link-accent {
+  color: var(--accent-primary);
+}
+
 /* Desktop Menu Container */
 @media (min-width: 768px) {
   .nav-links-center {
@@ -75,16 +80,6 @@
     height: 100%;
     align-items: center;
   }
-}
-
-/* Adjust main container to be spacious */
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  /* Context for absolute positioning of right nav */
-  height: 100%;
 }
 
 /* Icons */
@@ -214,4 +209,53 @@
 .user-dropdown-item:hover {
   background: var(--bg-secondary);
   color: var(--text-main);
+}
+
+/* Extracted Utility Classes */
+.nav-separator {
+  width: 1px;
+  height: 24px;
+  background: var(--border-light);
+  margin: 0 8px;
+}
+
+.nav-btn-logout {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-body);
+  font-weight: 500;
+  padding: 8px;
+  transition: color 0.2s;
+}
+
+.nav-btn-logout:hover {
+  color: var(--error);
+}
+
+.language-toggle {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.language-toggle:hover {
+  border-color: var(--text-body);
+}
+
+.mobile-menu {
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.mobile-menu-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }

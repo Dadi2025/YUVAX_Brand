@@ -96,7 +96,7 @@ const Navbar = () => {
 
             {/* 7. Dashboard/Orders */}
             {user && (
-              <Link to="/profile" className="nav-link flex items-center gap-2" style={{ color: 'var(--accent-primary)' }} aria-label="Orders">
+              <Link to="/profile" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Orders">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
@@ -106,7 +106,7 @@ const Navbar = () => {
               </Link>
             )}
             {isAgentLoggedIn && (
-              <Link to="/delivery/dashboard" className="nav-link flex items-center gap-2" style={{ color: 'var(--accent-primary)' }} aria-label="Dashboard">
+              <Link to="/delivery/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="7" height="7"></rect>
                   <rect x="14" y="3" width="7" height="7"></rect>
@@ -117,7 +117,7 @@ const Navbar = () => {
               </Link>
             )}
             {isAdminLoggedIn && (
-              <Link to="/admin/dashboard" className="nav-link flex items-center gap-2" style={{ color: 'var(--accent-primary)' }} aria-label="Dashboard">
+              <Link to="/admin/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="7" height="7"></rect>
                   <rect x="14" y="3" width="7" height="7"></rect>
@@ -171,16 +171,14 @@ const Navbar = () => {
               isAdminLoggedIn ? (
                 <button
                   onClick={handleAdminLogout}
-                  className="logout-btn-primary"
-                  style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.9rem' }}
+                  className="logout-btn-primary nav-btn-logout"
                 >
                   Logout
                 </button>
               ) : isAgentLoggedIn ? (
                 <button
                   onClick={handleAgentLogout}
-                  className="logout-btn-primary"
-                  style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.9rem' }}
+                  className="logout-btn-primary nav-btn-logout"
                 >
                   Logout
                 </button>
@@ -192,15 +190,12 @@ const Navbar = () => {
             )}
 
             {/* Separator for Utilities */}
-            <div style={{ width: '1px', height: '24px', background: 'var(--border-light)', margin: '0 8px' }}></div>
-
-
+            <div className="nav-separator"></div>
 
             {/* Language Toggle */}
             <button
               onClick={() => changeLanguage(currentLanguage === 'en' ? 'hi' : 'en')}
               className="language-toggle"
-              style={{ padding: '4px 8px', fontSize: '0.8rem' }}
             >
               {currentLanguage === 'en' ? 'हिं' : 'EN'}
             </button>
@@ -228,8 +223,8 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full mobile-menu" style={{ background: 'white', borderBottom: '1px solid #eee' }}>
-            <div className="mobile-menu-content" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div className="md:hidden absolute top-full left-0 w-full mobile-menu">
+            <div className="mobile-menu-content">
               <Link to="/" className="nav-link" onClick={() => setIsOpen(false)}>Home</Link>
               <Link to="/shop" className="nav-link" onClick={() => setIsOpen(false)}>Collections</Link>
               <Link to="/style-wall" className="nav-link" onClick={() => setIsOpen(false)}>Style Wall</Link>

@@ -115,13 +115,19 @@ export const simulateCourier = async (req, res) => {
             createdAt: { $lt: oneDayAgo }
         });
 
-        for (const order of processingOrders) {
-            order.status = 'Shipped';
-            await order.save();
-            // Send WhatsApp Shipping Notification
-            await sendShippingUpdate(order);
-            updatedCount++;
-        }
+        // Helper to process processing orders
+        const shipPromises = processingOrders.map(async (order) => {
+            try {
+                order.status = 'Shipped';
+                await order.save();
+                // Send WhatsApp Shipping Notification
+                await sendShippingUpdate(order).catch(console.error);
+                return 1;
+            } catch (err) {
+                console.error(`Error updating order ${order._id} to Shipped:`, err);
+                return 0;
+            }
+        });
 
         // 2. Shipped -> Delivered (if older than 2 days from update)
         const twoDaysAgo = new Date(now - twoDays);
@@ -130,24 +136,33 @@ export const simulateCourier = async (req, res) => {
             updatedAt: { $lt: twoDaysAgo }
         });
 
-        for (const order of shippedOrders) {
-            order.status = 'Delivered';
-            order.isDelivered = true;
-            order.deliveredAt = now;
+        const deliverPromises = shippedOrders.map(async (order) => {
+            try {
+                order.status = 'Delivered';
+                order.isDelivered = true;
+                order.deliveredAt = now;
+                await order.save();
 
-            // Award Loyalty Points
-            const pointsToAward = Math.floor(order.totalPrice / 100);
-            const user = await User.findById(order.user);
-            if (user) {
-                user.points += pointsToAward;
-                await user.save();
+                // Award Loyalty Points (Atomic Update)
+                const pointsToAward = Math.floor(order.totalPrice / 100);
+                if (order.user) {
+                    await User.findByIdAndUpdate(order.user, {
+                        $inc: { points: pointsToAward }
+                    });
+                }
+
+                // Send WhatsApp Delivery Notification
+                await sendDeliveryUpdate(order).catch(console.error);
+                return 1;
+            } catch (err) {
+                console.error(`Error updating order ${order._id} to Delivered:`, err);
+                return 0;
             }
+        });
 
-            await order.save();
-            // Send WhatsApp Delivery Notification
-            await sendDeliveryUpdate(order);
-            updatedCount++;
-        }
+        // Wait for all updates to complete concurrently
+        const results = await Promise.all([...shipPromises, ...deliverPromises]);
+        updatedCount = results.reduce((a, b) => a + b, 0);
 
         res.json({ message: `Simulated courier updates: ${updatedCount} orders updated` });
     } catch (error) {

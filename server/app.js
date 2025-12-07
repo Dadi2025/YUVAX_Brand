@@ -1,0 +1,115 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import mongoSanitize from 'express-mongo-sanitize';
+import productRoutes from './routes/productRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import otpRoutes from './routes/otpRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import agentRoutes from './routes/agentRoutes.js';
+import postRoutes from './routes/postRoutes.js';
+import visualSearchRoutes from './routes/visualSearchRoutes.js';
+import pincodeRoutes from './routes/pincodeRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
+import gameRoutes from './routes/gameRoutes.js';
+import referralRoutes from './routes/referralRoutes.js';
+import alertRoutes from './routes/alertRoutes.js';
+import loyaltyRoutes from './routes/loyaltyRoutes.js';
+import spinRoutes from './routes/spinRoutes.js';
+import flashSaleRoutes from './routes/flashSaleRoutes.js';
+import returnRoutes from './routes/returnRoutes.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+
+// Security Middleware
+app.use(helmet()); // Set security headers
+
+// CORS Configuration
+const corsOptions = {
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+
+// Request Logging
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+} else {
+    app.use(morgan('combined'));
+}
+
+// Body Parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Sanitize data to prevent MongoDB injection
+app.use(mongoSanitize());
+
+// Serve static files (for uploaded review images)
+app.use('/uploads', express.static('uploads'));
+
+// Apply rate limiting to all API routes
+app.use('/api/', apiLimiter);
+
+// Routes
+app.get('/', (req, res) => {
+    res.json({
+        message: 'YUVAX API is running',
+        version: '1.0.0',
+        environment: process.env.NODE_ENV
+    });
+});
+
+// API Routes
+app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/otp', otpRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/agents', agentRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/visual-search', visualSearchRoutes);
+app.use('/api/pincode', pincodeRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/game', gameRoutes);
+app.use('/api/referral', referralRoutes);
+app.use('/api/alerts', alertRoutes);
+app.use('/api/loyalty', loyaltyRoutes);
+app.use('/api/spin', spinRoutes);
+app.use('/api/flash-sales', flashSaleRoutes);
+app.use('/api/returns', returnRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+
+// 404 Handler
+app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Error:', err.stack);
+
+    const statusCode = err.statusCode || 500;
+    const message = process.env.NODE_ENV === 'production'
+        ? 'Internal server error'
+        : err.message;
+
+    res.status(statusCode).json({
+        message,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
+});
+
+export default app;
