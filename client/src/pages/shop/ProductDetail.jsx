@@ -178,37 +178,23 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Actions */}
-                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center' }}>
+                        <div className="product-actions-grid">
                             <button
                                 onClick={() => addToCart(product, selectedSize, quantity)}
-                                className="btn-primary"
-                                style={{ flex: 1, padding: '1rem' }}
+                                className="action-btn btn-add-cart"
                                 data-testid="add-to-cart-btn"
                             >
                                 ADD TO CART
                             </button>
                             <button
                                 onClick={() => setShowVirtualTryOn(true)}
-                                style={{
-                                    background: 'rgba(139, 92, 246, 0.1)',
-                                    border: '1px solid var(--accent-purple)',
-                                    color: 'var(--accent-purple)',
-                                    padding: '0.5rem 1rem',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    height: '50px',
-                                    fontWeight: '600'
-                                }}
+                                className="action-btn btn-try-on"
                             >
                                 <span>✨</span> Try On
                             </button>
                             <button
                                 onClick={() => addToWishlist(product)}
-                                className="btn-secondary"
-                                style={{ padding: '0 1.5rem', height: '50px' }}
+                                className="action-btn btn-wishlist"
                             >
                                 {isInWishlist(product.id) ? '❤️' : '♡'}
                             </button>
@@ -264,8 +250,7 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-                {/* Complete the Look - Product Recommendations */}
-                <ProductRecommendations productId={product.id} />
+
             </div>
 
             {/* Size Guide Modal */}

@@ -94,4 +94,151 @@
     background: var(--accent-cyan);
     color: black;
     border-color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+}
+
+/* 5. Product Actions Grid */
+.product-actions-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 0.6fr;
+    gap: 1rem;
+    align-items: stretch;
+    margin-bottom: 2rem;
+}
+
+.action-btn {
+    height: 54px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.action-btn:active {
+    transform: scale(0.98);
+}
+
+/* Add to Cart - Premium Primary */
+.btn-add-cart {
+    background: var(--text-main);
+    color: var(--bg-main);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-add-cart:hover {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Try On - AI Magic Feel */
+.btn-try-on {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+    border: 1px solid var(--accent-purple);
+    color: var(--accent-purple);
+}
+
+.btn-try-on:hover {
+    background: var(--accent-purple);
+    color: white;
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+    border-color: var(--accent-purple);
+}
+
+/* Wishlist - Square Icon */
+.btn-wishlist {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    font-size: 1.75rem;
+    /* Increased size */
+    padding: 0;
+}
+
+.btn-wishlist:hover {
+    border-color: #ff4444;
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.05);
+}
+
+/* 6. Delivery Check Premium - Compact */
+.delivery-check-container {
+    margin: 1rem 0;
+    padding: 0.85rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.delivery-check-container:focus-within {
+    border-color: var(--accent-cyan);
+}
+
+.delivery-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.delivery-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+
+.delivery-input {
+    flex: 1;
+    padding: 0.6rem 0.85rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.delivery-input:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.1);
+}
+
+.delivery-check-btn {
+    padding: 0 1rem;
+    background: transparent;
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.delivery-check-btn:hover {
+    background: var(--accent-cyan);
+    color: black;
+}
+
+@media (max-width: 640px) {
+    .product-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
 }
