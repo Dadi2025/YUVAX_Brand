@@ -238,6 +238,90 @@ export const getOrderAnalytics = async (req, res) => {
     }
 };
 
+// @desc    Get advanced analytics for charts
+// @route   GET /api/orders/analytics/advanced
+// @access  Private/Admin
+export const getAdvancedAnalytics = async (req, res) => {
+    try {
+        const today = new Date();
+        const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        // 1. Sales Trend (Last 7 Days)
+        const salesTrend = await Order.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: sevenDaysAgo },
+                    $or: [{ isPaid: true }, { status: 'Delivered' }]
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    totalSales: { $sum: "$totalPrice" },
+                    orderCount: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // 2. Order Status Distribution
+        const orderStatusDist = await Order.aggregate([
+            {
+                $group: {
+                    _id: "$status",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // 3. Top Products (by Quantity Sold)
+        const topProducts = await Order.aggregate([
+            { $unwind: "$orderItems" },
+            {
+                $group: {
+                    _id: "$orderItems.product",
+                    name: { $first: "$orderItems.name" },
+                    totalSold: { $sum: "$orderItems.qty" },
+                    revenue: { $sum: { $multiply: ["$orderItems.price", "$orderItems.qty"] } }
+                }
+            },
+            { $sort: { totalSold: -1 } },
+            { $limit: 5 }
+        ]);
+
+        // 4. Category Sales (Revenue by Category)
+        const categorySales = await Order.aggregate([
+            { $unwind: "$orderItems" },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "orderItems.product",
+                    foreignField: "_id",
+                    as: "productDetails"
+                }
+            },
+            { $unwind: "$productDetails" },
+            {
+                $group: {
+                    _id: "$productDetails.category",
+                    totalRevenue: { $sum: { $multiply: ["$orderItems.price", "$orderItems.qty"] } }
+                }
+            },
+            { $sort: { totalRevenue: -1 } }
+        ]);
+
+        res.json({
+            salesTrend,
+            orderStatusDist,
+            topProducts,
+            categorySales
+        });
+    } catch (error) {
+        console.error('Advanced analytics error:', error);
+        res.status(500).json({ message: 'Failed to fetch advanced analytics' });
+    }
+};
+
 // @desc    Get order by ID
 // @route   GET /api/orders/:id
 // @access  Public (for order tracking)

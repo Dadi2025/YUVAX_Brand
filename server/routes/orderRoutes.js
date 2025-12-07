@@ -14,7 +14,8 @@ import {
     requestExchange,
     updateExchangeStatus,
     processRefund,
-    manualRefund
+    manualRefund,
+    getAdvancedAnalytics
 } from '../controllers/orderController.js';
 
 const router = express.Router();
@@ -28,24 +29,6 @@ const orderValidation = [
         .trim()
         .notEmpty()
         .withMessage('Address is required'),
-    body('shippingAddress.city')
-        .trim()
-        .notEmpty()
-        .withMessage('City is required'),
-    body('shippingAddress.postalCode')
-        .trim()
-        .matches(/^\d{6}$/)
-        .withMessage('Invalid postal code'),
-    body('shippingAddress.country')
-        .trim()
-        .notEmpty()
-        .withMessage('Country is required'),
-    body('paymentMethod')
-        .isIn(['upi', 'card', 'cod', 'Razorpay', 'razorpay'])
-        .withMessage('Invalid payment method'),
-    body('totalPrice')
-        .isFloat({ min: 0 })
-        .withMessage('Invalid total price'),
 ];
 
 // @desc    Get all orders / Create new order
@@ -62,6 +45,7 @@ router.route('/simulate-courier').post(protect, admin, simulateCourier);
 // @desc    Get order analytics
 // NOTE: This route MUST be before /:id route to avoid matching 'analytics' as an ID
 router.route('/analytics').get(protect, admin, getOrderAnalytics);
+router.route('/analytics/advanced').get(protect, admin, getAdvancedAnalytics);
 
 // @desc    Get order by ID
 router.route('/:id').get(getOrderById);
