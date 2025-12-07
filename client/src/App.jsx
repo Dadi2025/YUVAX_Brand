@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/layout/Navbar';
-import SearchHeader from './components/layout/SearchHeader';
 import ScrollToTop from './components/common/ScrollToTop';
 import Toast from './components/common/Toast';
 import FashionAssistant from './components/features/FashionAssistant';
@@ -59,7 +58,6 @@ function App() {
         <Router>
           <div style={{ background: 'var(--bg-dark)', minHeight: '100vh', color: 'var(--text-main)' }}>
             <Navbar />
-            <SearchHeader />
             <ScrollToTop />
             <Toast />
             <FashionAssistant />

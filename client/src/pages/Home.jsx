@@ -9,6 +9,7 @@ import { useApp } from '../context/AppContext';
 import loyaltyService from '../services/loyaltyService';
 import TrendingSection from '../components/features/TrendingSection';
 import RecommendedProducts from '../components/features/RecommendedProducts';
+import SearchHeader from '../components/layout/SearchHeader';
 
 const Home = () => {
   const { products } = useApp();
@@ -37,6 +38,7 @@ const Home = () => {
 
   return (
     <div style={{ minHeight: '100vh' }}>
+      <SearchHeader />
       <Hero />
 
       {/* Categories Rail */}

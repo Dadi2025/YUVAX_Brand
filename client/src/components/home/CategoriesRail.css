@@ -1,6 +1,6 @@
 .categories-rail {
     padding: 1.5rem 0;
-    background: rgba(255, 255, 255, 0.02);
+    background: transparent;
     border-bottom: 1px solid var(--border-light);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -16,15 +16,17 @@
 
 .categories-rail-content {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
     padding: 0 1rem;
     min-width: min-content;
+    justify-content: flex-start;
+    /* Default to start scroll */
 }
 
 @media (min-width: 768px) {
     .categories-rail-content {
         justify-content: center;
-        gap: 3rem;
+        gap: 3.5rem;
     }
 }
 
@@ -32,10 +34,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     cursor: pointer;
-    transition: transform 0.2s ease;
-    min-width: 80px;
+    transition: transform 0.3s ease;
+    min-width: 110px;
 }
 
 .category-item:hover {
@@ -43,42 +45,52 @@
 }
 
 .category-icon-wrapper {
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background: var(--bg-card);
-    border: 1px solid var(--border-light);
+    border: 2px solid var(--border-light);
+    /* Slightly thicker border */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     position: relative;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .category-item:hover .category-icon-wrapper {
     border-color: var(--accent-cyan);
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    transform: scale(1.05);
+    /* Subtle pop */
 }
 
 .category-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.8;
-    transition: opacity 0.3s;
+    filter: grayscale(100%);
+    /* Start B&W for premium feel */
+    opacity: 0.9;
+    transition: all 0.4s ease;
 }
 
 .category-item:hover .category-image {
+    filter: grayscale(0%);
+    /* Color on hover */
     opacity: 1;
+    transform: scale(1.1);
+    /* Zoom effect */
 }
 
 .category-label {
     font-family: var(--font-display);
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
     text-transform: uppercase;
+    font-weight: 600;
     transition: color 0.3s;
 }
 
@@ -92,7 +104,12 @@
 }
 
 .category-item.sale:hover .category-icon-wrapper {
-    box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+}
+
+.category-item.sale .category-image {
+    filter: grayscale(0%) contrast(1.1);
+    /* Keep Sale in color always? Or distinctive */
 }
 
 .category-item.sale .category-label {

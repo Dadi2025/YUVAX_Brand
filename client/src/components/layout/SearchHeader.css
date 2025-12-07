@@ -2,27 +2,27 @@
 .search-header-container {
     background: var(--bg-main);
     border-bottom: 1px solid var(--border-light);
-    padding: 0.75rem 0;
+    padding: 1rem 0;
     position: sticky;
     top: var(--navbar-height);
     /* Stick right below navbar */
     z-index: 990;
     /* Below Navbar (1000) but above content */
     transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 
 .search-header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
-    flex-wrap: wrap;
+    gap: 3rem;
 }
 
 /* Search Form */
 .header-search-form {
     flex: 1;
-    max-width: 600px;
+    max-width: 500px;
 }
 
 .header-search-input-wrapper {
@@ -31,31 +31,38 @@
     align-items: center;
     background: var(--bg-secondary);
     border: 1px solid var(--border-light);
-    border-radius: 4px;
-    /* Minimalist radius */
-    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
     transition: all 0.2s ease;
 }
 
 .header-search-input-wrapper:focus-within {
-    border-color: var(--text-main);
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-color: var(--accent-cyan);
+    background: var(--bg-card);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* Stronger shadow on focus */
 }
 
 .header-search-icon {
     color: var(--text-muted);
-    margin-right: 0.75rem;
+    margin-right: 1rem;
+    transition: color 0.2s ease;
+}
+
+.header-search-input-wrapper:focus-within .header-search-icon {
+    color: var(--accent-cyan);
 }
 
 .header-search-input {
     width: 100%;
     border: none;
     background: transparent;
-    font-size: 0.875rem;
+    font-size: 0.95rem;
+    /* Slightly larger text */
     color: var(--text-main);
     outline: none;
     font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
 .header-search-input::placeholder {
@@ -63,50 +70,81 @@
     font-weight: 400;
 }
 
-/* Quick Links */
+/* Quick Links - Premium Style */
 .header-quick-links {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    overflow-x: auto;
-    /* Allow scroll on small mobile */
-    padding-bottom: 2px;
-    /* For scrollbar spacing if needed */
+    gap: 1.5rem;
+    /* Increased spacing (Lining) */
 }
 
 .quick-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
+    letter-spacing: 0.15em;
+    /* Widespacing */
+    font-weight: 700;
     white-space: nowrap;
+    margin-right: 0.5rem;
 }
 
 .quick-link-btn {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    background: none;
-    border: 1px solid var(--border-light);
-    border-radius: 20px;
-    padding: 0.35rem 0.85rem;
+    gap: 0.6rem;
+    background: transparent;
+    border: 1px solid transparent;
+    /* Invisible border for layout stability */
+    padding: 0.4rem 0.8rem;
     font-size: 0.75rem;
     color: var(--text-body);
-    font-weight: 500;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    opacity: 0.8;
 }
 
 .quick-link-btn:hover {
-    border-color: var(--accent-cyan);
     color: var(--accent-cyan);
-    background: rgba(6, 182, 212, 0.05);
+    opacity: 1;
+    transform: translateY(-1px);
+    /* Subtle lift */
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Icons in buttons */
+.quick-link-btn svg {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.quick-link-btn:hover svg {
+    opacity: 1;
 }
 
 /* Mobile Adjustments */
+@media (max-width: 1024px) {
+    .search-header-content {
+        gap: 1.5rem;
+    }
+
+    .header-quick-links {
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 768px) {
+    .search-header-container {
+        padding: 0.75rem 0;
+        top: 60px;
+        /* Adjust based on mobile navbar height */
+    }
+
     .search-header-content {
         flex-direction: column;
         align-items: stretch;
@@ -118,7 +156,19 @@
     }
 
     .header-quick-links {
-        padding-bottom: 0;
+        padding-bottom: 0.5rem;
         justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        /* Separator on mobile */
+    }
+
+    .quick-link-btn {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        /* Pill shape on mobile for better touch targets */
     }
 }
