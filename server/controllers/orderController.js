@@ -303,10 +303,13 @@ export const createOrder = async (req, res) => {
             shippingAddress,
             billingAddress: billingAddress || shippingAddress, // Default to shipping if not provided
             paymentMethod,
+            paymentResult: req.body.paymentResult, // Add payment result from request
             itemsPrice,
             taxPrice,
             shippingPrice,
             totalPrice,
+            isPaid: req.body.paymentResult && req.body.paymentResult.status === 'COMPLETED' ? true : false,
+            paidAt: req.body.paymentResult && req.body.paymentResult.status === 'COMPLETED' ? Date.now() : null,
         });
 
 

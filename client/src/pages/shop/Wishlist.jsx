@@ -88,11 +88,31 @@ const Wishlist = () => {
 
     if (wishlist.length === 0) {
         return (
-            <div style={{ minHeight: '100vh', paddingTop: '120px', textAlign: 'center' }}>
-                <div className="container">
-                    <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>YOUR WISHLIST</h1>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Your wishlist is empty</p>
-                    <Link to="/shop" className="btn-primary">Discover Products</Link>
+            <div style={{ minHeight: '100vh', paddingTop: '120px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="container" style={{ maxWidth: '600px' }}>
+                    <img
+                        src="/src/assets/images/empty-wishlist.png"
+                        alt="Empty Wishlist"
+                        style={{ width: '250px', marginBottom: '2rem', filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.1))' }}
+                    />
+                    <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Your wishlist is waiting for love
+                    </h1>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '1.2rem' }}>
+                        Save your favorites here and check back anytime!
+                    </p>
+                    <Link
+                        to="/shop"
+                        className="btn-primary"
+                        style={{
+                            padding: '1rem 3rem',
+                            fontSize: '1.1rem',
+                            borderRadius: '50px',
+                            boxShadow: '0 0 20px rgba(74, 222, 128, 0.2)'
+                        }}
+                    >
+                        Discover Products
+                    </Link>
                 </div>
             </div>
         );

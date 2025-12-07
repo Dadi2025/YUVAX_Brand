@@ -343,29 +343,36 @@ const DeliveryDashboard = () => {
                                     e.currentTarget.style.boxShadow = 'none';
                                 }}>
                                 {/* Order Header */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                        <div style={{
-                                            background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '8px',
-                                            fontFamily: 'monospace',
-                                            fontWeight: 'bold',
-                                            color: 'black'
-                                        }}>
-                                            #{order._id.slice(-6)}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                                            <div style={{
+                                                background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '8px',
+                                                fontFamily: 'monospace',
+                                                fontWeight: 'bold',
+                                                color: 'black'
+                                            }}>
+                                                #{order._id.slice(-6)}
+                                            </div>
+                                            <div style={{
+                                                background: order.status === 'Delivered' ? '#4ade80' :
+                                                    order.status === 'Returned' ? '#facc15' : 'var(--accent-cyan)',
+                                                color: 'black',
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '8px',
+                                                fontWeight: 'bold',
+                                                fontSize: '0.875rem'
+                                            }}>
+                                                {order.status === 'Delivered' ? '✓ Delivered' :
+                                                    order.status === 'Returned' ? '↩ Returned' : '🚚 ' + order.status}
+                                            </div>
                                         </div>
-                                        <div style={{
-                                            background: order.status === 'Delivered' ? '#4ade80' :
-                                                order.status === 'Returned' ? '#facc15' : 'var(--accent-cyan)',
-                                            color: 'black',
-                                            padding: '0.5rem 1rem',
-                                            borderRadius: '8px',
-                                            fontWeight: 'bold',
-                                            fontSize: '0.875rem'
-                                        }}>
-                                            {order.status === 'Delivered' ? '✓ Delivered' :
-                                                order.status === 'Returned' ? '↩ Returned' : '🚚 ' + order.status}
+                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <span>📅 {new Date(order.createdAt || order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                            <span>•</span>
+                                            <span>🕒 {new Date(order.createdAt || order.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
                                         </div>
                                     </div>
                                     <div style={{
@@ -376,7 +383,7 @@ const DeliveryDashboard = () => {
                                         fontWeight: 'bold',
                                         fontSize: '0.875rem'
                                     }}>
-                                        {order.paymentMethod === 'cod' ? `💰 COD ₹${order.totalPrice}` : '✓ Prepaid'}
+                                        {order.paymentMethod === 'cod' ? `💰 COD ₹${order.totalPrice}` : `✓ Prepaid ₹${order.totalPrice}`}
                                     </div>
                                 </div>
 

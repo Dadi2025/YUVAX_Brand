@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useApp } from '../../context/AppContext';
 
 const Login = () => {
@@ -119,6 +120,32 @@ const Login = () => {
         // In a real app, this would redirect to the provider's OAuth URL
         // For now, we'll simulate a login or show a "Coming Soon" message
         showToast(`${provider} login coming soon!`, 'info');
+    };
+
+    const handleGoogleLoginSuccess = async (credentialResponse) => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: credentialResponse.credential })
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('yuva-token', data.token);
+                const { token, ...userWithoutToken } = data;
+                localStorage.setItem('yuva-user', JSON.stringify(userWithoutToken));
+                showToast('Login successful!', 'success');
+                window.location.href = '/';
+            } else {
+                showToast(data.message || 'Google login failed', 'error');
+            }
+        } catch (error) {
+            showToast('Google login failed', 'error');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -281,9 +308,13 @@ const Login = () => {
 
                 <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid var(--border-light)', textAlign: 'center' }}>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>Or continue with</p>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button onClick={() => handleSocialLogin('Google')} className="btn-secondary" style={{ flex: 1, padding: '0.75rem' }}>Google</button>
-                        <button onClick={() => handleSocialLogin('Facebook')} className="btn-secondary" style={{ flex: 1, padding: '0.75rem' }}>Facebook</button>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleLoginSuccess}
+                            onError={() => showToast('Google Login Failed', 'error')}
+                            theme="filled_black"
+                            width="250"
+                        />
                     </div>
                 </div>
             </div>

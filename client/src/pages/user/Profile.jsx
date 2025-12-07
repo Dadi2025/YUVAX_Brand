@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
-import { Package, Clock, CheckCircle, RotateCcw, RefreshCw, XCircle } from 'lucide-react';
+import { Package, Clock, CheckCircle, RotateCcw, RefreshCw, XCircle, Printer } from 'lucide-react';
 import OrderReturnModal from '../../components/returns/OrderReturnModal';
 
 const Profile = () => {
@@ -34,6 +34,119 @@ const Profile = () => {
             case 'Delivered': return '#00ff00';
             default: return 'var(--text-muted)';
         }
+    };
+
+    const handlePrintInvoice = (order) => {
+        const printWindow = window.open('', '_blank');
+        const invoiceContent = `
+            <html>
+                <head>
+                    <title>Invoice - ${order._id || order.id}</title>
+                    <style>
+                        body { font-family: 'Helvetica', 'Arial', sans-serif; padding: 20px; line-height: 1.5; color: #333; }
+                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+                        .logo { font-size: 24px; font-weight: bold; color: #000; }
+                        .invoice-title { font-size: 32px; font-weight: bold; color: #333; }
+                        .info-section { display: flex; justify-content: space-between; margin-bottom: 40px; }
+                        .company-info, .bill-to { width: 45%; }
+                        h3 { font-size: 14px; text-transform: uppercase; color: #666; margin-bottom: 10px; }
+                        p { margin: 0; font-size: 14px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                        th { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; background: #f9f9f9; font-size: 12px; text-transform: uppercase; }
+                        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+                        .total-section { float: right; width: 300px; }
+                        .row { display: flex; justify-content: space-between; padding: 5px 0; }
+                        .grand-total { font-size: 18px; font-weight: bold; border-top: 2px solid #333; padding-top: 10px; margin-top: 10px; }
+                        .footer { margin-top: 50px; text-align: center; color: #999; font-size: 12px; padding-top: 20px; border-top: 1px solid #eee; }
+                        @media print {
+                            button { display: none; }
+                            body { font-size: 12pt; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="logo">YUVAX</div>
+                        <div class="invoice-title">INVOICE</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="company-info">
+                            <h3>From</h3>
+                            <p><strong>YUVAX Inc.</strong></p>
+                            <p>123 Fashion Street</p>
+                            <p>Mumbai, Maharashtra 400001</p>
+                            <p>support@yuvax.com</p>
+                        </div>
+                        <div class="bill-to">
+                            <h3>Bill To</h3>
+                            <p><strong>${order.shippingAddress.name}</strong></p>
+                            <p>${order.shippingAddress.address}</p>
+                            <p>${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.pincode}</p>
+                            <p>Phone: ${order.shippingAddress.phone}</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <p><strong>Order ID:</strong> ${order._id || order.id}</p>
+                        <p><strong>Date:</strong> ${new Date(order.createdAt || order.date).toLocaleDateString()}</p>
+                        <p><strong>Status:</strong> ${order.status}</p>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Size</th>
+                                <th>Oty</th>
+                                <th style="text-align: right">Price</th>
+                                <th style="text-align: right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(order.orderItems || order.items || []).map(item => `
+                                <tr>
+                                    <td>${item.name}</td>
+                                    <td>${item.size}</td>
+                                    <td>${item.quantity}</td>
+                                    <td style="text-align: right">₹${item.price}</td>
+                                    <td style="text-align: right">₹${item.price * item.quantity}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="total-section">
+                        <div class="row">
+                            <span>Subtotal:</span>
+                            <span>₹${order.totalPrice || order.total}</span>
+                        </div>
+                        <div class="row">
+                            <span>Shipping:</span>
+                            <span>Included</span>
+                        </div>
+                        <div class="row grand-total">
+                            <span>Total:</span>
+                            <span>₹${order.totalPrice || order.total}</span>
+                        </div>
+                    </div>
+
+                    <div style="clear: both;"></div>
+
+                    <div class="footer">
+                        <p>Thank you for shopping with YUVAX!</p>
+                        <p>For any queries, please contact support.</p>
+                    </div>
+
+                    <script>
+                        window.onload = function() { window.print(); }
+                    </script>
+                </body>
+            </html>
+        `;
+
+        printWindow.document.write(invoiceContent);
+        printWindow.document.close();
     };
 
     return (
@@ -237,6 +350,14 @@ const Profile = () => {
                                                         style={{ flex: 1 }}
                                                     >
                                                         TRACK ORDER
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handlePrintInvoice(order)}
+                                                        className="btn-secondary"
+                                                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                                                    >
+                                                        <Printer size={16} />
+                                                        INVOICE
                                                     </button>
                                                     {isReturnEligible(order) && (
                                                         <button

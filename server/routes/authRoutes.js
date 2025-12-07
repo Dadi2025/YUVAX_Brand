@@ -5,6 +5,52 @@ import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// @desc    Google Auth
+// @route   POST /api/auth/google
+// @access  Public
+router.post('/google', async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const { name, email, picture } = ticket.getPayload();
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Create new user if doesn't exist
+            // Generate a random password since they used Google login
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+            user = await User.create({
+                name,
+                email,
+                password: randomPassword,
+                // You might want to store the specialized provider info or avatar
+                // avatar: picture 
+            });
+        }
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            token: generateToken(user._id),
+        });
+
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        res.status(401).json({ message: 'Google authentication failed' });
+    }
+});
 
 // Rate limiter for auth routes
 const authLimiter = rateLimit({

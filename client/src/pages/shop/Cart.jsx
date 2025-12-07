@@ -7,11 +7,31 @@ const Cart = () => {
 
     if (cart.length === 0) {
         return (
-            <div style={{ minHeight: '100vh', paddingTop: '120px', textAlign: 'center' }}>
-                <div className="container">
-                    <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>YOUR CART</h1>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Your cart is empty</p>
-                    <Link to="/shop" className="btn-primary">Continue Shopping</Link>
+            <div style={{ minHeight: '100vh', paddingTop: '120px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="container" style={{ maxWidth: '600px' }}>
+                    <img
+                        src="/src/assets/images/empty-cart.png"
+                        alt="Empty Cart"
+                        style={{ width: '250px', marginBottom: '2rem', filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.1))' }}
+                    />
+                    <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Your cart feels so light!
+                    </h1>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '1.2rem' }}>
+                        Let's add some style to it. Explore our latest collections.
+                    </p>
+                    <Link
+                        to="/shop"
+                        className="btn-primary"
+                        style={{
+                            padding: '1rem 3rem',
+                            fontSize: '1.1rem',
+                            borderRadius: '50px',
+                            boxShadow: '0 0 20px rgba(74, 222, 128, 0.2)'
+                        }}
+                    >
+                        Continue Shopping
+                    </Link>
                 </div>
             </div>
         );
