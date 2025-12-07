@@ -55,6 +55,18 @@ router.post('/', protect, async (req, res) => {
             }]
         });
 
+        // Sync with Order model for Admin Panel visibility
+        if (returnType === 'exchange') {
+            order.exchangeStatus = 'Requested';
+            // Use the first item's reason or a generic one
+            order.exchangeReason = items.length > 0 ? (items[0].reasonDetails || items[0].reason) : 'Exchange Requested';
+        } else {
+            order.returnStatus = 'Requested';
+            // Use the first item's reason or a generic one
+            order.returnReason = items.length > 0 ? (items[0].reasonDetails || items[0].reason) : 'Return Requested';
+        }
+        await order.save();
+
         res.status(201).json(returnRequest);
     } catch (error) {
         res.status(400).json({ message: error.message });

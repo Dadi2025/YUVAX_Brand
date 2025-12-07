@@ -125,7 +125,7 @@ const ManageOrders = () => {
         if (filterStatus === 'All') return true;
         if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
         if (filterStatus === 'Delivered') return order.status === 'Delivered';
-        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Approved' || order.returnStatus === 'Completed';
+        if (filterStatus === 'Returned') return order.status === 'Returned' || ['Approved', 'Completed', 'Requested'].includes(order.returnStatus) || ['Approved', 'Completed', 'Requested'].includes(order.exchangeStatus);
         return true;
     });
 

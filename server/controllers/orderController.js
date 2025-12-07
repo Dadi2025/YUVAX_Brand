@@ -472,17 +472,9 @@ export const requestReturn = async (req, res) => {
             return res.status(400).json({ message: 'Return already requested' });
         }
 
-        // Auto-approve if within 7 days of delivery
-        const deliveryDate = new Date(order.deliveredAt);
-        const daysSinceDelivery = (Date.now() - deliveryDate) / (1000 * 60 * 60 * 24);
-
-        if (daysSinceDelivery <= 7) {
-            order.returnStatus = 'Approved';
-            order.returnReason = req.body.reason + ' (Auto-Approved)';
-        } else {
-            order.returnStatus = 'Requested';
-            order.returnReason = req.body.reason;
-        }
+        // Always request approval for returns
+        order.returnStatus = 'Requested';
+        order.returnReason = req.body.reason;
 
         const updatedOrder = await order.save();
         res.json(updatedOrder);
