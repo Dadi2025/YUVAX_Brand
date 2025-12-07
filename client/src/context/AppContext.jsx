@@ -328,7 +328,10 @@ export const AppProvider = ({ children }) => {
                     postalCode: orderDetails.shippingAddress.postalCode,
                     country: orderDetails.shippingAddress.country
                 },
+                billingAddress: orderDetails.billingAddress, // Add billing address
+                saveAddress: orderDetails.saveAddress,       // Add save address choice
                 paymentMethod: orderDetails.paymentMethod,
+                paymentResult: orderDetails.paymentResult,   // Add payment result (CRITICAL)
                 itemsPrice: getCartTotal(),
                 taxPrice: 0,
                 shippingPrice: 99,
