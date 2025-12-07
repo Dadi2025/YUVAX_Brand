@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../data/translations';
 import VisualSearch from '../features/VisualSearch';
-import TopBar from './TopBar';
+import GlobalSearch from '../features/GlobalSearch';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -53,12 +53,11 @@ const Navbar = () => {
 
   return (
     <>
-      <TopBar />
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container navbar-container">
           {/* Logo */}
           <Link to="/" className="navbar-logo">
-            YUVA<span className="navbar-logo-accent">X</span>
+            NEO-INDIA
           </Link>
 
           {/* Unified Desktop Menu */}
@@ -259,33 +258,11 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Search Bar */}
-        {showSearch && (
-          <div className="search-overlay">
-            <div className="container">
-              <form onSubmit={handleSearch} className="search-form">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  autoFocus
-                  className="search-input"
-                />
-                <button type="submit" className="btn-primary search-submit-btn">
-                  Search
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowSearch(false)}
-                  className="btn-secondary search-close-btn"
-                >
-                  Close
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
+        {/* Global Search Overlay */}
+        <GlobalSearch
+          isOpen={showSearch}
+          onClose={() => setShowSearch(false)}
+        />
 
         {/* Mobile Menu */}
         {isOpen && (

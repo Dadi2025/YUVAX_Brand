@@ -12,7 +12,7 @@ const Hero = () => {
 
       <div className="container hero-grid relative z-10">
         <div>
-          <span style={{ color: 'var(--accent-cyan)', letterSpacing: '0.3em', fontSize: '0.875rem', fontWeight: 'bold', display: 'block', marginBottom: '1.5rem' }}>EST. 2025 // NEO-TOKYO</span>
+          <span style={{ color: 'var(--accent-cyan)', letterSpacing: '0.3em', fontSize: '0.875rem', fontWeight: 'bold', display: 'block', marginBottom: '1.5rem' }}>EST. 2025 // NEO-INDIA</span>
           <h1 className="hero-title">
             FUTURE <br />
             <span className="text-gradient">WEAR</span>

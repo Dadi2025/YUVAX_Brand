@@ -29,34 +29,38 @@ const SocialShareButtons = ({ referralCode, url, text }) => {
     };
 
     return (
-        <div className="share-buttons">
+        <div className="share-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
             <button
                 className="share-btn share-whatsapp"
                 onClick={() => handleShare('whatsapp')}
                 title="Share on WhatsApp"
+                style={{ background: '#25D366', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}
             >
-                <Share2 size={24} />
+                <Share2 size={18} />
             </button>
             <button
                 className="share-btn share-facebook"
                 onClick={() => handleShare('facebook')}
                 title="Share on Facebook"
+                style={{ background: '#1877F2', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}
             >
-                <Facebook size={24} />
+                <Facebook size={18} />
             </button>
             <button
                 className="share-btn share-twitter"
                 onClick={() => handleShare('twitter')}
                 title="Share on Twitter"
+                style={{ background: '#1DA1F2', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}
             >
-                <Twitter size={24} />
+                <Twitter size={18} />
             </button>
             <button
                 className="share-btn share-email"
                 onClick={() => handleShare('email')}
                 title="Share via Email"
+                style={{ background: '#EA4335', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}
             >
-                <Mail size={24} />
+                <Mail size={18} />
             </button>
         </div>
     );

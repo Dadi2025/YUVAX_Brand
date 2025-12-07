@@ -123,12 +123,12 @@ const Login = () => {
 
     return (
         <div style={{ minHeight: '100vh', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ maxWidth: '400px', width: '100%', padding: '2rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
-                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', textAlign: 'center' }}>WELCOME BACK</h1>
+            <div style={{ maxWidth: '400px', width: '100%', padding: '2rem', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', textAlign: 'center', color: 'var(--text-main)' }}>WELCOME BACK</h1>
                 <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '1rem' }}>Login to your account</p>
 
                 {/* Login Mode Toggle */}
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.05)', padding: '0.25rem', borderRadius: '4px' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', background: 'var(--bg-secondary)', padding: '0.25rem', borderRadius: '4px' }}>
                     <button
                         type="button"
                         onClick={() => { setLoginMode('email'); setErrors({}); }}
@@ -136,7 +136,7 @@ const Login = () => {
                             flex: 1,
                             padding: '0.5rem',
                             background: loginMode === 'email' ? 'var(--accent-cyan)' : 'transparent',
-                            color: loginMode === 'email' ? 'black' : 'white',
+                            color: loginMode === 'email' ? 'black' : 'var(--text-muted)',
                             border: 'none',
                             borderRadius: '4px',
                             cursor: 'pointer',
@@ -153,7 +153,7 @@ const Login = () => {
                             flex: 1,
                             padding: '0.5rem',
                             background: loginMode === 'otp' ? 'var(--accent-cyan)' : 'transparent',
-                            color: loginMode === 'otp' ? 'black' : 'white',
+                            color: loginMode === 'otp' ? 'black' : 'var(--text-muted)',
                             border: 'none',
                             borderRadius: '4px',
                             cursor: 'pointer',
@@ -177,10 +177,10 @@ const Login = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.75rem',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--bg-secondary)',
                                     border: '1px solid var(--border-light)',
                                     borderRadius: '4px',
-                                    color: 'white',
+                                    color: 'var(--text-main)',
                                     outline: 'none'
                                 }}
                                 placeholder="your@email.com"
@@ -197,10 +197,10 @@ const Login = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.75rem',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--bg-secondary)',
                                     border: '1px solid var(--border-light)',
                                     borderRadius: '4px',
-                                    color: 'white',
+                                    color: 'var(--text-main)',
                                     outline: 'none'
                                 }}
                                 placeholder="••••••••"
@@ -228,10 +228,10 @@ const Login = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.75rem',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--bg-secondary)',
                                     border: `1px solid ${errors.phone ? '#ff4444' : 'var(--border-light)'}`,
                                     borderRadius: '4px',
-                                    color: 'white',
+                                    color: 'var(--text-main)',
                                     outline: 'none'
                                 }}
                                 placeholder="10-digit mobile number"
@@ -255,10 +255,10 @@ const Login = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            background: 'rgba(255,255,255,0.05)',
+                                            background: 'var(--bg-secondary)',
                                             border: `1px solid ${errors.otp ? '#ff4444' : 'var(--border-light)'}`,
                                             borderRadius: '4px',
-                                            color: 'white',
+                                            color: 'var(--text-main)',
                                             outline: 'none',
                                             letterSpacing: '0.5em',
                                             fontSize: '1.25rem',

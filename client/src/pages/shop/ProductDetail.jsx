@@ -12,6 +12,7 @@ import VirtualTryOn from '../../components/features/VirtualTryOn';
 import DeliveryCheck from '../../components/features/DeliveryCheck';
 import SocialShareButtons from '../../components/referral/SocialShareButtons';
 import FrequentlyBoughtTogether from '../../components/features/FrequentlyBoughtTogether';
+import './ProductDetail.css'; // Import custom styles
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -24,6 +25,7 @@ const ProductDetail = () => {
     const [showSizeCalculator, setShowSizeCalculator] = useState(false);
     const [showVirtualTryOn, setShowVirtualTryOn] = useState(false);
     const [refreshReviews, setRefreshReviews] = useState(0);
+    const [showShareOptions, setShowShareOptions] = useState(false);
 
     if (!product) {
         return <div style={{ minHeight: '100vh', paddingTop: '120px', textAlign: 'center' }}>Product not found</div>;
@@ -44,11 +46,11 @@ const ProductDetail = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', marginBottom: '4rem' }}>
                     {/* Images */}
                     <div>
-                        <div style={{ marginBottom: '1rem' }}>
+                        <div className="product-image-container" style={{ marginBottom: '1rem' }}>
                             <img
                                 src={product.images?.[selectedImage] || product.image}
                                 alt={product.name}
-                                style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '8px' }}
+                                className="product-image-main"
                             />
                         </div>
                         {product.images && product.images.length > 1 && (
@@ -90,36 +92,50 @@ const ProductDetail = () => {
 
                         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>{product.description}</p>
 
-                        <div style={{ marginBottom: '2rem' }}>
-                            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Share this look:</p>
-                            <SocialShareButtons
-                                url={window.location.href}
-                                text={`Check out this amazing ${product.name} on YUVA X!`}
-                            />
+                        <div style={{ marginBottom: '2rem', position: 'relative' }}>
+                            <button
+                                onClick={() => setShowShareOptions(!showShareOptions)}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid var(--border-light)',
+                                    color: 'var(--text-main)',
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    fontSize: '0.875rem'
+                                }}
+                            >
+                                <span>🔗</span> Share Product
+                            </button>
+                            {showShareOptions && (
+                                <div className="share-options-modal">
+                                    <SocialShareButtons
+                                        url={window.location.href}
+                                        text={`Check out this amazing ${product.name} on YUVA X!`}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         {/* Size Selector */}
                         <div style={{ marginBottom: '2rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                                <h3 style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>Select Size</h3>
-                                <div style={{ display: 'flex', gap: '1rem' }}>
+                            <div className="size-header-container">
+                                <h3 className="section-label">Select Size</h3>
+                                <div className="size-helpers">
                                     <button
                                         onClick={() => setShowSizeCalculator(true)}
-                                        style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.875rem', textDecoration: 'underline' }}
+                                        className="size-helper-btn"
                                     >
                                         Calculate My Size
                                     </button>
                                     <button
                                         onClick={() => setShowSizeGuide(true)}
-                                        style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.875rem', textDecoration: 'underline' }}
+                                        className="size-helper-btn"
                                     >
                                         Size Guide
-                                    </button>
-                                    <button
-                                        onClick={() => setShowVirtualTryOn(true)}
-                                        style={{ background: 'none', border: 'none', color: 'var(--accent-purple)', cursor: 'pointer', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-                                    >
-                                        <span>✨</span> Try It On
                                     </button>
                                 </div>
                             </div>
@@ -128,15 +144,7 @@ const ProductDetail = () => {
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
-                                        style={{
-                                            padding: '0.75rem 1.5rem',
-                                            background: selectedSize === size ? 'var(--accent-cyan)' : 'transparent',
-                                            color: selectedSize === size ? 'black' : 'white',
-                                            border: `1px solid ${selectedSize === size ? 'var(--accent-cyan)' : 'var(--border-light)'}`,
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                            fontWeight: 'bold'
-                                        }}
+                                        className={`size-btn ${selectedSize === size ? 'active' : ''}`}
                                     >
                                         {size}
                                     </button>
@@ -150,22 +158,27 @@ const ProductDetail = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid var(--border-light)', borderRadius: '4px', padding: '0.5rem', width: 'fit-content' }}>
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '0.5rem 1rem', fontSize: '1.25rem' }}
+                                    className="quantity-btn"
                                 >
                                     −
                                 </button>
-                                <span style={{ minWidth: '3rem', textAlign: 'center', fontSize: '1.125rem' }}>{quantity}</span>
+                                <span className="quantity-display">{quantity}</span>
                                 <button
                                     onClick={() => setQuantity(quantity + 1)}
-                                    style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '0.5rem 1rem', fontSize: '1.25rem' }}
+                                    className="quantity-btn"
                                 >
                                     +
                                 </button>
                             </div>
                         </div>
 
+                        {/* Delivery Check - Moved Here */}
+                        <div style={{ marginBottom: '2rem' }}>
+                            <DeliveryCheck />
+                        </div>
+
                         {/* Actions */}
-                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center' }}>
                             <button
                                 onClick={() => addToCart(product, selectedSize, quantity)}
                                 className="btn-primary"
@@ -175,9 +188,27 @@ const ProductDetail = () => {
                                 ADD TO CART
                             </button>
                             <button
+                                onClick={() => setShowVirtualTryOn(true)}
+                                style={{
+                                    background: 'rgba(139, 92, 246, 0.1)',
+                                    border: '1px solid var(--accent-purple)',
+                                    color: 'var(--accent-purple)',
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    height: '50px',
+                                    fontWeight: '600'
+                                }}
+                            >
+                                <span>✨</span> Try On
+                            </button>
+                            <button
                                 onClick={() => addToWishlist(product)}
                                 className="btn-secondary"
-                                style={{ padding: '1rem 1.5rem' }}
+                                style={{ padding: '0 1.5rem', height: '50px' }}
                             >
                                 {isInWishlist(product.id) ? '❤️' : '♡'}
                             </button>
@@ -198,8 +229,7 @@ const ProductDetail = () => {
                                 </div>
                             </div>
 
-                            {/* Delivery Check */}
-                            <DeliveryCheck />
+                            {/* Delivery Check Moved Up */}
                         </div>
                     </div>
                 </div>

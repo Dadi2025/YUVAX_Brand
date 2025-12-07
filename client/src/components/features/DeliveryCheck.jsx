@@ -30,9 +30,9 @@ const DeliveryCheck = () => {
 
     return (
         <div style={{
-            marginTop: '2rem',
-            padding: '1.5rem',
-            background: 'rgba(255, 255, 255, 0.05)',
+            marginTop: '0.5rem',
+            padding: '1rem',
+            background: 'var(--bg-secondary)',
             borderRadius: '8px',
             border: '1px solid var(--border-light)'
         }}>

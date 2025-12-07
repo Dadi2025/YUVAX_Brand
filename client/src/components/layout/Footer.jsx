@@ -11,7 +11,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div>
                         <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', fontFamily: 'var(--font-display)', display: 'block', marginBottom: '1rem' }}>
-                            YUVA<span style={{ color: 'var(--accent-cyan)' }}>X</span>
+                            NEO-INDIA <span style={{ color: 'var(--accent-cyan)' }}>FUTURE WEAR</span>
                         </Link>
                         <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>
                             Future-ready streetwear for the digital generation.
@@ -56,7 +56,7 @@ const Footer = () => {
                 <TrustBadges />
 
                 <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                    <p>&copy; {new Date().getFullYear()} YUVA X. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} NEO-INDIA. All rights reserved.</p>
                 </div>
             </div>
 

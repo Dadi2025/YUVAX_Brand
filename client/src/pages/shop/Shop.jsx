@@ -24,6 +24,10 @@ const Shop = () => {
         if (search) {
             setSearchQuery(search);
         }
+        const sort = params.get('sort');
+        if (sort) {
+            setSortBy(sort);
+        }
     }, [location.search]);
 
     // Update search when voice transcript changes
@@ -72,6 +76,8 @@ const Shop = () => {
         filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
     } else if (sortBy === 'newest') {
         filteredProducts = [...filteredProducts].sort((a, b) => b.isNewArrival - a.isNewArrival);
+    } else if (sortBy === 'popular') {
+        filteredProducts = [...filteredProducts].sort((a, b) => b.rating - a.rating);
     }
 
     return (
@@ -371,6 +377,7 @@ const Shop = () => {
                                 }}
                             >
                                 <option value="newest">Newest First</option>
+                                <option value="popular">Popularity</option>
                                 <option value="price-low">Price: Low to High</option>
                                 <option value="price-high">Price: High to Low</option>
                             </select>

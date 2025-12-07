@@ -74,7 +74,7 @@ const Contact = () => {
                     </div>
 
                     <div style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                        <p>Email: support@yuvax.in</p>
+                        <p>Email: support@neoindia.in</p>
                         <p>Phone: +91 98765 43210</p>
                         <p>Address: 123, Cyber City, Bangalore, India</p>
                     </div>
