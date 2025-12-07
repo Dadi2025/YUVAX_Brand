@@ -47,10 +47,10 @@ const Analytics = () => {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div style={{ background: '#1a1a1a', border: '1px solid var(--border-light)', padding: '10px', borderRadius: '4px' }}>
-                    <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-primary)' }}>{label}</p>
+                <div style={{ background: '#1a1a1a', border: '1px solid var(--border-light)', padding: '10px', borderRadius: '4px', zIndex: 1000 }}>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#fff' }}>{label}</p>
                     {payload.map((entry, index) => (
-                        <p key={index} style={{ margin: 0, color: entry.color }}>
+                        <p key={index} style={{ margin: 0, color: entry.color || '#fff' }}>
                             {entry.name}: {entry.value}
                         </p>
                     ))}
