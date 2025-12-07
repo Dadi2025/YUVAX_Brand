@@ -4,6 +4,8 @@ import ManageProducts from './ManageProducts';
 import ManageOrders from './ManageOrders';
 import ManageUsers from './ManageUsers';
 import ManageAgents from './ManageAgents';
+import ManagePincodes from './ManagePincodes';
+import Analytics from './Analytics';
 import DashboardStats from './DashboardStats';
 
 const AdminDashboard = () => {
@@ -39,8 +41,8 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Tabs */}
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--border-light)' }}>
-                    {['overview', 'products', 'orders', 'users', 'agents'].map(tab => (
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--border-light)', overflowX: 'auto' }}>
+                    {['overview', 'analytics', 'products', 'orders', 'users', 'agents', 'pincodes'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -54,7 +56,8 @@ const AdminDashboard = () => {
                                 letterSpacing: '0.1em',
                                 fontSize: '0.875rem',
                                 fontWeight: 'bold',
-                                borderBottom: activeTab === tab ? '2px solid var(--accent-cyan)' : '2px solid transparent'
+                                borderBottom: activeTab === tab ? '2px solid var(--accent-cyan)' : '2px solid transparent',
+                                whiteSpace: 'nowrap'
                             }}
                         >
                             {tab}
@@ -76,6 +79,12 @@ const AdminDashboard = () => {
 
                 {/* Agents Tab */}
                 {activeTab === 'agents' && <ManageAgents />}
+
+                {/* Pincodes Tab */}
+                {activeTab === 'pincodes' && <ManagePincodes />}
+
+                {/* Analytics Tab */}
+                {activeTab === 'analytics' && <Analytics />}
             </div>
         </div>
     );

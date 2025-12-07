@@ -177,21 +177,59 @@ export const simulateCourier = async (req, res) => {
 export const getOrderAnalytics = async (req, res) => {
     try {
         const totalOrders = await Order.countDocuments();
-        const totalSales = await Order.aggregate([
-            { $match: { isPaid: true } },
-            { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+
+        const analytics = await Order.aggregate([
+            {
+                $facet: {
+                    grossSales: [
+                        {
+                            $match: {
+                                $or: [
+                                    { isPaid: true },
+                                    { status: 'Delivered' }
+                                ]
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: null,
+                                total: { $sum: '$totalPrice' }
+                            }
+                        }
+                    ],
+                    refunds: [
+                        {
+                            $match: {
+                                refundStatus: 'Completed'
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: null,
+                                total: { $sum: { $ifNull: ['$refundAmount', '$totalPrice'] } }
+                            }
+                        }
+                    ]
+                }
+            }
         ]);
 
-        const salesData = totalSales.length > 0 ? totalSales[0].total : 0;
+        const gross = analytics[0].grossSales.length > 0 ? analytics[0].grossSales[0].total : 0;
+        const refundTotal = analytics[0].refunds.length > 0 ? analytics[0].refunds[0].total : 0;
 
-        const recentOrders = await Order.find()
+        // Net Sales = Gross Sales (Paid/Delivered) - Refunds
+        const netSales = gross - refundTotal;
+
+        const recentOrders = await Order.find({})
             .sort({ createdAt: -1 })
-            .limit(5)
-            .populate('user', 'name');
+            .limit(10)
+            .populate('user', 'name email');
 
         res.json({
             totalOrders,
-            totalSales: salesData,
+            totalSales: netSales < 0 ? 0 : netSales, // Ensure never negative
+            grossSales: gross,
+            totalRefunds: refundTotal,
             recentOrders
         });
     } catch (error) {

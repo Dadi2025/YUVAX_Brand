@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Users, MapPin, Package, Star, Plus, Edit2, Trash2, X, Check } from 'lucide-react';
+import { Users, MapPin, Package, Star, Plus, Edit2, Trash2, X, Check, Eye } from 'lucide-react';
 
 const ManageAgents = () => {
     const [agents, setAgents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingAgent, setEditingAgent] = useState(null);
+    const [selectedAgent, setSelectedAgent] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -322,6 +323,22 @@ const ManageAgents = () => {
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                                             <button
+                                                onClick={() => setSelectedAgent(agent)}
+                                                style={{
+                                                    background: 'var(--accent-cyan)',
+                                                    color: 'black',
+                                                    border: 'none',
+                                                    padding: '0.5rem',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center'
+                                                }}
+                                                title="View Details"
+                                            >
+                                                <Eye size={16} />
+                                            </button>
+                                            <button
                                                 onClick={() => openModal(agent)}
                                                 style={{
                                                     background: 'var(--accent-cyan)',
@@ -564,6 +581,140 @@ const ManageAgents = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {/* View Agent Modal */}
+            {selectedAgent && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '1rem'
+                }}>
+                    <div style={{
+                        background: 'var(--bg-card)',
+                        borderRadius: '12px',
+                        maxWidth: '500px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'auto',
+                        border: '1px solid var(--border-light)'
+                    }}>
+                        <div style={{
+                            padding: '1.5rem',
+                            borderBottom: '1px solid var(--border-light)',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>Agent Details</h3>
+                            <button
+                                onClick={() => setSelectedAgent(null)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'var(--text-muted)',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div style={{ padding: '1.5rem' }}>
+                            <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+                                <div style={{
+                                    width: '80px',
+                                    height: '80px',
+                                    borderRadius: '50%',
+                                    background: 'var(--accent-purple)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '2rem',
+                                    fontWeight: 'bold',
+                                    color: 'white',
+                                    margin: '0 auto 1rem'
+                                }}>
+                                    {selectedAgent.name.charAt(0).toUpperCase()}
+                                </div>
+                                <h4 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{selectedAgent.name}</h4>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                    <span style={{
+                                        padding: '0.25rem 0.5rem',
+                                        borderRadius: '4px',
+                                        background: selectedAgent.isActive ? '#10b981' : '#ef4444',
+                                        color: 'white',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 'bold'
+                                    }}>
+                                        {selectedAgent.isActive ? 'Active' : 'Inactive'}
+                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                        <Star size={16} fill="#f59e0b" color="#f59e0b" />
+                                        <span style={{ fontWeight: 'bold' }}>{selectedAgent.rating.toFixed(1)}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gap: '1rem' }}>
+                                <div style={{ background: 'var(--bg-dark)', padding: '1rem', borderRadius: '8px' }}>
+                                    <h5 style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Contact Info</h5>
+                                    <div style={{ marginBottom: '0.5rem' }}>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Email</div>
+                                        <div>{selectedAgent.email}</div>
+                                    </div>
+                                    <div style={{ marginBottom: '0.5rem' }}>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Phone</div>
+                                        <div>{selectedAgent.phone}</div>
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Address</div>
+                                        <div>{selectedAgent.address}</div>
+                                        <div>{selectedAgent.city}</div>
+                                    </div>
+                                </div>
+
+                                <div style={{ background: 'var(--bg-dark)', padding: '1rem', borderRadius: '8px' }}>
+                                    <h5 style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Performance</h5>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                        <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                                            <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{selectedAgent.assignedOrders}</div>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Assigned</div>
+                                        </div>
+                                        <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                                            <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{selectedAgent.completedOrders}</div>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Completed</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style={{ background: 'var(--bg-dark)', padding: '1rem', borderRadius: '8px' }}>
+                                    <h5 style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Covered Pincodes ({selectedAgent.pinCodes.length})</h5>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                        {selectedAgent.pinCodes.map((pin, idx) => (
+                                            <span key={idx} style={{
+                                                background: 'var(--accent-cyan)',
+                                                color: 'black',
+                                                padding: '0.25rem 0.5rem',
+                                                borderRadius: '4px',
+                                                fontSize: '0.875rem',
+                                                fontWeight: '500'
+                                            }}>
+                                                {pin}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

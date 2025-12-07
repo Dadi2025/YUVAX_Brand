@@ -16,7 +16,9 @@ const ManageProducts = () => {
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black'],
         description: '',
-        stock: ''
+        stock: '',
+        sizeChart: [],
+        completeTheLook: []
     });
 
     if (!products) {
@@ -30,7 +32,9 @@ const ManageProducts = () => {
             price: parseFloat(formData.price),
             originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
             stock: parseInt(formData.stock),
-            images: [formData.image]
+            images: [formData.image],
+            sizeChart: formData.sizeChart,
+            completeTheLook: formData.completeTheLook
         };
 
         if (editingProduct) {
@@ -55,7 +59,9 @@ const ManageProducts = () => {
             sizes: ['S', 'M', 'L', 'XL'],
             colors: ['Black'],
             description: '',
-            stock: ''
+            stock: '',
+            sizeChart: [],
+            completeTheLook: []
         });
     };
 
@@ -71,7 +77,9 @@ const ManageProducts = () => {
             sizes: product.sizes,
             colors: product.colors,
             description: product.description,
-            stock: product.stock.toString()
+            stock: product.stock.toString(),
+            sizeChart: product.sizeChart || [],
+            completeTheLook: product.completeTheLook || []
         });
         setShowForm(true);
     };
@@ -244,6 +252,62 @@ const ManageProducts = () => {
                             rows={3}
                             style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-light)', borderRadius: '4px', color: 'white' }}
                         />
+                    </div>
+
+                    {/* Size Chart Inputs */}
+                    {formData.sizes.length > 0 && (
+                        <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
+                            <h4 style={{ marginBottom: '1rem' }}>Size Guide Measurements (Inches)</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                                {formData.sizes.map(size => {
+                                    const sizeData = formData.sizeChart.find(s => s.size === size) || { size, chest: '', waist: '', length: '', shoulder: '' };
+
+                                    const handleSizeChange = (field, value) => {
+                                        const newChart = [...formData.sizeChart.filter(s => s.size !== size)];
+                                        newChart.push({ ...sizeData, [field]: value });
+                                        setFormData({ ...formData, sizeChart: newChart });
+                                    };
+
+                                    return (
+                                        <div key={size} style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '4px' }}>
+                                            <strong style={{ display: 'block', marginBottom: '0.5rem' }}>{size}</strong>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                                <input placeholder="Chest" type="number" value={sizeData.chest || ''} onChange={(e) => handleSizeChange('chest', e.target.value)} style={{ padding: '0.25rem', background: '#333', border: '1px solid #555', color: 'white', borderRadius: '4px' }} />
+                                                <input placeholder="Waist" type="number" value={sizeData.waist || ''} onChange={(e) => handleSizeChange('waist', e.target.value)} style={{ padding: '0.25rem', background: '#333', border: '1px solid #555', color: 'white', borderRadius: '4px' }} />
+                                                <input placeholder="Length" type="number" value={sizeData.length || ''} onChange={(e) => handleSizeChange('length', e.target.value)} style={{ padding: '0.25rem', background: '#333', border: '1px solid #555', color: 'white', borderRadius: '4px' }} />
+                                                <input placeholder="Shoulder" type="number" value={sizeData.shoulder || ''} onChange={(e) => handleSizeChange('shoulder', e.target.value)} style={{ padding: '0.25rem', background: '#333', border: '1px solid #555', color: 'white', borderRadius: '4px' }} />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Complete The Look */}
+                    <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
+                        <h4 style={{ marginBottom: '1rem' }}>Complete The Look (Cross-Sell)</h4>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Select products to display as recommendations.</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', maxHeight: '200px', overflowY: 'auto', padding: '0.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
+                            {products.filter(p => p.id !== editingProduct?.id).map(p => (
+                                <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.25rem 0.5rem', background: formData.completeTheLook.includes(p._id) ? 'var(--accent-purple)' : '#333', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={Array.isArray(formData.completeTheLook) && formData.completeTheLook.includes(p._id)}
+                                        onChange={() => {
+                                            const current = Array.isArray(formData.completeTheLook) ? formData.completeTheLook : [];
+                                            const newLinks = current.includes(p._id)
+                                                ? current.filter(id => id !== p._id)
+                                                : [...current, p._id];
+                                            setFormData({ ...formData, completeTheLook: newLinks });
+                                        }}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <img src={p.image} alt="" style={{ width: '20px', height: '20px', objectFit: 'cover', borderRadius: '2px' }} />
+                                    {p.name}
+                                </label>
+                            ))}
+                        </div>
                     </div>
 
                     <button type="submit" className="btn-primary" style={{ marginTop: '1.5rem' }}>

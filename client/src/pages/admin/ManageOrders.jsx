@@ -285,11 +285,13 @@ const ManageOrders = () => {
                                                 value={order.status}
                                                 onChange={(e) => updateOrderStatus(orderId, e.target.value)}
                                                 style={{
-                                                    background: 'rgba(0,0,0,0.3)',
-                                                    border: '1px solid var(--border-light)',
+                                                    background: '#ffffff',
+                                                    border: '1px solid #d1d5db',
                                                     color: getStatusColor(order.status),
                                                     padding: '0.5rem',
-                                                    borderRadius: '4px'
+                                                    borderRadius: '4px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
                                                 }}
                                             >
                                                 <option value="Processing">Processing</option>

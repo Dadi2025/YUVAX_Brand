@@ -14,7 +14,8 @@ const productSchema = mongoose.Schema({
     description: { type: String },
     isNewArrival: { type: Boolean, default: false },
     rating: { type: Number, default: 0 },
-    reviews: { type: Number, default: 0 },
+    reviews: { type: Number, default: 0 }, // Legacy count
+    numReviews: { type: Number, default: 0 }, // For reviewRoutes compatibility
     stock: { type: Number, default: 0 },
     availablePinCodes: [{ type: String }], // Empty array = available everywhere
     unavailablePinCodes: [{ type: String }], // Specific PIN codes where not available
