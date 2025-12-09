@@ -1,18 +1,3 @@
-import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useApp } from '../../context/AppContext';
-import ProductCard from '../../components/features/ProductCard';
-import ProductRecommendations from '../../components/features/ProductRecommendations';
-import SizeGuide from '../../components/features/SizeGuide';
-import SizeCalculator from '../../components/features/SizeCalculator';
-import ReviewForm from '../../components/features/ReviewForm';
-import ReviewList from '../../components/features/ReviewList';
-import CompleteLook from '../../components/features/CompleteLook';
-import VirtualTryOn from '../../components/features/VirtualTryOn';
-import DeliveryCheck from '../../components/features/DeliveryCheck';
-import SocialShareButtons from '../../components/referral/SocialShareButtons';
-import FrequentlyBoughtTogether from '../../components/features/FrequentlyBoughtTogether';
-import './ProductDetail.css'; // Import custom styles
 
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
