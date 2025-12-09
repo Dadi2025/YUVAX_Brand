@@ -113,6 +113,15 @@
     transform: translateY(0);
 }
 
+@media (max-width: 768px) {
+    .product-quick-actions {
+        opacity: 1;
+        transform: translateY(0);
+        bottom: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
 .quick-action-btn {
     width: 44px;
     height: 44px;
