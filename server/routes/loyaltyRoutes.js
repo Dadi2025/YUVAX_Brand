@@ -11,22 +11,29 @@ const router = express.Router();
 // @access  Private
 router.get('/dashboard', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('loyaltyPoints loyaltyTier totalSpent');
+        // Use req.user from protect middleware instead of redundant fetch
+        // This prevents crash if req.user is an Agent (User.findById would return null)
+        const user = req.user;
 
-        const tierInfo = loyaltyService.getTierPerks(user.loyaltyTier);
+        // Ensure user has loyalty fields (Agents might not)
+        if (!user.loyaltyTier && !user.loyaltyPoints) {
+            return res.status(400).json({ message: 'Loyalty program not available for this account type' });
+        }
+
+        const tierInfo = loyaltyService.getTierPerks(user.loyaltyTier || 'Bronze');
         const nextTier = user.loyaltyTier === 'Bronze' ? 'Silver' : user.loyaltyTier === 'Silver' ? 'Gold' : null;
         const nextTierThreshold = nextTier ? loyaltyService.TIER_THRESHOLDS[nextTier] : null;
-        const progressToNextTier = nextTier ? ((user.totalSpent / nextTierThreshold) * 100).toFixed(1) : 100;
+        const progressToNextTier = nextTier ? (((user.totalSpent || 0) / nextTierThreshold) * 100).toFixed(1) : 100;
 
         res.json({
-            points: user.loyaltyPoints,
-            tier: user.loyaltyTier,
-            totalSpent: user.totalSpent,
+            points: user.loyaltyPoints || 0,
+            tier: user.loyaltyTier || 'Bronze',
+            totalSpent: user.totalSpent || 0,
             tierPerks: tierInfo,
             nextTier,
             nextTierThreshold,
             progressToNextTier: parseFloat(progressToNextTier),
-            amountToNextTier: nextTier ? Math.max(0, nextTierThreshold - user.totalSpent) : 0
+            amountToNextTier: nextTier ? Math.max(0, nextTierThreshold - (user.totalSpent || 0)) : 0
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
