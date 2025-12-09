@@ -23,14 +23,14 @@ const CategoriesRail = () => {
         <div className="categories-rail">
             <h3 style={{
                 textAlign: 'center',
-                color: 'var(--text-muted)',
-                fontSize: '0.9rem',
-                letterSpacing: '0.15em',
+                color: '#000000', // Pure Black
+                fontSize: '1.1rem',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 marginBottom: '1.5rem',
-                fontWeight: '600'
+                fontWeight: '800' // Extra Bold
             }}>
-                Search by Category
+                Top Collections
             </h3>
             <div className="categories-rail-content">
                 {CATEGORIES.map((cat) => (

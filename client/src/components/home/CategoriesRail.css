@@ -86,16 +86,22 @@
 
 .category-label {
     font-family: var(--font-display);
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
+    font-size: 0.9rem;
+    /* Slightly larger */
+    letter-spacing: 0.05em;
+    color: #000000;
+    /* Pure Black for visibility */
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
+    /* Extra Bold */
     transition: color 0.3s;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    /* Subtle lift */
 }
 
 .category-item:hover .category-label {
-    color: var(--text-main);
+    color: var(--accent-secondary);
+    /* Color pop on hover */
 }
 
 /* Sale Badge */

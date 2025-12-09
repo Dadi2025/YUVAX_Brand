@@ -59,13 +59,15 @@
 }
 
 .newsletter-desc {
-    color: var(--text-muted);
+    color: var(--text-body);
+    /* Darker grey */
     font-size: 1.125rem;
     margin-bottom: 3rem;
     max-width: 36rem;
     margin-left: auto;
     margin-right: auto;
-    font-weight: 300;
+    font-weight: 500;
+    /* Medium weight */
 }
 
 .newsletter-input-group {
