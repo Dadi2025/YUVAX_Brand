@@ -1,0 +1,62 @@
+/* TopBar Styles - Hype/Streetwear */
+.top-bar {
+    background-color: #000000;
+    color: #ffffff;
+    height: 36px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    z-index: 1001;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-bar-content {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+    gap: 4rem;
+    padding-left: 100%;
+    /* Start off-screen */
+}
+
+.top-bar-item {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.top-bar-highlight {
+    color: var(--accent-highlight, #bef264);
+}
+
+.top-bar-hot {
+    color: var(--accent-hot, #f43f5e);
+}
+
+.top-bar:hover .top-bar-content {
+    animation-play-state: paused;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .top-bar-content {
+        animation-duration: 15s;
+        /* Faster on small screens or adjust */
+    }
+}

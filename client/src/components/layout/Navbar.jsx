@@ -5,6 +5,8 @@ import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../data/translations';
 import './Navbar.css';
 
+import TopBar from './TopBar';
+
 const Navbar = () => {
   const { getCartCount, wishlist, user, logout } = useApp();
   const { currentLanguage, changeLanguage } = useLanguage();
@@ -43,6 +45,7 @@ const Navbar = () => {
 
   return (
     <>
+      <TopBar />
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container navbar-container">
           {/* Logo */}
