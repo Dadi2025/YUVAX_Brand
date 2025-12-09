@@ -119,11 +119,22 @@ router.get('/similar/:productId', async (req, res) => {
 // @access  Public
 router.get('/frequently-bought/:productId', async (req, res) => {
     try {
-        const productId = parseInt(req.params.productId);
+        const productIdParam = req.params.productId;
+        let product;
 
-        // Find orders containing this product
+        if (productIdParam.match(/^[0-9]+$/)) {
+            product = await Product.findOne({ id: parseInt(productIdParam) });
+        } else {
+            product = await Product.findById(productIdParam);
+        }
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Find orders containing this product (using _id reference)
         const orders = await Order.find({
-            'orderItems.product': productId
+            'orderItems.product': product._id
         }).limit(50);
 
         // Count co-occurrences
@@ -131,19 +142,21 @@ router.get('/frequently-bought/:productId', async (req, res) => {
 
         orders.forEach(order => {
             order.orderItems.forEach(item => {
-                if (item.product !== productId) {
-                    productCounts[item.product] = (productCounts[item.product] || 0) + 1;
+                // item.product is ObjectId reference
+                if (item.product.toString() !== product._id.toString()) {
+                    const prodIdStr = item.product.toString();
+                    productCounts[prodIdStr] = (productCounts[prodIdStr] || 0) + 1;
                 }
             });
         });
 
-        // Get top 3 most frequently bought together
+        // Get top 3 most frequently bought together product _ids
         const topProductIds = Object.entries(productCounts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3)
-            .map(([id]) => parseInt(id));
+            .map(([id]) => id); // These are _ids
 
-        const products = await Product.find({ id: { $in: topProductIds } });
+        const products = await Product.find({ _id: { $in: topProductIds } });
 
         res.json(products);
     } catch (error) {
