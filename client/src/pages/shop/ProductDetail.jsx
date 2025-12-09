@@ -190,19 +190,27 @@ const ProductDetail = () => {
                             </div>
                         </div>
 
-                        {/* Delivery Check & Try On */}
-                        <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                            <DeliveryCheck onTryOn={() => setShowVirtualTryOn(true)} />
-                        </div>
-
-                        {/* Main Actions */}
-                        <div className="main-actions-group">
+                        {/* Quantity & Utility Actions Grid */}
+                        <div className="action-grid-row mb-6">
+                            {/* Quantity */}
                             <div className="quantity-selector">
                                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
                                 <span>{quantity}</span>
                                 <button onClick={() => setQuantity(quantity + 1)}>+</button>
                             </div>
 
+                            {/* Try On Button - High Visibility for Youth Appeal */}
+                            <button
+                                onClick={() => setShowVirtualTryOn(true)}
+                                className="btn-virtual-try-on"
+                            >
+                                <span className="text-xl">✨</span>
+                                <span>Virtual Try On</span>
+                            </button>
+                        </div>
+
+                        {/* Main Actions - Bold & Accessible */}
+                        <div className="main-actions-group">
                             <button onClick={() => addToCart(product, selectedSize, quantity)} className="btn-action btn-add-cart">
                                 Add to Cart
                             </button>
@@ -214,6 +222,11 @@ const ProductDetail = () => {
                             <button onClick={toggleWishlist} className={`btn-wishlist ${inWishlist ? 'active' : ''}`}>
                                 {inWishlist ? '❤️' : '♡'}
                             </button>
+                        </div>
+
+                        {/* Delivery Check - Secondary Priority */}
+                        <div className="mt-4 mb-8">
+                            <DeliveryCheck />
                         </div>
 
                         {/* Information Accordions */}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, CheckCircle, XCircle, Truck } from 'lucide-react';
 import { getAddressFromPincode } from '../../utils/pincodeService';
 
-const DeliveryCheck = ({ onTryOn }) => {
+const DeliveryCheck = () => {
     const [pincode, setPincode] = useState('');
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ const DeliveryCheck = ({ onTryOn }) => {
             </h3>
 
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'stretch' }}>
-                <div className="delivery-input-group" style={{ flex: '1 1 50%', marginBottom: 0 }}>
+                <div className="delivery-input-group" style={{ width: '100%', marginBottom: 0 }}>
                     <input
                         type="text"
                         placeholder="Enter Pincode"
@@ -53,15 +53,7 @@ const DeliveryCheck = ({ onTryOn }) => {
                     </button>
                 </div>
 
-                {onTryOn && (
-                    <button
-                        onClick={onTryOn}
-                        className="btn-try-on-inline"
-                        style={{ flex: '1 1 50%' }}
-                    >
-                        ✨ TRY ON
-                    </button>
-                )}
+
             </div>
 
             {error && (
