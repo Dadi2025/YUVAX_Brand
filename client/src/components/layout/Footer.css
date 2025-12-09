@@ -1,0 +1,206 @@
+/* Footer.css - Premium Dark Mode Anchor */
+.footer {
+    background-color: #000000;
+    color: #ffffff;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 64px 0 32px 0;
+    margin-top: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add a subtle glow/gradient at top to separate from content */
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.footer-top {
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 32px;
+}
+
+/* Brand - Huge "Streetwear" vibe */
+.footer-brand-link {
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: var(--font-heading);
+    letter-spacing: -0.05em;
+    color: #ffffff;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+    transition: transform 0.3s ease;
+}
+
+.footer-brand-link:hover {
+    transform: skewX(-10deg);
+}
+
+.footer-tagline {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+}
+
+/* Search Area */
+.footer-search-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.footer-search-form {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    /* Glassy dark */
+    border-radius: 99px;
+    /* Pill shape */
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.footer-search-form:focus-within {
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.footer-search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 0.9rem;
+    width: 200px;
+}
+
+.footer-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.footer-cam-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.footer-cam-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: rotate(15deg);
+}
+
+/* Links Grid */
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+.footer-col-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: white;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.footer-link {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+/* Copyright */
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 32px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Social Icons (Placeholder styles if added) */
+.footer-socials {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s;
+}
+
+.social-icon:hover {
+    background: white;
+    color: black;
+    transform: translateY(-3px);
+}
+
+/* WhatsApp Float */
+.whatsapp-float {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #25D366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1) rotate(10deg);
+}
