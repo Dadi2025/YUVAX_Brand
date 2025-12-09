@@ -78,7 +78,7 @@ const userSchema = mongoose.Schema({
 });
 
 // Indexes for performance
-userSchema.index({ email: 1 });
+
 userSchema.index({ phone: 1 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

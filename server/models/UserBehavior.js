@@ -48,7 +48,7 @@ const userBehaviorSchema = new mongoose.Schema({
 });
 
 // Index for faster queries
-userBehaviorSchema.index({ user: 1 });
+
 userBehaviorSchema.index({ 'productViews.product': 1 });
 
 const UserBehavior = mongoose.model('UserBehavior', userBehaviorSchema);

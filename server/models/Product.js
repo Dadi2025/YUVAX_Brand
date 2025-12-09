@@ -37,7 +37,7 @@ const productSchema = mongoose.Schema({
 });
 
 // Indexes for performance
-productSchema.index({ id: 1 });
+
 productSchema.index({ category: 1 });
 productSchema.index({ gender: 1 });
 productSchema.index({ category: 1, gender: 1 }); // Compound index for common queries

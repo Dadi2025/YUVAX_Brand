@@ -41,7 +41,7 @@ const couponSchema = mongoose.Schema({
 
 // Index for faster queries
 couponSchema.index({ user: 1, isUsed: 1 });
-couponSchema.index({ code: 1 });
+
 
 const Coupon = mongoose.model('Coupon', couponSchema);
 
