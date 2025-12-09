@@ -4,6 +4,7 @@ import { categories, priceRanges, genders, sizes, colors } from '../../data/prod
 import ProductCard from '../../components/features/ProductCard';
 import useVoiceSearch from '../../hooks/useVoiceSearch';
 import { useApp } from '../../context/AppContext';
+import './Shop.css';
 
 const Shop = () => {
     const location = useLocation();
@@ -81,62 +82,41 @@ const Shop = () => {
     }
 
     return (
-        <div style={{ minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem' }}>
+        <div className="shop-page">
             <div className="container">
-                <h1 style={{ fontSize: '3rem', marginBottom: '2rem' }}>ALL COLLECTIONS</h1>
+                <h1 className="shop-title">ALL COLLECTIONS</h1>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '3rem' }}>
+                <div className="shop-layout">
                     {/* Filters Sidebar */}
-                    <div>
+                    <aside className="shop-sidebar">
                         {/* Search */}
-                        <div style={{ marginBottom: '2rem' }}>
+                        <div className="filter-group">
                             <input
                                 type="text"
                                 placeholder="Search products..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid var(--border-light)',
-                                    borderRadius: '4px',
-                                    color: 'white',
-                                    outline: 'none'
-                                }}
+                                className="filter-search-input"
                             />
                         </div>
 
                         {/* Voice Search */}
                         {isSupported && (
-                            <div style={{ marginBottom: '2rem' }}>
+                            <div className="filter-group">
                                 <button
                                     onClick={startListening}
                                     disabled={isListening}
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        background: isListening ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.05)',
-                                        border: '1px solid var(--border-light)',
-                                        borderRadius: '4px',
-                                        color: isListening ? 'black' : 'white',
-                                        cursor: isListening ? 'not-allowed' : 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '0.5rem',
-                                        fontWeight: 'bold'
-                                    }}
+                                    className={`voice-search-btn ${isListening ? 'listening' : ''}`}
                                 >
-                                    <span style={{ fontSize: '1.25rem' }}>🎤</span>
+                                    <span className="text-xl">🎤</span>
                                     {isListening ? 'Listening...' : 'Voice Search'}
                                 </button>
                             </div>
                         )}
 
                         {/* Gender Filter */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gender</h3>
+                        <div className="filter-group">
+                            <h3 className="filter-title">Gender</h3>
                             {genders.map(gender => (
                                 <button
                                     key={gender}
@@ -144,141 +124,36 @@ const Shop = () => {
                                         setSelectedGender(gender);
                                         setSelectedCategory('All'); // Reset category when gender changes
                                     }}
-                                    style={{
-                                        display: 'block',
-                                        width: '100%',
-                                        textAlign: 'left',
-                                        padding: '0.5rem 0',
-                                        background: 'none',
-                                        border: 'none',
-                                        color: selectedGender === gender ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                        cursor: 'pointer',
-                                        fontSize: '0.875rem'
-                                    }}
+                                    className={`filter-btn ${selectedGender === gender ? 'active' : ''}`}
                                 >
                                     {gender}
                                 </button>
                             ))}
                         </div>
 
-                        {/* Categories - Gender Based */}
-                        {selectedGender === 'Men' && (
-                            <div style={{ marginBottom: '2rem' }}>
-                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Men's Categories</h3>
-                                {['All', 'Hoodies', 'T-Shirts', 'Pants', 'Accessories'].map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setSelectedCategory(cat)}
-                                        style={{
-                                            display: 'block',
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.5rem 0',
-                                            background: 'none',
-                                            border: 'none',
-                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                            cursor: 'pointer',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedGender === 'Women' && (
-                            <div style={{ marginBottom: '2rem' }}>
-                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Women's Categories</h3>
-                                {['All', 'Sarees', 'Half Saree', 'Kurta', 'Western', 'Tops', 'Leggings'].map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setSelectedCategory(cat)}
-                                        style={{
-                                            display: 'block',
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.5rem 0',
-                                            background: 'none',
-                                            border: 'none',
-                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                            cursor: 'pointer',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedGender === 'Unisex' && (
-                            <div style={{ marginBottom: '2rem' }}>
-                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Categories</h3>
-                                {['All', 'Accessories'].map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setSelectedCategory(cat)}
-                                        style={{
-                                            display: 'block',
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.5rem 0',
-                                            background: 'none',
-                                            border: 'none',
-                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                            cursor: 'pointer',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedGender === 'All' && (
-                            <div style={{ marginBottom: '2rem' }}>
-                                <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>All Categories</h3>
-                                {categories.map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setSelectedCategory(cat)}
-                                        style={{
-                                            display: 'block',
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.5rem 0',
-                                            background: 'none',
-                                            border: 'none',
-                                            color: selectedCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                            cursor: 'pointer',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        {/* Categories - Gender Based Logic simplified for UI */}
+                        <div className="filter-group">
+                            <h3 className="filter-title">Category</h3>
+                            {categories.map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
 
                         {/* Size Filter */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Size</h3>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div className="filter-group">
+                            <h3 className="filter-title">Size</h3>
+                            <div className="filter-grid">
                                 {sizes.map(size => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(selectedSize === size ? 'All' : size)}
-                                        style={{
-                                            padding: '0.25rem 0.5rem',
-                                            background: selectedSize === size ? 'var(--accent-cyan)' : 'transparent',
-                                            border: '1px solid var(--border-light)',
-                                            color: selectedSize === size ? 'black' : 'var(--text-muted)',
-                                            cursor: 'pointer',
-                                            fontSize: '0.75rem',
-                                            borderRadius: '4px'
-                                        }}
+                                        className={`filter-chip ${selectedSize === size ? 'active' : ''}`}
                                     >
                                         {size}
                                     </button>
@@ -287,22 +162,14 @@ const Shop = () => {
                         </div>
 
                         {/* Color Filter */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Color</h3>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div className="filter-group">
+                            <h3 className="filter-title">Color</h3>
+                            <div className="filter-grid">
                                 {colors.map(color => (
                                     <button
                                         key={color}
                                         onClick={() => setSelectedColor(selectedColor === color ? 'All' : color)}
-                                        style={{
-                                            padding: '0.25rem 0.5rem',
-                                            background: selectedColor === color ? 'var(--accent-cyan)' : 'transparent',
-                                            border: '1px solid var(--border-light)',
-                                            color: selectedColor === color ? 'black' : 'var(--text-muted)',
-                                            cursor: 'pointer',
-                                            fontSize: '0.75rem',
-                                            borderRadius: '4px'
-                                        }}
+                                        className={`filter-chip ${selectedColor === color ? 'active' : ''}`}
                                     >
                                         {color}
                                     </button>
@@ -311,23 +178,13 @@ const Shop = () => {
                         </div>
 
                         {/* Price Range */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Price</h3>
+                        <div className="filter-group">
+                            <h3 className="filter-title">Price</h3>
                             {priceRanges.map(range => (
                                 <button
                                     key={range.label}
                                     onClick={() => setSelectedPriceRange(selectedPriceRange?.label === range.label ? null : range)}
-                                    style={{
-                                        display: 'block',
-                                        width: '100%',
-                                        textAlign: 'left',
-                                        padding: '0.5rem 0',
-                                        background: 'none',
-                                        border: 'none',
-                                        color: selectedPriceRange?.label === range.label ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                        cursor: 'pointer',
-                                        fontSize: '0.875rem'
-                                    }}
+                                    className={`filter-btn ${selectedPriceRange?.label === range.label ? 'active' : ''}`}
                                 >
                                     {range.label}
                                 </button>
@@ -344,43 +201,28 @@ const Shop = () => {
                                 setSelectedPriceRange(null);
                                 setSearchQuery('');
                             }}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                background: 'none',
-                                border: '1px solid var(--border-light)',
-                                color: 'white',
-                                cursor: 'pointer',
-                                borderRadius: '4px',
-                                fontSize: '0.875rem',
-                                textTransform: 'uppercase'
-                            }}
+                            className="btn-clear-filters"
                         >
                             Clear Filters
                         </button>
-                    </div>
+                    </aside>
 
                     {/* Products Grid */}
-                    <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                            <p style={{ color: 'var(--text-muted)' }}>{filteredProducts.length} products</p>
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                style={{
-                                    padding: '0.5rem 1rem',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid var(--border-light)',
-                                    borderRadius: '4px',
-                                    color: 'white',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                <option value="newest">Newest First</option>
-                                <option value="popular">Popularity</option>
-                                <option value="price-low">Price: Low to High</option>
-                                <option value="price-high">Price: High to Low</option>
-                            </select>
+                    <main>
+                        <div className="flex justify-between items-center mb-8">
+                            <p className="text-gray-500 font-medium">{filteredProducts.length} Results</p>
+                            <div className="relative">
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="appearance-none bg-transparent border border-gray-200 py-2 pl-4 pr-8 rounded-md focus:outline-none focus:border-black cursor-pointer"
+                                >
+                                    <option value="newest">Newest First</option>
+                                    <option value="popular">Popularity</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                </select>
+                            </div>
                         </div>
 
                         {filteredProducts.length > 0 ? (
@@ -390,11 +232,24 @@ const Shop = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
-                                <p style={{ color: 'var(--text-muted)', fontSize: '1.125rem' }}>No products found</p>
+                            <div className="text-center py-20 bg-gray-50 rounded-lg">
+                                <p className="text-gray-500 text-lg">No products found matching your criteria.</p>
+                                <button
+                                    className="mt-4 text-black font-bold border-b border-black pb-1 hover:text-accent-secondary hover:border-accent-secondary"
+                                    onClick={() => {
+                                        setSelectedCategory('All');
+                                        setSelectedGender('All');
+                                        setSelectedSize('All');
+                                        setSelectedColor('All');
+                                        setSelectedPriceRange(null);
+                                        setSearchQuery('');
+                                    }}
+                                >
+                                    Reset Filters
+                                </button>
                             </div>
                         )}
-                    </div>
+                    </main>
                 </div>
             </div>
         </div>

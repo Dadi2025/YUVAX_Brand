@@ -14,6 +14,22 @@ import SocialShareButtons from '../../components/referral/SocialShareButtons';
 import FrequentlyBoughtTogether from '../../components/features/FrequentlyBoughtTogether';
 import './ProductDetail.css'; // Import custom styles
 
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
+import ProductCard from '../../components/features/ProductCard';
+import ProductRecommendations from '../../components/features/ProductRecommendations';
+import SizeGuide from '../../components/features/SizeGuide';
+import SizeCalculator from '../../components/features/SizeCalculator';
+import ReviewForm from '../../components/features/ReviewForm';
+import ReviewList from '../../components/features/ReviewList';
+import CompleteLook from '../../components/features/CompleteLook';
+import VirtualTryOn from '../../components/features/VirtualTryOn';
+import DeliveryCheck from '../../components/features/DeliveryCheck';
+import SocialShareButtons from '../../components/referral/SocialShareButtons';
+import FrequentlyBoughtTogether from '../../components/features/FrequentlyBoughtTogether';
+import './ProductDetail.css';
+
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -29,7 +45,7 @@ const ProductDetail = () => {
     const [showShareOptions, setShowShareOptions] = useState(false);
 
     if (!product) {
-        return <div style={{ minHeight: '100vh', paddingTop: '120px', textAlign: 'center' }}>Product not found</div>;
+        return <div className="product-detail-page text-center">Product not found</div>;
     }
 
     const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
@@ -52,8 +68,8 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="product-layout-grid">
-                    {/* Images */}
-                    <div>
+                    {/* Images Column */}
+                    <div className="product-gallery">
                         <div className="product-image-container">
                             <img
                                 src={product.images?.[selectedImage] || product.image}
@@ -62,7 +78,7 @@ const ProductDetail = () => {
                             />
                         </div>
                         {product.images && product.images.length > 1 && (
-                            <div className="image-gallery">
+                            <div className="image-thumbnails">
                                 {product.images.map((img, idx) => (
                                     <img
                                         key={idx}
@@ -76,15 +92,15 @@ const ProductDetail = () => {
                         )}
                     </div>
 
-                    {/* Product Info */}
-                    <div>
+                    {/* Product Info Column */}
+                    <div className="product-info-col">
                         <h1 className="product-title">{product.name}</h1>
-                        <div className="product-price-container">
+                        <div className="product-price-row">
                             <span className="current-price">₹{product.price}</span>
                             {product.originalPrice && (
                                 <>
                                     <span className="original-price">₹{product.originalPrice}</span>
-                                    <span className="discount-badge">
+                                    <span className="discount-tag">
                                         {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                                     </span>
                                 </>
@@ -111,103 +127,62 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Size Selector */}
-                        <div className="size-section">
-                            <h3 className="section-label">Select Size</h3>
-                            <div className="size-selector">
+                        <div className="attribute-section">
+                            <div className="attribute-header">
+                                <span className="attribute-label">Select Size</span>
+                                <div className="flex gap-4">
+                                    <button onClick={() => setShowSizeCalculator(true)} className="size-guide-btn">Calculate Size</button>
+                                    <button onClick={() => setShowSizeGuide(true)} className="size-guide-btn">Size Guide</button>
+                                </div>
+                            </div>
+                            <div className="size-grid">
                                 {product.sizes.map(size => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
                                         className={`size-btn ${selectedSize === size ? 'active' : ''}`}
                                     >
-
                                         {size}
                                     </button>
                                 ))}
-                                <button
-                                    onClick={() => setShowSizeCalculator(true)}
-                                    className="size-helper-btn"
-                                    title="Calculate My Size"
-                                >
-                                    📏 Calculate Size
-                                </button>
-                                <button
-                                    onClick={() => setShowSizeGuide(true)}
-                                    className="size-helper-btn"
-                                    title="Size Guide"
-                                >
-                                    📋 Size Guide
-                                </button>
                             </div>
                         </div>
 
                         {/* Quantity */}
-                        <div className="quantity-section">
-                            <h3 className="quantity-label">Quantity</h3>
-                            <div className="quantity-control">
-                                <button
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="quantity-btn"
-                                >
-                                    −
-                                </button>
-                                <span className="quantity-display">{quantity}</span>
-                                <button
-                                    onClick={() => setQuantity(quantity + 1)}
-                                    className="quantity-btn"
-                                >
-                                    +
-                                </button>
+                        <div className="attribute-section">
+                            <span className="attribute-label block mb-2">Quantity</span>
+                            <div className="quantity-wrapper">
+                                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="qty-btn">−</button>
+                                <span className="qty-display">{quantity}</span>
+                                <button onClick={() => setQuantity(quantity + 1)} className="qty-btn">+</button>
                             </div>
                         </div>
 
-                        {/* Delivery Check - Moved Here */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <DeliveryCheck onTryOn={() => setShowVirtualTryOn(true)} />
-                        </div>
+                        {/* Delivery Check */}
+                        <DeliveryCheck onTryOn={() => setShowVirtualTryOn(true)} />
 
                         {/* Actions */}
-                        <div className="product-actions-grid">
-                            <button
-                                onClick={() => addToCart(product, selectedSize, quantity)}
-                                className="action-btn btn-add-cart"
-                                data-testid="add-to-cart-btn"
-                            >
-                                ADD TO CART
-                            </button>
-                            <button
-                                onClick={handleBuyNow}
-                                className="action-btn btn-buy-now"
-                            >
-                                BUY NOW
-                            </button>
-                            <button
-                                onClick={() => addToWishlist(product)}
-                                className="action-btn btn-wishlist"
-                            >
+                        <div className="main-actions">
+                            <button onClick={() => addToCart(product, selectedSize, quantity)} className="btn-add-cart">Add to Cart</button>
+                            <button onClick={handleBuyNow} className="btn-buy-now">Buy Now</button>
+                            <button onClick={() => addToWishlist(product)} className="btn-wishlist-toggle">
                                 {isInWishlist(product.id) ? '❤️' : '♡'}
                             </button>
                         </div>
 
-                        {/* Product Details */}
-                        <div className="meta-info">
-                            <div className="meta-item">
-                                <span className="meta-label">Category:</span> <span>{product.category}</span>
-                            </div>
-                            <div className="meta-item">
-                                <span className="meta-label">Stock:</span> <span className={`stock-status ${product.stock > 10 ? 'in-stock' : ''}`}>{product.stock} available</span>
-                            </div>
-                            <div className="meta-item">
-                                <span className="meta-label">Rating:</span> <span>⭐ {product.rating} ({product.reviews} reviews)</span>
-                            </div>
+                        {/* Meta Data */}
+                        <div className="product-meta">
+                            <div className="meta-row"><span>Category:</span> {product.category}</div>
+                            <div className="meta-row"><span>Stock:</span> {product.stock > 10 ? 'In Stock' : `${product.stock} left`}</div>
+                            <div className="meta-row"><span>Rating:</span> ⭐ {product.rating} ({product.reviews} reviews)</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
-                    <div>
-                        <h2 className="section-title">YOU MAY ALSO LIKE</h2>
+                    <div className="section-margin">
+                        <h2 className="section-title">You May Also Like</h2>
                         <div className="product-grid">
                             {relatedProducts.map(p => (
                                 <ProductCard key={p.id} product={p} />
@@ -224,8 +199,8 @@ const ProductDetail = () => {
 
                 {/* Customer Reviews Section */}
                 <div style={{ marginTop: '4rem' }}>
+                    <h2 className="section-title">Customer Reviews</h2>
                     <ReviewList productId={product.id} key={refreshReviews} />
-
                     <div style={{ marginTop: '3rem' }}>
                         <ReviewForm
                             productId={product.id}
@@ -234,10 +209,9 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-
             </div>
 
-            {/* Size Guide Modal */}
+            {/* Modals */}
             <SizeGuide
                 isOpen={showSizeGuide}
                 onClose={() => setShowSizeGuide(false)}
@@ -245,28 +219,24 @@ const ProductDetail = () => {
                 productSizeChart={product.sizeChart}
             />
 
-            {
-                showSizeCalculator && (
-                    <SizeCalculator
-                        isOpen={showSizeCalculator}
-                        onClose={() => setShowSizeCalculator(false)}
-                        onSizeRecommended={(size) => {
-                            setSelectedSize(size);
-                            setShowSizeCalculator(false);
-                        }}
-                    />
-                )
-            }
+            {showSizeCalculator && (
+                <SizeCalculator
+                    isOpen={showSizeCalculator}
+                    onClose={() => setShowSizeCalculator(false)}
+                    onSizeRecommended={(size) => {
+                        setSelectedSize(size);
+                        setShowSizeCalculator(false);
+                    }}
+                />
+            )}
 
-            {
-                showVirtualTryOn && (
-                    <VirtualTryOn
-                        product={product}
-                        isOpen={showVirtualTryOn}
-                        onClose={() => setShowVirtualTryOn(false)}
-                    />
-                )
-            }
+            {showVirtualTryOn && (
+                <VirtualTryOn
+                    product={product}
+                    isOpen={showVirtualTryOn}
+                    onClose={() => setShowVirtualTryOn(false)}
+                />
+            )}
         </div >
     );
 };

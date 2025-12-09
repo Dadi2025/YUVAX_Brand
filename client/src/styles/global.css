@@ -1,54 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 
 :root {
-  /* Palette - Modern Noir & Alabaster (Luxury) */
-  --bg-main: #FAFAF9;
-  /* Alabaster - Warm, soft white */
-  --bg-secondary: #F3F4F6;
-  /* Cool Grey for contrast */
-  --bg-card: #FFFFFF;
-  /* Pure White for lifts */
-  --bg-white: #FFFFFF;
+  /* Palette - Streetwear & Hype (High Energy) */
+  --bg-main: #ffffff;
+  /* Pure White */
+  --bg-secondary: #f8fafc;
+  /* Very light subtle grey */
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.85);
 
-  --text-main: #171717;
-  /* Carbon - Softer than pure black */
-  --text-body: #4B5563;
-  /* Slate - High readability */
-  --text-muted: #9CA3AF;
-  /* Muted Grey */
-  --text-light: #F9FAFB;
-  /* Off-white text */
+  --text-main: #0a0a0a;
+  /* Super Black */
+  --text-body: #333333;
+  /* Dark Grey */
+  --text-muted: #94a3b8;
+  --text-on-dark: #ffffff;
 
   /* Accents */
-  --accent-primary: #171717;
-  /* Carbon Black */
-  --accent-hover: #404040;
-  /* Charcoal */
-  --accent-tertiary: #CA8A04;
-  /* Muted Gold for special interactions */
+  --accent-primary: #000000;
+  /* Core brand is black (streetwear staple) */
+  --accent-secondary: #4f46e5;
+  /* Electric Indigo */
+  --accent-highlight: #bef264;
+  /* Neon Lime - For pops */
+  --accent-hot: #f43f5e;
+  /* Hot Rose */
 
-  --border-light: #E5E5E5;
-  /* Mist - Subtle */
-  --border-dark: #171717;
-  /* Strong */
-
-  --accent-error: #EF4444;
-  --accent-success: #10B981;
-  --accent-cyan: #2dd4bf;
-  --accent-purple: #c084fc;
+  --border-light: #e2e8f0;
+  --border-dark: #000000;
 
   /* Typography */
-  --font-main: 'Inter', sans-serif;
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', sans-serif;
+  /* Keep Outfit for bold headings */
 
   /* Layout */
-  --navbar-height: 80px;
-  --topbar-height: 40px;
+  --navbar-height: 70px;
+  /* Slightly slimmer */
+  --topbar-height: 36px;
   --header-height: calc(var(--navbar-height) + var(--topbar-height));
 
-  --container-width: 1440px;
-  --radius-sm: 2px;
-  --radius-md: 4px;
+  --container-width: 1400px;
+  /* Wider for impactful visuals */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  /* Slightly softer corners */
+  --radius-lg: 16px;
+  --radius-full: 9999px;
 }
 
 * {

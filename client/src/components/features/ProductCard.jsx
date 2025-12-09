@@ -42,74 +42,57 @@ const ProductCard = ({ product, compact = false }) => {
   }
 
   return (
-    <Link to={`/product/${product.id}`} className="product-card group">
-      <div className="product-image-container">
+    <Link to={`/product/${product.id}`} className="product-card group block">
+      <div className="product-image-container relative overflow-hidden rounded-md bg-gray-100 aspect-[3/4]">
         <img
           src={product.image}
           alt={product.name}
-          className="product-image"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
-        {/* Badges - Top Left */}
-        <div className="badge-container">
+        {/* Badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-2 z-10">
           {product.isNewArrival && (
-            <span className="badge badge-new">New</span>
+            <span className="badge-new shadow-sm">New</span>
           )}
           {discount > 0 && (
-            <span className="badge badge-discount">
+            <span className="badge-sale shadow-sm">
               {discount}% OFF
             </span>
           )}
         </div>
 
-        {/* Wishlist Button - Top Right */}
+        {/* Wishlist Button */}
         <button
           onClick={handleWishlistToggle}
-          className={`btn-wishlist-icon ${inWishlist ? 'active' : ''}`}
+          className={`absolute top-2 right-2 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all shadow-sm ${inWishlist ? 'text-red-500' : 'text-gray-400'}`}
           title="Add to Wishlist"
         >
           {inWishlist ? '❤️' : '♡'}
         </button>
 
-        {/* Quick Actions Overlay - Bottom */}
-        <div className="product-actions-overlay">
-          {/* Size Selector for Quick Add (Future enhancement: interactive) */}
-          {product.sizes && product.sizes.length > 0 && (
-            <div style={{ display: 'flex', gap: '5px', justifyContent: 'center', marginBottom: '5px' }}>
-              {product.sizes.slice(0, 5).map(size => (
-                <span key={size} style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.8)' }}>{size}</span>
-              ))}
-            </div>
-          )}
-
-          <button
-            onClick={handleAddToCart}
-            className="btn-quick-add"
-          >
-            ADD TO CART
+        {/* Quick Actions Overlay */}
+        <div className="product-quick-actions">
+          {/* Actions handled by CSS hover in enhancements.css */}
+          <button onClick={handleAddToCart} className="quick-action-btn" title="Quick Add">
+            <span>+</span>
+          </button>
+          <button onClick={(e) => { e.preventDefault(); window.location.href = `/product/${product.id}` }} className="quick-action-btn" title="View Details">
+            <span>↗</span>
           </button>
         </div>
       </div>
 
-      <div className="product-info">
-        <h3 className="product-name" title={product.name}>{product.name}</h3>
-
-        <div className="product-price-row">
-          <span className="price-current">₹{product.price}</span>
-          {product.originalPrice && (
-            <span className="price-original">₹{product.originalPrice}</span>
-          )}
+      <div className="mt-3 space-y-1 px-1">
+        <div className="flex justify-between items-start">
+          <h3 className="font-bold text-sm uppercase tracking-wide truncate pr-2 text-main">{product.name}</h3>
+          <span className="font-bold text-sm">₹{product.price}</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p className="product-category">{product.category}</p>
-
-          {/* Rating */}
-          {product.rating > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <span style={{ color: '#FFD700', fontSize: '0.8rem' }}>★</span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{product.rating}</span>
-            </div>
+        <div className="flex justify-between items-center text-xs text-muted">
+          <p className="uppercase tracking-wider">{product.category}</p>
+          {product.originalPrice && (
+            <span className="line-through text-gray-400">₹{product.originalPrice}</span>
           )}
         </div>
       </div>

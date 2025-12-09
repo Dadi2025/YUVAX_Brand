@@ -2,10 +2,34 @@
 
 .home-page {
     min-height: 100vh;
+    padding-bottom: 4rem;
 }
 
 .section-margin {
     margin-top: 4rem;
+}
+
+/* Trending Horizontal Scroll */
+.trending-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1.5rem;
+    padding: 1rem 0.5rem 2rem 0.5rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.trending-scroll-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.trending-item {
+    min-width: 280px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
 }
 
 .flash-sale-section {

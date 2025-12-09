@@ -22,27 +22,21 @@ const TrendingSection = () => {
         fetchTrending();
     }, []);
 
-    if (loading) {
-        return <div style={{ textAlign: 'center', padding: '2rem', color: 'white' }}>Loading trending...</div>;
-    }
-
-    if (products.length === 0) {
-        return null;
-    }
+    if (loading) return null; // Silent loading
+    if (products.length === 0) return null;
 
     return (
-        <section style={{ marginBottom: '4rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                <TrendingUp size={32} color="#00ffff" />
-                <h2 style={{ fontSize: '2rem', margin: 0 }}>Trending Now</h2>
+        <section className="trending-section">
+            <div className="flex items-center gap-3 mb-6 px-1">
+                <TrendingUp size={28} className="text-black" />
+                <h2 className="text-2xl font-black uppercase tracking-tight">Trending Now</h2>
             </div>
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '2rem'
-            }}>
+
+            <div className="trending-scroll-container">
                 {products.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <div key={product.id} className="trending-item">
+                        <ProductCard product={product} />
+                    </div>
                 ))}
             </div>
         </section>

@@ -69,6 +69,29 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Visual Break - Manifesto Banner */}
+      <section className="py-20 bg-black text-white overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
+        <div className="container text-center">
+          <span className="text-accent-highlight tracking-[0.2em] text-sm font-bold uppercase mb-4 block">The Philosophy</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 leading-none">
+            Not Just <span className="text-stroke-white text-transparent">Clothes.</span><br />
+            It's a <span className="italic text-accent-secondary">Statement.</span>
+          </h2>
+          <p className="max-w-xl mx-auto text-gray-400 mb-10 text-lg">
+            Every thread engineered for the hustle. Every cut designed for the future.
+            Join the new wave of Indian streetwear.
+          </p>
+          <button
+            className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:bg-accent-highlight hover:scale-105 transition-all"
+            onClick={() => window.location.href = '/shop'}
+          >
+            Explore Collections
+          </button>
+        </div>
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
+      </section>
+
       {/* Trending Section */}
       <section className="container section-margin">
         <TrendingSection />

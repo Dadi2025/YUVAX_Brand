@@ -1,0 +1,156 @@
+/* Shop Page Layout */
+.shop-page {
+    min-height: 100vh;
+    padding-top: var(--header-height);
+    padding-bottom: 4rem;
+}
+
+.shop-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+}
+
+.shop-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+/* Sidebar Filters */
+.filter-group {
+    margin-bottom: 2.5rem;
+}
+
+.filter-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+.filter-search-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    transition: all 0.2s;
+}
+
+.filter-search-input:focus {
+    border-color: var(--accent-secondary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.voice-search-btn {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.voice-search-btn.listening {
+    background: var(--accent-hot);
+    color: white;
+    border-color: var(--accent-hot);
+}
+
+.filter-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    color: var(--text-main);
+    font-weight: 500;
+    padding-left: 0.5rem;
+}
+
+.filter-btn.active {
+    font-weight: 700;
+    color: var(--accent-secondary);
+}
+
+/* Size & Color Grids */
+.filter-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-chip {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-chip:hover {
+    border-color: var(--text-main);
+}
+
+.filter-chip.active {
+    background: var(--text-main);
+    color: white;
+    border-color: var(--text-main);
+}
+
+.btn-clear-filters {
+    width: 100%;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border: none;
+    color: var(--text-main);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-clear-filters:hover {
+    background: var(--text-main);
+    color: white;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+    .shop-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .shop-sidebar {
+        display: none;
+        /* In a real app, we'd add a mobile drawer */
+    }
+}
