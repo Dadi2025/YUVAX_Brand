@@ -17,11 +17,35 @@
 
 .navbar-container {
   display: flex;
+  /* Mobile: Flex Space-Between */
   justify-content: space-between;
   align-items: center;
   height: 100%;
   position: relative;
-  /* Ensure context for absolute positioning */
+}
+
+@media (min-width: 768px) {
+  .navbar-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    justify-content: unset;
+    /* Reset flex justify */
+  }
+}
+
+/* Ensure logo stays on start */
+.navbar-logo {
+  justify-self: start;
+}
+
+/* Center Nav Links */
+.nav-center {
+  justify-self: center;
+}
+
+/* Right Utilities */
+.nav-right {
+  justify-self: end;
 }
 
 /* Logo */
@@ -65,22 +89,8 @@
 }
 
 /* Desktop Menu Container */
-@media (min-width: 768px) {
-  .nav-links-center {
-    display: flex;
-    gap: 12px;
-    /* Gap reduced to 12px for compact, premium look */
-    position: absolute;
-    right: 0;
-    /* Align to right side */
-    left: auto;
-    /* Remove centering */
-    transform: none;
-    /* Remove centering transform */
-    height: 100%;
-    align-items: center;
-  }
-}
+/* Desktop Menu Container - Managed by Grid areas now */
+/* .nav-links-center removed in favor of .nav-center and .nav-right */
 
 /* Icons */
 .nav-icon-btn {

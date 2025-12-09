@@ -48,30 +48,26 @@ const Navbar = () => {
             NEO-INDIA
           </Link>
 
-          {/* Unified Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6 nav-links-center">
-            {/* 1. Home */}
+          {/* Center Navigation */}
+          <div className="hidden md:flex items-center gap-8 nav-center">
             <Link to="/" className="nav-link">Home</Link>
-
-            {/* 2. Collections */}
             <Link to="/shop" className="nav-link">Collections</Link>
-
-            {/* 3. Refer & Earn */}
+            <Link to="/style-wall" className="nav-link">Style Wall</Link>
             {user && (
               <Link to="/referral" className="nav-link" aria-label="Refer & Earn">
                 Refer & Earn
               </Link>
             )}
+          </div>
 
-            {/* 4. Style Wall */}
-            <Link to="/style-wall" className="nav-link">Style Wall</Link>
+          {/* Right Utilities */}
+          <div className="hidden md:flex items-center gap-6 nav-right">
 
-            {/* 5. Wishlist */}
-            <Link to="/wishlist" className="relative nav-link flex items-center gap-2" aria-label="Wishlist">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Wishlist */}
+            <Link to="/wishlist" className="nav-icon-btn relative" aria-label="Wishlist">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
-              <span className="nav-icon-label">Wishlist</span>
               {wishlist.length > 0 && (
                 <span className="nav-badge nav-badge-purple">
                   {wishlist.length}
@@ -79,14 +75,13 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* 6. Cart */}
-            <Link to="/cart" className="relative nav-link flex items-center gap-2" aria-label="Cart">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Cart */}
+            <Link to="/cart" className="nav-icon-btn relative" aria-label="Cart">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
               </svg>
-              <span className="nav-icon-label">Cart</span>
               {getCartCount() > 0 && (
                 <span className="nav-badge nav-badge-cyan">
                   {getCartCount()}
@@ -94,63 +89,32 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* 7. Dashboard/Orders */}
-            {user && (
-              <Link to="/profile" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Orders">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                </svg>
-                <span className="nav-icon-label">Orders</span>
-              </Link>
-            )}
-            {isAgentLoggedIn && (
-              <Link to="/delivery/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                <span className="nav-icon-label">Dashboard</span>
-              </Link>
-            )}
-            {isAgentLoggedIn && !isAdminLoggedIn && !user?.isAdmin && (
-              <Link to="/delivery/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                <span className="nav-icon-label">Delivery</span>
-              </Link>
-            )}
-            {isAdminLoggedIn && (
-              <Link to="/admin/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                <span className="nav-icon-label">Dashboard</span>
-              </Link>
-            )}
+            {/* Dashboard Link (Conditionally Rendered) */}
+            {(
+              (isAgentLoggedIn && !isAdminLoggedIn && !user?.isAdmin) ||
+              (isAdminLoggedIn)
+            ) && (
+                <Link to={isAdminLoggedIn ? "/admin/dashboard" : "/delivery/dashboard"} className="nav-icon-btn" aria-label="Dashboard">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </Link>
+              )}
 
-            {/* 8. Account */}
+            {/* Account / User Menu */}
             {user ? (
               <div className="user-menu-container">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="nav-link user-menu-btn flex items-center gap-2"
+                  className="nav-icon-btn"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
-                  <span className="nav-icon-label">Account</span>
                 </button>
                 {showUserMenu && (
                   <div className="user-dropdown">
@@ -178,35 +142,23 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              // Show logout for admin/agent, or login for neither
+              // Login / Logout buttons for Admin/Agent/Guest
               isAdminLoggedIn ? (
-                <button
-                  onClick={handleAdminLogout}
-                  className="logout-btn-primary nav-btn-logout"
-                >
-                  Logout
-                </button>
+                <button onClick={handleAdminLogout} className="text-sm font-medium uppercase tracking-wide hover:text-red-500 transition-colors">Logout</button>
               ) : isAgentLoggedIn ? (
-                <button
-                  onClick={handleAgentLogout}
-                  className="logout-btn-primary nav-btn-logout"
-                >
-                  Logout
-                </button>
+                <button onClick={handleAgentLogout} className="text-sm font-medium uppercase tracking-wide hover:text-red-500 transition-colors">Logout</button>
               ) : (
-                <Link to="/login" className="btn-primary flex items-center h-9 px-4 text-sm">
-                  Login/Account
+                <Link to="/login" className="btn-primary" style={{ padding: '8px 20px', height: '36px', fontSize: '12px' }}>
+                  Login
                 </Link>
               )
             )}
-
-            {/* Separator for Utilities */}
-            <div className="nav-separator"></div>
 
             {/* Language Toggle */}
             <button
               onClick={() => changeLanguage(currentLanguage === 'en' ? 'hi' : 'en')}
               className="language-toggle"
+              style={{ marginLeft: '8px' }}
             >
               {currentLanguage === 'en' ? 'हिं' : 'EN'}
             </button>

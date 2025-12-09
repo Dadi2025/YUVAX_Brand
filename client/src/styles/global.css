@@ -1,32 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 
 :root {
-  /* Palette - Scandinavian Minimalist (Light Mode) and I will make the font black for headings and body*/
-  --bg-main: #FFFFFF;
-  /* Pure White */
-  --bg-secondary: #F9FAFB;
-  /* Very Light Grey (Gray-50) */
+  /* Palette - Modern Noir & Alabaster (Luxury) */
+  --bg-main: #FAFAF9;
+  /* Alabaster - Warm, soft white */
+  --bg-secondary: #F3F4F6;
+  /* Cool Grey for contrast */
   --bg-card: #FFFFFF;
-  /* Cards are white on white/grey */
+  /* Pure White for lifts */
+  --bg-white: #FFFFFF;
 
-  --text-main: #111111;
-  /* Jet Black for Headings */
+  --text-main: #171717;
+  /* Carbon - Softer than pure black */
   --text-body: #4B5563;
-  /* Dark Grey for readability (Gray-600) */
+  /* Slate - High readability */
   --text-muted: #9CA3AF;
-  /* Light Grey (Gray-400) */
+  /* Muted Grey */
   --text-light: #F9FAFB;
-  /* Actually white/light for text on dark backgrounds */
+  /* Off-white text */
 
   /* Accents */
-  --accent-primary: #000000;
-  /* Primary Action is Black */
-  --accent-hover: #333333;
-  /* Charocal */
-  --border-light: #E5E7EB;
-  /* Delicate Grey Borders */
-  --border-dark: #111111;
-  /* Strong Borders */
+  --accent-primary: #171717;
+  /* Carbon Black */
+  --accent-hover: #404040;
+  /* Charcoal */
+  --accent-tertiary: #CA8A04;
+  /* Muted Gold for special interactions */
+
+  --border-light: #E5E5E5;
+  /* Mist - Subtle */
+  --border-dark: #171717;
+  /* Strong */
 
   --accent-error: #EF4444;
   --accent-success: #10B981;
@@ -141,11 +145,21 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* Subtle depth */
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
 }
 
 .btn-primary:hover {
   background: white;
   color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .btn-secondary {
