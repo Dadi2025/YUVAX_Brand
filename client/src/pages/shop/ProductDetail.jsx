@@ -40,19 +40,21 @@ const ProductDetail = () => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem' }}>
+        <div className="product-detail-page">
             <div className="container">
                 {/* Breadcrumb */}
-                <div style={{ marginBottom: '2rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                    <Link to="/" style={{ color: 'inherit' }}>Home</Link> /
-                    <Link to="/shop" style={{ color: 'inherit', margin: '0 0.5rem' }}>Shop</Link> /
-                    <span style={{ color: 'white' }}>{product.name}</span>
+                <div className="breadcrumb">
+                    <Link to="/" className="breadcrumb-link">Home</Link>
+                    <span className="breadcrumb-separator">/</span>
+                    <Link to="/shop" className="breadcrumb-link">Shop</Link>
+                    <span className="breadcrumb-separator">/</span>
+                    <span className="breadcrumb-current">{product.name}</span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', marginBottom: '4rem' }}>
+                <div className="product-layout-grid">
                     {/* Images */}
                     <div>
-                        <div className="product-image-container" style={{ marginBottom: '1rem' }}>
+                        <div className="product-image-container">
                             <img
                                 src={product.images?.[selectedImage] || product.image}
                                 alt={product.name}
@@ -60,21 +62,14 @@ const ProductDetail = () => {
                             />
                         </div>
                         {product.images && product.images.length > 1 && (
-                            <div style={{ display: 'flex', gap: '1rem' }}>
+                            <div className="image-gallery">
                                 {product.images.map((img, idx) => (
                                     <img
                                         key={idx}
                                         src={img}
                                         alt={`${product.name} ${idx + 1}`}
                                         onClick={() => setSelectedImage(idx)}
-                                        style={{
-                                            width: '80px',
-                                            height: '100px',
-                                            objectFit: 'cover',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                            border: selectedImage === idx ? '2px solid var(--accent-cyan)' : '2px solid transparent'
-                                        }}
+                                        className={`thumbnail ${selectedImage === idx ? 'active' : ''}`}
                                     />
                                 ))}
                             </div>
@@ -83,36 +78,25 @@ const ProductDetail = () => {
 
                     {/* Product Info */}
                     <div>
-                        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{product.name}</h1>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                            <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-cyan)' }}>₹{product.price}</span>
+                        <h1 className="product-title">{product.name}</h1>
+                        <div className="product-price-container">
+                            <span className="current-price">₹{product.price}</span>
                             {product.originalPrice && (
                                 <>
-                                    <span style={{ fontSize: '1.25rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₹{product.originalPrice}</span>
-                                    <span style={{ background: 'var(--accent-purple)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '4px', fontSize: '0.875rem', fontWeight: 'bold' }}>
+                                    <span className="original-price">₹{product.originalPrice}</span>
+                                    <span className="discount-badge">
                                         {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                                     </span>
                                 </>
                             )}
                         </div>
 
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>{product.description}</p>
+                        <p className="product-description">{product.description}</p>
 
-                        <div style={{ marginBottom: '2rem', position: 'relative' }}>
+                        <div className="share-btn-container">
                             <button
                                 onClick={() => setShowShareOptions(!showShareOptions)}
-                                style={{
-                                    background: 'transparent',
-                                    border: '1px solid var(--border-light)',
-                                    color: 'var(--text-main)',
-                                    padding: '0.5rem 1rem',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    fontSize: '0.875rem'
-                                }}
+                                className="share-trigger-btn"
                             >
                                 <span>🔗</span> Share Product
                             </button>
@@ -127,9 +111,9 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Size Selector */}
-                        <div style={{ marginBottom: '2rem' }}>
+                        <div className="size-section">
                             <h3 className="section-label">Select Size</h3>
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                            <div className="size-selector">
                                 {product.sizes.map(size => (
                                     <button
                                         key={size}
@@ -158,9 +142,9 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Quantity */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Quantity</h3>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid var(--border-light)', borderRadius: '4px', padding: '0.5rem', width: 'fit-content' }}>
+                        <div className="quantity-section">
+                            <h3 className="quantity-label">Quantity</h3>
+                            <div className="quantity-control">
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                     className="quantity-btn"
@@ -206,21 +190,16 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Product Details */}
-                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem' }}>
-                            <div style={{ marginBottom: '1rem' }}>
-                                <span style={{ color: 'var(--text-muted)' }}>Category:</span> <span>{product.category}</span>
+                        <div className="meta-info">
+                            <div className="meta-item">
+                                <span className="meta-label">Category:</span> <span>{product.category}</span>
                             </div>
-                            <div style={{ marginBottom: '1rem' }}>
-                                <span style={{ color: 'var(--text-muted)' }}>Stock:</span> <span style={{ color: product.stock > 10 ? 'var(--accent-cyan)' : 'var(--accent-purple)' }}>{product.stock} available</span>
+                            <div className="meta-item">
+                                <span className="meta-label">Stock:</span> <span className={`stock-status ${product.stock > 10 ? 'in-stock' : ''}`}>{product.stock} available</span>
                             </div>
-                            <div>
-                                <span style={{ color: 'var(--text-muted)' }}>Rating:</span> <span>⭐ {product.rating} ({product.reviews} reviews)</span>
-                                <div>
-                                    <span style={{ color: 'var(--text-muted)' }}>Rating:</span> <span>⭐ {product.rating} ({product.reviews} reviews)</span>
-                                </div>
+                            <div className="meta-item">
+                                <span className="meta-label">Rating:</span> <span>⭐ {product.rating} ({product.reviews} reviews)</span>
                             </div>
-
-                            {/* Delivery Check Moved Up */}
                         </div>
                     </div>
                 </div>
@@ -228,7 +207,7 @@ const ProductDetail = () => {
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
                     <div>
-                        <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>YOU MAY ALSO LIKE</h2>
+                        <h2 className="section-title">YOU MAY ALSO LIKE</h2>
                         <div className="product-grid">
                             {relatedProducts.map(p => (
                                 <ProductCard key={p.id} product={p} />

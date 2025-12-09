@@ -6,6 +6,8 @@
     border-radius: 8px;
     cursor: zoom-in;
     position: relative;
+    /* Added margin from inline style */
+    margin-bottom: 1rem;
 }
 
 .product-image-main {
@@ -49,11 +51,31 @@
 }
 
 /* 3. Visibility Fixes */
+.quantity-section {
+    margin-bottom: 2rem;
+}
+
+.quantity-label {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    padding: 0.5rem;
+    width: fit-content;
+}
+
 .quantity-btn {
     background: none;
     border: none;
     color: var(--text-main);
-    /* Ensure visible text color */
     cursor: pointer;
     padding: 0.5rem 1rem;
     font-size: 1.25rem;
@@ -72,13 +94,27 @@
 }
 
 /* 4. Size Button Visibility */
+.size-section {
+    margin-bottom: 2rem;
+}
+
+.section-label {
+    margin-bottom: 1rem;
+    /* Extracted from previous usage */
+}
+
+.size-selector {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 .size-btn {
     padding: 0.5rem 1rem;
     background: transparent;
     color: var(--text-main);
-    /* Explicitly visible text */
     border: 1px solid var(--border-light);
-    /* Explicit border */
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
@@ -121,7 +157,6 @@
     text-transform: uppercase;
     position: relative;
     overflow: hidden;
-    /* Base Border Highlight */
     border: 1px solid transparent;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -131,11 +166,9 @@
 }
 
 /* Add to Cart - Premium Primary */
-/* Add to Cart - "Void Gradient" with Highlight */
 .btn-add-cart {
     background: linear-gradient(145deg, #1a1a1a, #000000);
     color: #fff;
-    /* Subtle white border for definition */
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
@@ -161,13 +194,12 @@
     border-color: var(--accent-purple);
 }
 
-/* Wishlist - Square Icon */
+/* Wishlist */
 .btn-wishlist {
     background: transparent;
     border: 1px solid var(--border-light);
     color: var(--text-muted);
     font-size: 1.75rem;
-    /* Increased size */
     padding: 0;
 }
 
@@ -177,7 +209,7 @@
     background: rgba(255, 68, 68, 0.05);
 }
 
-/* 6. Delivery Check Premium - Compact */
+/* 6. Delivery Check Premium */
 .delivery-check-container {
     margin: 1rem 0;
     padding: 0.85rem 1rem;
@@ -252,7 +284,7 @@
     }
 }
 
-/* 7. Size Helper Buttons (New Inline Style) */
+/* 7. Size Helper Buttons */
 .size-helper-btn {
     padding: 0.5rem 1rem;
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(6, 182, 212, 0.05));
@@ -278,12 +310,10 @@
 /* Polished Button Styles - Premium Feel */
 
 /* Inline Try-On Button (in DeliveryCheck) */
-/* Inline Try-On Button - Neon Glass Highlight */
 .btn-try-on-inline {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(5px);
     color: var(--accent-purple);
-    /* Neon Border Highlight */
     border: 1px solid rgba(139, 92, 246, 0.5);
     border-radius: 8px;
     font-weight: 700;
@@ -307,11 +337,9 @@
 }
 
 /* Main Buy Now Button (in Action Grid) */
-/* Buy Now - "Electric Gradient" with Highlight */
 .btn-buy-now {
     background: linear-gradient(135deg, #00f260 0%, #0575e6 100%);
     color: #fff;
-    /* Glowing border effect */
     border: 1px solid rgba(255, 255, 255, 0.3);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     position: relative;
@@ -341,16 +369,161 @@
     transform: translateY(-2px);
 }
 
-/* Refined Add to Cart */
-.btn-add-cart {
-    background: #111;
-    color: #fff;
-    border: 1px solid #111;
+/* NEW: Clean Layout Classes */
+.product-detail-page {
+    min-height: 100vh;
+    padding-top: 120px;
+    padding-bottom: 4rem;
 }
 
-.btn-add-cart:hover {
-    background: #000;
-    border-color: #000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
+.breadcrumb {
+    margin-bottom: 2rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.breadcrumb-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+    color: var(--text-main);
+}
+
+.breadcrumb-separator {
+    margin: 0 0.5rem;
+}
+
+.breadcrumb-current {
+    color: var(--text-main);
+}
+
+.product-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+    .product-layout-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+}
+
+.image-gallery {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.thumbnail.active {
+    border-color: var(--accent-cyan);
+}
+
+.product-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.product-price-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.current-price {
+    font-size: 2rem;
+    fontWeight: bold;
+    color: var(--accent-cyan);
+}
+
+.original-price {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    background: var(--accent-purple);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.product-description {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.share-btn-container {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.share-trigger-btn {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-main);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+}
+
+.share-trigger-btn:hover {
+    background: var(--bg-secondary);
+}
+
+.meta-info {
+    border-top: 1px solid var(--border-light);
+    padding-top: 2rem;
+}
+
+.meta-item {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.meta-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stock-status {
+    color: var(--accent-purple);
+    font-weight: 500;
+}
+
+.stock-status.in-stock {
+    color: var(--accent-cyan);
+}
+
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
 }

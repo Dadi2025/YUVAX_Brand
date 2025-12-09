@@ -11,6 +11,7 @@ import loyaltyService from '../services/loyaltyService';
 import TrendingSection from '../components/features/TrendingSection';
 import RecommendedProducts from '../components/features/RecommendedProducts';
 import SearchHeader from '../components/layout/SearchHeader';
+import './Home.css';
 
 const Home = () => {
   const { products } = useApp();
@@ -38,7 +39,7 @@ const Home = () => {
     : null;
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div className="home-page">
       <SearchHeader />
       <Hero />
 
@@ -47,7 +48,7 @@ const Home = () => {
 
       {/* Flash Sale Section */}
       {flashSales.length > 0 && (
-        <section className="container" style={{ marginTop: '2rem' }}>
+        <section className="container flash-sale-section">
           <FlashSaleBanner endTime={earliestEndTime} />
           <FlashSaleGrid products={flashSales} />
         </section>
@@ -56,8 +57,8 @@ const Home = () => {
       <section className="section-padding container">
         <div className="section-header">
           <div>
-            <h2 style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>LATEST DROPS</h2>
-            <div style={{ height: '2px', width: '5rem', background: 'white' }}></div>
+            <h2 className="section-title">LATEST DROPS</h2>
+            <div className="latest-drops-separator"></div>
           </div>
         </div>
 
@@ -69,22 +70,20 @@ const Home = () => {
       </section>
 
       {/* Trending Section */}
-      <section className="container" style={{ marginTop: '4rem' }}>
+      <section className="container section-margin">
         <TrendingSection />
       </section>
 
       {/* Personalized Recommendations */}
-      <section className="container" style={{ marginTop: '4rem' }}>
+      <section className="container section-margin">
         <RecommendedProducts title="Recommended For You" />
       </section>
 
-
-
       <section className="newsletter-section">
         <div className="container">
-          <div style={{ maxWidth: '56rem', margin: '0 auto', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '2rem', letterSpacing: '-0.025em' }}>JOIN THE MOVEMENT</h2>
-            <p style={{ color: '#888', fontSize: '1.125rem', marginBottom: '3rem', maxWidth: '36rem', margin: '0 auto 3rem auto', fontWeight: 300 }}>
+          <div className="newsletter-content">
+            <h2 className="newsletter-title">JOIN THE MOVEMENT</h2>
+            <p className="newsletter-desc">
               Sign up for early access to new collections and exclusive drops.
               Be the first to wear the future.
             </p>

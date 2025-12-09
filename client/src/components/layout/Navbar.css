@@ -26,10 +26,11 @@
 
 @media (min-width: 768px) {
   .navbar-container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    justify-content: unset;
-    /* Reset flex justify */
+    display: flex;
+    /* Reverting to flex for predictable alignment */
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
   }
 }
 
