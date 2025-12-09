@@ -92,7 +92,7 @@
   gap: 1.25rem;
 }
 
-/* Icons */
+/* Icons - Youth Vibe High Energy */
 .nav-icon-btn {
   background: transparent;
   border: 1px solid transparent;
@@ -101,37 +101,86 @@
   align-items: center;
   justify-content: center;
   color: #000000;
-  /* Pure Black */
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  /* Slightly larger touch target */
+  height: 42px;
   border-radius: 50%;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Bouncy transition */
   padding: 0;
+  position: relative;
 }
 
 .nav-icon-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px);
-  color: #000000;
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Badges - Dot style */
+/* Individual Icon Hover Colors */
+.nav-icon-btn[aria-label="Wishlist"]:hover {
+  color: #f43f5e;
+  /* Hot Rose */
+  filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.4));
+}
+
+.nav-icon-btn[aria-label="Cart"]:hover {
+  color: #0ea5e9;
+  /* Electric Sky */
+  filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.4));
+}
+
+.nav-icon-btn[aria-label="Dashboard"]:hover {
+  color: #8b5cf6;
+  /* Violet */
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+}
+
+.nav-icon-btn:hover svg {
+  stroke-width: 2px;
+}
+
+/* Badges - Hype/Neon */
 .nav-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  top: 0px;
+  right: 0px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 99px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-secondary);
-  /* Electric Indigo */
-  color: white;
-  border: 2px solid white;
+  background: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+.nav-badge-purple {
+  background: #f43f5e;
+  /* Hot Rose for Wishlist */
+  color: #ffffff;
+}
+
+.nav-badge-cyan {
+  background: #bef264;
+  /* Neon Lime for Cart */
+  color: #000000;
+  /* Black text on Lime for contrast */
 }
 
 .nav-badge-purple,
