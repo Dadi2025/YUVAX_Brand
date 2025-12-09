@@ -369,6 +369,8 @@ export const createOrder = async (req, res) => {
         taxPrice,
         shippingPrice,
         totalPrice,
+        pointsRedeemed,
+        pointsDiscountAmount,
         userId
     } = req.body;
 
@@ -393,6 +395,8 @@ export const createOrder = async (req, res) => {
             taxPrice,
             shippingPrice,
             totalPrice,
+            pointsRedeemed: pointsRedeemed || 0,
+            pointsDiscountAmount: pointsDiscountAmount || 0,
             isPaid: req.body.paymentResult && req.body.paymentResult.status === 'COMPLETED' ? true : false,
             paidAt: req.body.paymentResult && req.body.paymentResult.status === 'COMPLETED' ? Date.now() : null,
         });
@@ -610,11 +614,21 @@ export const processRefund = async (req, res) => {
         order.refundAmount = order.totalPrice;
         order.refundedAt = Date.now();
 
-        // Reverse Loyalty Points
+        // Reverse Loyalty Points (Deduct points earned)
         try {
             await loyaltyService.reversePurchasePoints(order.user, order.refundAmount, order._id);
         } catch (err) {
             console.error("Failed to reverse loyalty points:", err);
+        }
+
+        // Refund Redeemed Points (Credit back points used)
+        if (order.pointsRedeemed && order.pointsRedeemed > 0) {
+            try {
+                await loyaltyService.refundRedeemedPoints(order.user, order.pointsRedeemed, order._id);
+                console.log(`Refunded ${order.pointsRedeemed} points to user ${order.user}`);
+            } catch (err) {
+                console.error("Failed to refund redeemed points:", err);
+            }
         }
 
         const updatedOrder = await order.save();
@@ -653,6 +667,16 @@ export const manualRefund = async (req, res) => {
             await loyaltyService.reversePurchasePoints(order.user, order.refundAmount, order._id);
         } catch (err) {
             console.error("Failed to reverse loyalty points:", err);
+        }
+
+        // Refund Redeemed Points
+        if (order.pointsRedeemed && order.pointsRedeemed > 0) {
+            try {
+                await loyaltyService.refundRedeemedPoints(order.user, order.pointsRedeemed, order._id);
+                console.log(`Refunded ${order.pointsRedeemed} points to user ${order.user}`);
+            } catch (err) {
+                console.error("Failed to refund redeemed points:", err);
+            }
         }
 
         const updatedOrder = await order.save();

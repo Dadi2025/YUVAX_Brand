@@ -161,6 +161,43 @@ export const reversePurchasePoints = async (userId, refundAmount, orderId) => {
 };
 
 /**
+ * Refund redeemed points (credit back to user)
+ */
+export const refundRedeemedPoints = async (userId, points, orderId) => {
+    try {
+        if (!points || points <= 0) return { success: true, refunded: 0 };
+
+        const user = await User.findById(userId);
+        if (!user) throw new Error('User not found');
+
+        // Create transaction record
+        const transaction = await PointsTransaction.create({
+            user: userId,
+            points: points,
+            type: 'earn', // Technically earning them back
+            source: 'return',
+            description: `Refunded ${points} redeemed points from return`,
+            metadata: { orderId }
+        });
+
+        // Update user's loyalty points
+        user.loyaltyPoints += points;
+        await user.save();
+
+        // Legacy support (optional, but safe)
+        if (user.points !== undefined) {
+            user.points += points;
+            await user.save();
+        }
+
+        return { success: true, transaction, newBalance: user.loyaltyPoints };
+    } catch (error) {
+        console.error('Error refunding redeemed points:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
  * Award points for purchase
  */
 export const awardPurchasePoints = async (userId, orderAmount, orderId) => {
@@ -347,6 +384,7 @@ export default {
     redeemPoints,
     awardPurchasePoints,
     reversePurchasePoints,
+    refundRedeemedPoints,
     awardReviewPoints,
     awardReferralPoints,
     awardBirthdayBonus,

@@ -64,6 +64,14 @@ const orderSchema = mongoose.Schema({
     paidAt: {
         type: Date
     },
+    pointsRedeemed: {
+        type: Number,
+        default: 0
+    },
+    pointsDiscountAmount: {
+        type: Number,
+        default: 0
+    },
     isDelivered: {
         type: Boolean,
         required: true,
