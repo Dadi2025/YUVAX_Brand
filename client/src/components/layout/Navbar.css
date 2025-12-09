@@ -44,7 +44,8 @@
   font-weight: 800;
   font-family: var(--font-heading);
   letter-spacing: -0.04em;
-  color: var(--text-main);
+  color: #000000;
+  /* Pure Black */
   text-transform: uppercase;
   text-decoration: none;
   display: flex;
@@ -58,30 +59,37 @@
 
 /* Nav Links Centered (Desktop) */
 .nav-link {
-  font-size: 0.875rem;
-  /* 14px */
-  font-weight: 600;
+  font-size: 0.9rem;
+  /* Increased slightly */
+  font-weight: 700;
+  /* Extra Bold */
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: var(--text-body);
-  transition: all 0.2s ease;
-  padding: 8px 12px;
+  letter-spacing: 0.05em;
+  color: #000000;
+  /* Pure Black */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px 16px;
   text-decoration: none;
   position: relative;
-  border-radius: var(--radius-sm);
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
+/* Multi-Dark Hover Effect */
 .nav-link:hover,
 .nav-link.active {
-  color: var(--text-main);
-  background: var(--bg-secondary);
+  color: transparent;
+  /* Needed for gradient text */
+  background-image: linear-gradient(135deg, #000000 0%, #434343 50%, #000000 100%);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 /* Right Utilities */
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 /* Icons */
@@ -92,7 +100,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-main);
+  color: #000000;
+  /* Pure Black */
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -101,9 +110,9 @@
 }
 
 .nav-icon-btn:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-light);
+  background: rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
+  color: #000000;
 }
 
 /* Badges - Dot style */
