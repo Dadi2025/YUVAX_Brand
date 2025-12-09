@@ -12,12 +12,12 @@ const pointsTransactionSchema = mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['earn', 'redeem'],
+        enum: ['earn', 'redeem', 'deduct'],
         required: true
     },
     source: {
         type: String,
-        enum: ['purchase', 'review', 'referral', 'birthday', 'social_share', 'signup_bonus', 'spin_wheel', 'manual'],
+        enum: ['purchase', 'review', 'referral', 'birthday', 'social_share', 'signup_bonus', 'spin_wheel', 'manual', 'return'],
         required: true
     },
     description: {

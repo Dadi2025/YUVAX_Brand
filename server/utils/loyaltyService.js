@@ -110,6 +110,57 @@ export const redeemPoints = async (userId, points) => {
 };
 
 /**
+ * Reverse points for return/refund
+ */
+export const reversePurchasePoints = async (userId, refundAmount, orderId) => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) throw new Error('User not found');
+
+        // Calculate points to reverse (same rate as earning: 10 points per 100)
+        // Ensure we don't reverse more than what they have? 
+        // No, balance can go negative theoretically if they spent them, 
+        // OR we just deduct what we can. Let's allow negative for now or floor at 0.
+        // Standard practice: Deduction happens regardless.
+        const pointsToReverse = Math.floor(refundAmount * POINTS_RATES.PURCHASE);
+
+        if (pointsToReverse <= 0) return { success: true, reversed: 0 };
+
+        // Create transaction record
+        const transaction = await PointsTransaction.create({
+            user: userId,
+            points: -pointsToReverse,
+            type: 'deduct', // Or 'reverse'
+            source: 'return',
+            description: `Reversed ${pointsToReverse} points for refund`,
+            metadata: { orderId }
+        });
+
+        // Update user's loyalty points
+        user.loyaltyPoints -= pointsToReverse;
+        // Optional: Prevent negative balance?
+        // if (user.loyaltyPoints < 0) user.loyaltyPoints = 0; 
+
+        await user.save();
+
+        // Also handling legacy points field just in case
+        if (user.points !== undefined) {
+            user.points -= pointsToReverse;
+            await user.save();
+        }
+
+        return { success: true, transaction, newBalance: user.loyaltyPoints };
+
+    } catch (error) {
+        console.error('Error reversing points:', error);
+        // Don't throw, just log to prevent refund flow interruption
+        return { success: false, error: error.message };
+    }
+
+
+};
+
+/**
  * Award points for purchase
  */
 export const awardPurchasePoints = async (userId, orderAmount, orderId) => {
@@ -295,6 +346,7 @@ export default {
     awardPoints,
     redeemPoints,
     awardPurchasePoints,
+    reversePurchasePoints,
     awardReviewPoints,
     awardReferralPoints,
     awardBirthdayBonus,

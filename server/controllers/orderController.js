@@ -4,6 +4,7 @@ import Order from '../models/Order.js';
 import User from '../models/User.js';
 import { assignAgentByPinCode } from '../utils/agentAssignment.js';
 import { sendOrderConfirmation, sendShippingUpdate, sendDeliveryUpdate } from '../utils/whatsappService.js';
+import loyaltyService from '../utils/loyaltyService.js';
 
 // @desc    Get all orders
 // @route   GET /api/orders
@@ -69,12 +70,13 @@ export const updateOrderStatus = async (req, res) => {
             order.isDelivered = true;
             order.deliveredAt = Date.now();
 
-            // Award Loyalty Points (1 point per ₹100)
-            const pointsToAward = Math.floor(order.totalPrice / 100);
-            const user = await User.findById(order.user);
-            if (user) {
-                user.points += pointsToAward;
-                await user.save();
+            // Award Loyalty Points using Service
+            try {
+                // Import dynamically if needed or assume imported at top (I will add import next)
+                await loyaltyService.awardPurchasePoints(order.user, order.totalPrice, order._id);
+                console.log(`Awarded points for order ${order._id}`);
+            } catch (err) {
+                console.error("Failed to award loyalty points:", err);
             }
         }
 
@@ -143,12 +145,11 @@ export const simulateCourier = async (req, res) => {
                 order.deliveredAt = now;
                 await order.save();
 
-                // Award Loyalty Points (Atomic Update)
-                const pointsToAward = Math.floor(order.totalPrice / 100);
-                if (order.user) {
-                    await User.findByIdAndUpdate(order.user, {
-                        $inc: { points: pointsToAward }
-                    });
+                // Award Loyalty Points (Atomic Update handled by Service)
+                try {
+                    await loyaltyService.awardPurchasePoints(order.user, order.totalPrice, order._id);
+                } catch (err) {
+                    console.error("Failed to award loyalty points:", err);
                 }
 
                 // Send WhatsApp Delivery Notification
@@ -609,6 +610,13 @@ export const processRefund = async (req, res) => {
         order.refundAmount = order.totalPrice;
         order.refundedAt = Date.now();
 
+        // Reverse Loyalty Points
+        try {
+            await loyaltyService.reversePurchasePoints(order.user, order.refundAmount, order._id);
+        } catch (err) {
+            console.error("Failed to reverse loyalty points:", err);
+        }
+
         const updatedOrder = await order.save();
         res.json(updatedOrder);
     } catch (error) {
@@ -639,6 +647,13 @@ export const manualRefund = async (req, res) => {
         order.refundStatus = 'Completed';
         order.refundAmount = req.body.amount || order.totalPrice;
         order.refundedAt = Date.now();
+
+        // Reverse Loyalty Points
+        try {
+            await loyaltyService.reversePurchasePoints(order.user, order.refundAmount, order._id);
+        } catch (err) {
+            console.error("Failed to reverse loyalty points:", err);
+        }
 
         const updatedOrder = await order.save();
         res.json(updatedOrder);
