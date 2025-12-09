@@ -49,6 +49,9 @@ const AdminLogin = () => {
             // Check if user is admin
             if (userData.isAdmin) {
                 localStorage.setItem('yuva-admin', 'true');
+                // Clear any agent session to prevent confusion
+                localStorage.removeItem('agent-token');
+                localStorage.removeItem('agent-info');
                 navigate('/admin/dashboard');
             } else {
                 showToast('Access denied. Admin privileges required.', 'error');

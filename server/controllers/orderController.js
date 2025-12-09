@@ -497,6 +497,16 @@ export const updateReturnStatus = async (req, res) => {
 
         order.returnStatus = req.body.status;
 
+        // Auto-assign agent for pickup if Approved
+        if (req.body.status === 'Approved') {
+            const pinCode = order.shippingAddress.postalCode;
+            const agent = await assignAgentByPinCode(pinCode);
+            if (agent) {
+                order.assignedAgent = agent._id;
+                console.log(`✅ Return Pickup assigned to agent: ${agent.name}`);
+            }
+        }
+
         const updatedOrder = await order.save();
         res.json(updatedOrder);
     } catch (error) {
@@ -556,6 +566,16 @@ export const updateExchangeStatus = async (req, res) => {
         }
 
         order.exchangeStatus = req.body.status;
+
+        // Auto-assign agent for exchange pickup/delivery if Approved
+        if (req.body.status === 'Approved') {
+            const pinCode = order.shippingAddress.postalCode;
+            const agent = await assignAgentByPinCode(pinCode);
+            if (agent) {
+                order.assignedAgent = agent._id;
+                console.log(`✅ Exchange assigned to agent: ${agent.name}`);
+            }
+        }
 
         const updatedOrder = await order.save();
         res.json(updatedOrder);

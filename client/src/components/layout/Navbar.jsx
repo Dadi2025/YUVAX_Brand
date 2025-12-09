@@ -116,6 +116,17 @@ const Navbar = () => {
                 <span className="nav-icon-label">Dashboard</span>
               </Link>
             )}
+            {isAgentLoggedIn && !isAdminLoggedIn && !user?.isAdmin && (
+              <Link to="/delivery/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span className="nav-icon-label">Delivery</span>
+              </Link>
+            )}
             {isAdminLoggedIn && (
               <Link to="/admin/dashboard" className="nav-link flex items-center gap-2 nav-link-accent" aria-label="Dashboard">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

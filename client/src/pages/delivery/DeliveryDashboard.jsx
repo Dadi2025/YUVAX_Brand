@@ -147,7 +147,7 @@ const DeliveryDashboard = () => {
         if (filterStatus === 'All') return true;
         if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
         if (filterStatus === 'Delivered') return order.status === 'Delivered';
-        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Picked Up';
+        if (filterStatus === 'Returned') return order.status === 'Returned' || order.returnStatus === 'Picked Up' || order.returnStatus === 'Approved' || order.exchangeStatus === 'Approved';
         return true;
     });
 

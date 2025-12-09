@@ -56,6 +56,7 @@ router.post('/', protect, async (req, res) => {
         });
 
         // Sync with Order model for Admin Panel visibility
+        console.log(`Processing return request for Order ${orderId}, Type: ${returnType}`);
         if (returnType === 'exchange') {
             order.exchangeStatus = 'Requested';
             // Use the first item's reason or a generic one

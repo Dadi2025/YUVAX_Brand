@@ -125,7 +125,7 @@ const ManageOrders = () => {
         if (filterStatus === 'All') return true;
         if (filterStatus === 'Pending') return ['Processing', 'Shipped'].includes(order.status);
         if (filterStatus === 'Delivered') return order.status === 'Delivered';
-        if (filterStatus === 'Returned') return order.status === 'Returned' || ['Approved', 'Completed', 'Requested'].includes(order.returnStatus) || ['Approved', 'Completed', 'Requested'].includes(order.exchangeStatus);
+        if (filterStatus === 'Returned') return order.status === 'Returned' || ['Approved', 'Completed', 'Requested', 'Rejected'].includes(order.returnStatus) || ['Approved', 'Completed', 'Requested', 'Rejected'].includes(order.exchangeStatus);
         return true;
     });
 
@@ -207,7 +207,7 @@ const ManageOrders = () => {
                     }}
                 >
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#facc15' }}>
-                        {orders.filter(o => o.status === 'Returned' || o.returnStatus === 'Approved' || o.returnStatus === 'Completed').length}
+                        {orders.filter(o => o.status === 'Returned' || ['Approved', 'Completed', 'Requested', 'Rejected'].includes(o.returnStatus) || ['Approved', 'Completed', 'Requested', 'Rejected'].includes(o.exchangeStatus)).length}
                     </div>
                     <div style={{ color: 'var(--text-muted)' }}>Returned</div>
                 </div>
