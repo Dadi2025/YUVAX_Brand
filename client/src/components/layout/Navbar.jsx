@@ -11,6 +11,8 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   // Scroll detection
@@ -51,17 +53,35 @@ const Navbar = () => {
           {/* Center Navigation */}
           <div className="hidden md:flex items-center gap-8 nav-center">
             <Link to="/" className="nav-link">Home</Link>
+            <Link to="/shop?sort=newest" className="nav-link nav-link-fire">
+              New Arrivals <span className="fire-badge">🔥</span>
+            </Link>
             <Link to="/shop" className="nav-link">Collections</Link>
             <Link to="/style-wall" className="nav-link">Style Wall</Link>
-            {user && (
-              <Link to="/referral" className="nav-link" aria-label="Refer & Earn">
-                Refer & Earn
-              </Link>
-            )}
           </div>
 
           {/* Right Utilities */}
           <div className="hidden md:flex items-center gap-6 nav-right">
+
+            {/* EXPANDABLE SEARCH BAR */}
+            <div className={`nav-search-container ${isSearchOpen ? 'active' : ''}`}>
+              <input
+                type="text"
+                placeholder="Search for drip..."
+                className="nav-search-input"
+                onBlur={() => !searchQuery && setIsSearchOpen(false)} // Close if empty on blue
+              />
+              <button
+                className="nav-icon-btn search-trigger"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label="Search"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
 
             {/* Wishlist */}
             <Link to="/wishlist" className="nav-icon-btn relative" aria-label="Wishlist">

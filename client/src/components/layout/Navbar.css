@@ -283,3 +283,95 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
+
+/* --- NEW ADDITIONS: Search & Fire Badge --- */
+
+/* SEARCH BAR 'SPOTLIGHT' */
+.nav-search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: transparent;
+  padding: 4px;
+  border-radius: 99px;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.nav-search-container.active {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-light);
+  padding-right: 4px;
+}
+
+.nav-search-input {
+  width: 0;
+  opacity: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Courier New', monospace;
+  /* Typewriter vibe */
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #000;
+  outline: none;
+  transition: all 0.4s ease;
+  padding: 0;
+}
+
+.nav-search-container.active .nav-search-input {
+  width: 180px;
+  opacity: 1;
+  padding: 0 12px;
+}
+
+/* Search Trigger Button */
+.search-trigger {
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.nav-search-container.active .search-trigger {
+  color: #000;
+  transform: scale(0.9);
+}
+
+/* FIRE BADGE ANIMATION */
+.fire-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 1.1em;
+  animation: pulseFire 1.5s infinite ease-in-out;
+  filter: drop-shadow(0 0 4px orange);
+}
+
+@keyframes pulseFire {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px orange);
+  }
+
+  50% {
+    transform: scale(1.2) rotate(5deg);
+    filter: drop-shadow(0 0 8px red);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px orange);
+  }
+}
+
+.nav-link-fire {
+  position: relative;
+  overflow: visible;
+  /* Allow badge to pop out */
+}
+
+/* Rainbow underline for New Arrivals on Hover */
+.nav-link-fire:hover {
+  background-image: linear-gradient(to right, #ff00cc, #333399, #000000);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
