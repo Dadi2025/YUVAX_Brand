@@ -357,34 +357,7 @@
     background: #fff0f0;
 }
 
-/* Trust Badges */
-.trust-badges-row {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-light);
-    margin-bottom: 2rem;
-}
-
-.trust-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    text-align: center;
-}
-
-.trust-item .icon {
-    font-size: 1.5rem;
-    color: var(--text-main);
-}
-
-.trust-item .label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
+/* Trust Badges moved to TrustBar component */
 
 /* Accordions */
 .info-accordions {

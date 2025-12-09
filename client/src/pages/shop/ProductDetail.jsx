@@ -15,6 +15,8 @@ import SocialShareButtons from '../../components/referral/SocialShareButtons';
 import FrequentlyBoughtTogether from '../../components/features/FrequentlyBoughtTogether';
 import './ProductDetail.css';
 
+import TrustBar from '../../components/home/TrustBar';
+
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -214,22 +216,6 @@ const ProductDetail = () => {
                             </button>
                         </div>
 
-                        {/* Trust Badges */}
-                        <div className="trust-badges-row">
-                            <div className="trust-item">
-                                <span className="icon">🚚</span>
-                                <span className="label">Free Shipping</span>
-                            </div>
-                            <div className="trust-item">
-                                <span className="icon">🛡️</span>
-                                <span className="label">Secure Payment</span>
-                            </div>
-                            <div className="trust-item">
-                                <span className="icon">↩️</span>
-                                <span className="label">Easy Returns</span>
-                            </div>
-                        </div>
-
                         {/* Information Accordions */}
                         <div className="info-accordions">
                             <div className="accordion-item">
@@ -293,6 +279,11 @@ const ProductDetail = () => {
                             onReviewSubmitted={() => setRefreshReviews(prev => prev + 1)}
                         />
                     </div>
+                </div>
+
+                {/* Trust Bar at Bottom */}
+                <div className="mt-16 border-t border-gray-100 pt-8">
+                    <TrustBar />
                 </div>
 
             </div>
