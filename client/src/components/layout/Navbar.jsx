@@ -63,29 +63,9 @@ const Navbar = () => {
           {/* Right Utilities */}
           <div className="hidden md:flex items-center gap-6 nav-right">
 
-            {/* EXPANDABLE SEARCH BAR */}
-            <div className={`nav-search-container ${isSearchOpen ? 'active' : ''}`}>
-              <input
-                type="text"
-                placeholder="Search for drip..."
-                className="nav-search-input"
-                onBlur={() => !searchQuery && setIsSearchOpen(false)} // Close if empty on blue
-              />
-              <button
-                className="nav-icon-btn search-trigger"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                aria-label="Search"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </button>
-            </div>
-
             {/* Wishlist */}
             <Link to="/wishlist" className="nav-icon-btn relative" aria-label="Wishlist">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
               {wishlist.length > 0 && (
@@ -97,7 +77,7 @@ const Navbar = () => {
 
             {/* Cart */}
             <Link to="/cart" className="nav-icon-btn relative" aria-label="Cart">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -109,13 +89,33 @@ const Navbar = () => {
               )}
             </Link>
 
+            {/* EXPANDABLE SEARCH BAR (Relocated) */}
+            <div className={`nav-search-container ${isSearchOpen ? 'active' : ''}`}>
+              <input
+                type="text"
+                placeholder="Search..."
+                className="nav-search-input"
+                onBlur={() => !searchQuery && setIsSearchOpen(false)}
+              />
+              <button
+                className="nav-icon-btn search-trigger"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label="Search"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
+
             {/* Dashboard Link (Conditionally Rendered) */}
             {(
               (isAgentLoggedIn && !isAdminLoggedIn && !user?.isAdmin) ||
               (isAdminLoggedIn)
             ) && (
                 <Link to={isAdminLoggedIn ? "/admin/dashboard" : "/delivery/dashboard"} className="nav-icon-btn" aria-label="Dashboard">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="3" width="7" height="7"></rect>
                     <rect x="14" y="3" width="7" height="7"></rect>
                     <rect x="14" y="14" width="7" height="7"></rect>
